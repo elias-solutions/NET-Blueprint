@@ -7,6 +7,7 @@ namespace BIT.NET.Backend.Blueprint.IntegrationTests.PersonControllerTest;
 [TestFixture]
 internal class PersonsControllerGetAllTest : IntegrationTestBase
 {
+    private const string Route = "/api/v1/persons";
     private readonly CreatePersonRequest _request;
 
     public PersonsControllerGetAllTest()
@@ -18,10 +19,10 @@ internal class PersonsControllerGetAllTest : IntegrationTestBase
     public async Task WhenRestServiceIsCalled_ThenResultShouldBeExpectedModelList()
     {
         //Arrange
-        var expected = await PostAsync<CreatePersonRequest, GetPersonResponse>("/api/v1/persons", _request);
+        var expected = await PostAsync<CreatePersonRequest, GetPersonResponse>(Route, _request);
 
         //Act
-        var response = await GetAsync<IEnumerable<GetPersonResponse>>("/api/v1/persons");
+        var response = await GetAsync<IEnumerable<GetPersonResponse>>(Route);
             
         //Assert
         response.Should().BeEquivalentTo(new[] { expected });
