@@ -1,5 +1,7 @@
+using BIT.NET.Backend.Blueprint.Authorization;
 using BIT.NET.Backend.Blueprint.Model;
 using BIT.NET.Backend.Blueprint.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BIT.NET.Backend.Blueprint.Controllers
@@ -18,18 +20,21 @@ namespace BIT.NET.Backend.Blueprint.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IEnumerable<GetPersonResponse>> GetPersonsAsync()
         {
             return await _personService.GetPersonsAsync();
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<GetPersonResponse> GetPersonByIdAsync(Guid id)
         {
             return await _personService.GetPersonByIdAsync(id);
         }
 
         [HttpPost]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<GetPersonResponse> CreatePersonAsync(CreatePersonRequest request)
         {
             var savedModel = await _personService.CreatePersonsAsync(request);
@@ -37,6 +42,7 @@ namespace BIT.NET.Backend.Blueprint.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = Roles.Admin)]
         public async Task DeletePersonByIdAsync(Guid id)
         {
             await _personService.DeletePersonByIdAsync(id);

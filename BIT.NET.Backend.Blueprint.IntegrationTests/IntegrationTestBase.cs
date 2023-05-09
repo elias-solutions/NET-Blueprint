@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.TestHost;
 
 namespace BIT.NET.Backend.Blueprint.IntegrationTests;
 
-internal abstract class IntegrationTestBase : WebApplicationFactory<Program>
+public abstract class IntegrationTestBase : WebApplicationFactory<Startup>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {

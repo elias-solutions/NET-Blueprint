@@ -1,11 +1,11 @@
+using BIT.NET.Backend.Blueprint.Authorization;
 using BIT.NET.Backend.Blueprint.Model;
 using FluentAssertions;
 using NUnit.Framework;
 
 namespace BIT.NET.Backend.Blueprint.IntegrationTests.PersonControllerTest;
 
-[TestFixture]
-internal class PersonsControllerGetTest : IntegrationTestBase
+public class PersonsControllerGetTest : IntegrationTestBase
 {
     private const string Route = "/api/v1/persons";
     private readonly CreatePersonRequest _request;
@@ -16,7 +16,7 @@ internal class PersonsControllerGetTest : IntegrationTestBase
     }
 
     [Test]
-    public async Task WhenRestServiceIsCalled_ThenResultShouldBeExpectedModel()
+    public async Task PersonsController_Get_Ok()
     {
         //Arrange
         var expected = await PostAsync<CreatePersonRequest, GetPersonResponse>(Route, _request);
