@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -26,7 +27,7 @@ public abstract class IntegrationTestBase : WebApplicationFactory<Startup>
     {
         var client = CreateHttpClient();
         var response = await client.GetAsync(route);
-        response.IsSuccessStatusCode.Should().BeTrue();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
         var result = await response.Content.ReadAsync<TOutput>();
         return result;
     }
@@ -34,7 +35,7 @@ public abstract class IntegrationTestBase : WebApplicationFactory<Startup>
     protected async Task<TOutput> PostAsync<TInput, TOutput>(string route, TInput model) where TInput : class
     {
         var response = await CreateHttpClient().PostAsync(route, CreateHttpContent(model));
-        response.IsSuccessStatusCode.Should().BeTrue();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
         var result = await response.Content.ReadAsync<TOutput>();
         return result;
     }
@@ -42,7 +43,7 @@ public abstract class IntegrationTestBase : WebApplicationFactory<Startup>
     protected async Task DeleteAsync(string route)
     {
         var response = await CreateHttpClient().DeleteAsync(route);
-        response.IsSuccessStatusCode.Should().BeTrue();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
     private HttpContent CreateHttpContent<T>(T model)

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace BIT.NET.Backend.Blueprint.Controllers
 {
     [ApiController]
+    //[Authorize(Roles = Roles.Admin)]
     [Route("api/v1/persons")]
     public class PersonsController : ControllerBase
     {
@@ -20,21 +21,18 @@ namespace BIT.NET.Backend.Blueprint.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = Roles.Admin)]
         public async Task<IEnumerable<GetPersonResponse>> GetPersonsAsync()
         {
             return await _personService.GetPersonsAsync();
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = Roles.Admin)]
         public async Task<GetPersonResponse> GetPersonByIdAsync(Guid id)
         {
             return await _personService.GetPersonByIdAsync(id);
         }
 
         [HttpPost]
-        [Authorize(Roles = Roles.Admin)]
         public async Task<GetPersonResponse> CreatePersonAsync(CreatePersonRequest request)
         {
             var savedModel = await _personService.CreatePersonsAsync(request);
@@ -42,7 +40,6 @@ namespace BIT.NET.Backend.Blueprint.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = Roles.Admin)]
         public async Task DeletePersonByIdAsync(Guid id)
         {
             await _personService.DeletePersonByIdAsync(id);
