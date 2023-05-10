@@ -8,8 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 
-
-namespace BIT.NET.Backend.Blueprint.IntegrationTests;
+namespace BIT.NET.Backend.Blueprint.Integration.Tests;
 
 public abstract class IntegrationTestBase : WebApplicationFactory<Startup>
 {

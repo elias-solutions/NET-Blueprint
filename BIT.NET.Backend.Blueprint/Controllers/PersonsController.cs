@@ -21,28 +21,31 @@ namespace BIT.NET.Backend.Blueprint.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<GetPersonResponse>> GetPersonsAsync()
+        public async Task<IActionResult> GetPersonsAsync()
         {
-            return await _personService.GetPersonsAsync();
+            var result = await _personService.GetPersonsAsync();
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
-        public async Task<GetPersonResponse> GetPersonByIdAsync(Guid id)
+        public async Task<IActionResult> GetPersonByIdAsync(Guid id)
         {
-            return await _personService.GetPersonByIdAsync(id);
+            var result = await _personService.GetPersonByIdAsync(id);
+            return Ok(result);
         }
 
         [HttpPost]
-        public async Task<GetPersonResponse> CreatePersonAsync(CreatePersonRequest request)
+        public async Task<IActionResult> CreatePersonAsync(CreatePersonRequest request)
         {
-            var savedModel = await _personService.CreatePersonsAsync(request);
-            return savedModel;
+            var result = await _personService.CreatePersonsAsync(request);
+            return Ok(result);
         }
 
         [HttpDelete("{id}")]
-        public async Task DeletePersonByIdAsync(Guid id)
+        public async Task<IActionResult> DeletePersonByIdAsync(Guid id)
         {
             await _personService.DeletePersonByIdAsync(id);
+            return Ok();
         }
     }
 }

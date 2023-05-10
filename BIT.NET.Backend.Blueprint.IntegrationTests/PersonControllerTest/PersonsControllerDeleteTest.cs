@@ -1,9 +1,8 @@
-using BIT.NET.Backend.Blueprint.Authorization;
 using BIT.NET.Backend.Blueprint.Model;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace BIT.NET.Backend.Blueprint.IntegrationTests.PersonControllerTest;
+namespace BIT.NET.Backend.Blueprint.Integration.Tests.PersonControllerTest;
 
 public class PersonsControllerDeleteTest : IntegrationTestBase
 {
