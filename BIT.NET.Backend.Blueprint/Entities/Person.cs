@@ -4,7 +4,7 @@ namespace BIT.NET.Backend.Blueprint.Entities
 {
     public class Person : EntityBase
     {
-        public string FristName { get; set; } = default!;
+        public string FirstName { get; set; } = default!;
 
         public string LastName { get; set; } = default!;
 

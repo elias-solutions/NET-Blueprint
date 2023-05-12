@@ -1,3 +1,4 @@
+using BIT.NET.Backend.Blueprint.Authorization;
 using BIT.NET.Backend.Blueprint.Model;
 using BIT.NET.Backend.Blueprint.Service;
 using Microsoft.AspNetCore.Authorization;
@@ -6,7 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace BIT.NET.Backend.Blueprint.Controllers
 {
     [ApiController]
-    [AllowAnonymous]
+    [Authorize(Roles = Roles.Admin)]
+    //[AllowAnonymous]
     [Route("api/v1/persons")]
     public class PersonsController : ControllerBase
     {

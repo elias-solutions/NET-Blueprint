@@ -1,11 +1,8 @@
-using System.Text.Json;
 using BIT.NET.Backend.Blueprint.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using AspNetCore.Simple.MsTest.Sdk;
 using BIT.NET.Backend.Blueprint.Integration.SimpleSdk.Tests.Environments;
-using Extensions.Pack;
 using ObjectsComparer;
-using System.Collections.Immutable;
 
 namespace BIT.NET.Backend.Blueprint.Integration.SimpleSdk.Tests.Api.Persons.V1
 {

@@ -36,7 +36,7 @@ namespace BIT.NET.Backend.Blueprint.Service
         {
             var entity = new Person
             {
-                FristName = request.FirstName,
+                FirstName = request.FirstName,
                 LastName = request.LastName,
                 Birthday = request.Birthday
             };
@@ -69,7 +69,7 @@ namespace BIT.NET.Backend.Blueprint.Service
         {
             return new PersonDto(
                 entity.Id, 
-                entity.FristName, 
+                entity.FirstName, 
                 entity.LastName, 
                 entity.Birthday, 
                 entity.CreatedBy, 
