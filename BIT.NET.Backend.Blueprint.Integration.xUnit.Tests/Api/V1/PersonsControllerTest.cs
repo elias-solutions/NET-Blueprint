@@ -1,7 +1,6 @@
 using System.Net;
 using System.Text;
 using System.Text.Json;
-using BIT.NET.Backend.Blueprint.Entities;
 using BIT.NET.Backend.Blueprint.Extensions;
 using BIT.NET.Backend.Blueprint.Integration.xUnit.Tests.Environments;
 using BIT.NET.Backend.Blueprint.Model;
@@ -22,14 +21,23 @@ public class PersonsControllerTest : IClassFixture<WebApplicationFactory<Startup
 
     public PersonsControllerTest(WebApplicationFactory<Startup> factory)
     {
-        _factory = factory;
+        _factory = factory.WithWebHostBuilder(builder =>
+        {
+            builder.ConfigureTestServices(services =>
+            {
+                services
+                    .AddAuthentication("TestAuthentication")
+                    .AddScheme<AuthenticationSchemeOptions, AdminTestAuthenticationHandler>("TestAuthentication", null);
+            });
+        });
+
         _request = new CreatePersonRequest("Jonas", "Elias", DateTime.Now);
     }
 
     [Fact]
     public async Task PersonsController_Ok()
     {
-        using var client = BuildClient();
+        using var client = _factory.CreateClient();
 
         var httpContent = new StringContent(JsonSerializer.Serialize(_request), Encoding.UTF8, "application/json");
         var response = await client.PostAsync(Route, httpContent);
@@ -61,17 +69,5 @@ public class PersonsControllerTest : IClassFixture<WebApplicationFactory<Startup
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         personsResult = await response.Content.ReadAsync<IEnumerable<PersonDto>>();
         personsResult.Should().BeEmpty();
-    }
-
-    private HttpClient BuildClient()
-    {
-        return _factory.WithWebHostBuilder(builder =>
-        {
-            builder.ConfigureTestServices(services =>
-            {
-                services.AddAuthentication("TestAuthentication")
-                    .AddScheme<AuthenticationSchemeOptions, AdminTestAuthenticationHandler>("TestAuthentication", null);
-            });
-        }).CreateClient();
     }
 }

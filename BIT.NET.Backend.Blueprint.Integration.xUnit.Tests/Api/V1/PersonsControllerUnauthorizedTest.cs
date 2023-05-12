@@ -16,13 +16,21 @@ public class PersonsControllerUnauthorizedTest : IClassFixture<WebApplicationFac
 
     public PersonsControllerUnauthorizedTest(WebApplicationFactory<Startup> factory)
     {
-        _factory = factory;
+        _factory = factory.WithWebHostBuilder(builder =>
+        {
+            builder.ConfigureTestServices(services =>
+            {
+                services
+                    .AddAuthentication("TestAuthentication")
+                    .AddScheme<AuthenticationSchemeOptions, UnauthorizedTestAuthenticationHandler>("TestAuthentication", null);
+            });
+        });
     }
 
     [Fact]
     public async Task PersonController_Post_Unauthorized()
     {
-        using var client = BuildClient();
+        using var client = _factory.CreateClient();
 
         var response = await client.PostAsync(Route, new StringContent(string.Empty));
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
@@ -31,7 +39,7 @@ public class PersonsControllerUnauthorizedTest : IClassFixture<WebApplicationFac
     [Fact]
     public async Task PersonController_Delete_Unauthorized()
     {
-        using var client = BuildClient();
+        using var client = _factory.CreateClient();
 
         var response = await client.DeleteAsync(Route);
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
@@ -40,7 +48,7 @@ public class PersonsControllerUnauthorizedTest : IClassFixture<WebApplicationFac
     [Fact]
     public async Task PersonController_GetAll_Unauthorized()
     {
-        using var client = BuildClient();
+        using var client = _factory.CreateClient();
 
         var response = await client.GetAsync(Route);
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
@@ -49,21 +57,9 @@ public class PersonsControllerUnauthorizedTest : IClassFixture<WebApplicationFac
     [Fact]
     public async Task PersonController_Get_Unauthorized()
     {
-        using var client = BuildClient();
+        using var client = _factory.CreateClient();
 
         var response = await client.GetAsync($"{Route}/{Guid.NewGuid()}");
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
-    }
-
-    private HttpClient BuildClient()
-    {
-        return _factory.WithWebHostBuilder(builder =>
-        {
-            builder.ConfigureTestServices(services =>
-            {
-                services.AddAuthentication("TestAuthentication")
-                    .AddScheme<AuthenticationSchemeOptions, UnauthorizedTestAuthenticationHandler>("TestAuthentication", null);
-            });
-        }).CreateClient();
     }
 }
