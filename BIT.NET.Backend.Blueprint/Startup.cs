@@ -2,7 +2,6 @@ using System.Text.Json.Serialization;
 using BIT.NET.Backend.Blueprint.DataAccess;
 using BIT.NET.Backend.Blueprint.Repository.Base;
 using BIT.NET.Backend.Blueprint.Service;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 
 namespace BIT.NET.Backend.Blueprint;
@@ -15,13 +14,6 @@ public class Startup
         services.AddScoped(typeof(PersonService));
         services.AddScoped(typeof(Repository<>));
         services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
-        services.AddAuthentication(options =>
-        {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-        }).AddJwtBearer();
-        services.AddAuthorization();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
     }

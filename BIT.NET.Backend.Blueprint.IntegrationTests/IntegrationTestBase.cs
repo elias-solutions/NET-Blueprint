@@ -16,7 +16,6 @@ public abstract class IntegrationTestBase : WebApplicationFactory<Startup>
     {
         builder.ConfigureTestServices(_ =>
         {
-
         });
 
         base.ConfigureWebHost(builder);
@@ -54,6 +53,8 @@ public abstract class IntegrationTestBase : WebApplicationFactory<Startup>
 
     private HttpClient CreateHttpClient()
     {
+
+
         var httpClient = Server.CreateClient();
         httpClient.DefaultRequestHeaders.Accept.Clear();
         httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));

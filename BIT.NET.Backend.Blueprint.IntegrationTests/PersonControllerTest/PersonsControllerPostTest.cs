@@ -18,7 +18,7 @@ public class PersonsControllerPostTest : IntegrationTestBase
     public async Task PersonsController_Post_Ok()
     {
         //Act
-        var response = await PostAsync<CreatePersonRequest, GetPersonResponse>(Route, _request);
+        var response = await PostAsync<CreatePersonRequest, PersonDto>(Route, _request);
 
         //Assert
         response.Id.Should().NotBe(Guid.Empty);

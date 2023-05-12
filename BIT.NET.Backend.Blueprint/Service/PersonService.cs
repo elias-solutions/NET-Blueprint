@@ -13,7 +13,7 @@ namespace BIT.NET.Backend.Blueprint.Service
             _repository = repository;
         }
 
-        public async Task<GetPersonResponse> GetPersonByIdAsync(Guid id)
+        public async Task<PersonDto> GetPersonByIdAsync(Guid id)
         {
             var entity = await _repository.GetAsync(x => x.Id == id);
             if (entity == null)
@@ -25,14 +25,14 @@ namespace BIT.NET.Backend.Blueprint.Service
             return model;
         }
 
-        public async Task<IEnumerable<GetPersonResponse>> GetPersonsAsync()
+        public async Task<IEnumerable<PersonDto>> GetPersonsAsync()
         {
             var entities = await _repository.GetAllAsync();
             var models = entities.Select(Map).ToList();
             return models;
         }
 
-        public async Task<GetPersonResponse> CreatePersonsAsync(CreatePersonRequest request)
+        public async Task<PersonDto> CreatePersonsAsync(CreatePersonRequest request)
         {
             var entity = new Person
             {
@@ -56,9 +56,18 @@ namespace BIT.NET.Backend.Blueprint.Service
             await _repository.RemoveAsync(entity);
         }
 
-        private GetPersonResponse Map(Person entity)
+        public async Task DeletePersonsAsync()
         {
-            return new GetPersonResponse(
+            var persons = await _repository.GetAllAsync();
+            foreach (var person in persons)
+            {
+                await _repository.RemoveAsync(person);
+            }
+        }
+
+        private PersonDto Map(Person entity)
+        {
+            return new PersonDto(
                 entity.Id, 
                 entity.FristName, 
                 entity.LastName, 

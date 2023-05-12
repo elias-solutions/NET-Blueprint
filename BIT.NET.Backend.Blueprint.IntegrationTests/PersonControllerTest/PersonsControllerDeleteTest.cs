@@ -18,15 +18,15 @@ public class PersonsControllerDeleteTest : IntegrationTestBase
     public async Task PersonsController_Delete_Ok()
     {
         //Arrange
-        var expected = await PostAsync<CreatePersonRequest, GetPersonResponse>(Route, _request);
-        var getPersonResponse = await GetAsync<IEnumerable<GetPersonResponse>>(Route);
+        var expected = await PostAsync<CreatePersonRequest, PersonDto>(Route, _request);
+        var getPersonResponse = await GetAsync<IEnumerable<PersonDto>>(Route);
         getPersonResponse.Should().ContainInOrder(expected);
 
         //Act
         await DeleteAsync($"{Route}/{expected.Id}");
 
         //Assert
-        var response = await GetAsync<IEnumerable<GetPersonResponse>>(Route);
+        var response = await GetAsync<IEnumerable<PersonDto>>(Route);
         response.Should().BeEmpty();
     }
 }

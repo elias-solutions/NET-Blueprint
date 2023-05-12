@@ -1,6 +1,6 @@
 ﻿namespace BIT.NET.Backend.Blueprint.Model
 {
-    public record GetPersonResponse
+    public record PersonDto
     (
         Guid Id, 
         string FirstName, 

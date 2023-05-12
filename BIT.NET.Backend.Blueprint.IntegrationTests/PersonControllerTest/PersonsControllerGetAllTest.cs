@@ -18,10 +18,10 @@ public class PersonsControllerGetAllTest : IntegrationTestBase
     public async Task PersonsController_GetAll_Ok()
     {
         //Arrange
-        var expected = await PostAsync<CreatePersonRequest, GetPersonResponse>(Route, _request);
+        var expected = await PostAsync<CreatePersonRequest, PersonDto>(Route, _request);
 
         //Act
-        var response = await GetAsync<IEnumerable<GetPersonResponse>>(Route);
+        var response = await GetAsync<IEnumerable<PersonDto>>(Route);
             
         //Assert
         response.Should().BeEquivalentTo(new[] { expected });

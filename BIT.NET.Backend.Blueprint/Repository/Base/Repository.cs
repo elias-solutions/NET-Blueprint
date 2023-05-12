@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
-using Microsoft.AspNetCore.Mvc;
 
 namespace BIT.NET.Backend.Blueprint.Repository.Base
 {
