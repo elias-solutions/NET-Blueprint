@@ -1,5 +1,5 @@
 using System.Net;
-using BIT.NET.Backend.Blueprint.Integration.Tests.Environments;
+using BIT.NET.Backend.Blueprint.Integration.xUnit.Tests.Environments;
 using FluentAssertions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
-namespace BIT.NET.Backend.Blueprint.Integration.Tests.Api.Persons.V1;
+namespace BIT.NET.Backend.Blueprint.Integration.xUnit.Tests.Api.V1;
 
 public class PersonsControllerUnauthorizedTest : IClassFixture<WebApplicationFactory<Startup>>
 {
@@ -23,7 +23,7 @@ public class PersonsControllerUnauthorizedTest : IClassFixture<WebApplicationFac
     public async Task PersonController_Post_Unauthorized()
     {
         using var client = BuildClient();
-        
+
         var response = await client.PostAsync(Route, new StringContent(string.Empty));
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }

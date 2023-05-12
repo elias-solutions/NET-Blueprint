@@ -1,7 +1,7 @@
 using System.Net;
 using System.Text;
 using System.Text.Json;
-using BIT.NET.Backend.Blueprint.Integration.Tests.Environments;
+using BIT.NET.Backend.Blueprint.Integration.xUnit.Tests.Environments;
 using BIT.NET.Backend.Blueprint.Model;
 using FluentAssertions;
 using Microsoft.AspNetCore.Authentication;
@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
-namespace BIT.NET.Backend.Blueprint.Integration.Tests.Api.Persons.V1;
+namespace BIT.NET.Backend.Blueprint.Integration.xUnit.Tests.Api.V1;
 
 public class PersonsControllerForbiddenTest : IClassFixture<WebApplicationFactory<Startup>>
 {

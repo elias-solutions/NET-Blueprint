@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BIT.NET.Backend.Blueprint.E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BIT.NET.Backend.Blueprint.Integration.SimpleSdk.Tests", "BIT.NET.Backend.Blueprint.Integration.SimpleSdk.Tests\BIT.NET.Backend.Blueprint.Integration.SimpleSdk.Tests.csproj", "{73AAC3BC-EF2A-4437-909F-B5F2730AD22F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BIT.NET.Backend.Blueprint.Integration.Tests", "xUnitTEst\BIT.NET.Backend.Blueprint.Integration.Tests.csproj", "{B8121C9F-AC84-49F9-B2CB-89741F07A279}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BIT.NET.Backend.Blueprint.Integration.xUnit.Tests", "BIT.NET.Backend.Blueprint.Integration.xUnit.Tests\BIT.NET.Backend.Blueprint.Integration.xUnit.Tests.csproj", "{4FA7853D-937C-4547-A3BD-9A3DED059700}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +29,10 @@ Global
 		{73AAC3BC-EF2A-4437-909F-B5F2730AD22F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{73AAC3BC-EF2A-4437-909F-B5F2730AD22F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{73AAC3BC-EF2A-4437-909F-B5F2730AD22F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B8121C9F-AC84-49F9-B2CB-89741F07A279}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B8121C9F-AC84-49F9-B2CB-89741F07A279}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B8121C9F-AC84-49F9-B2CB-89741F07A279}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B8121C9F-AC84-49F9-B2CB-89741F07A279}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4FA7853D-937C-4547-A3BD-9A3DED059700}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FA7853D-937C-4547-A3BD-9A3DED059700}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FA7853D-937C-4547-A3BD-9A3DED059700}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FA7853D-937C-4547-A3BD-9A3DED059700}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
