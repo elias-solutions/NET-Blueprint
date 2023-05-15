@@ -5,39 +5,27 @@ using BIT.NET.Backend.Blueprint.Extensions;
 using BIT.NET.Backend.Blueprint.Integration.xUnit.Tests.Environments;
 using BIT.NET.Backend.Blueprint.Model;
 using FluentAssertions;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.DependencyInjection;
+using NSubstitute;
 using Xunit;
 
 namespace BIT.NET.Backend.Blueprint.Integration.xUnit.Tests.Api.V1;
 
-public class PersonsControllerTest : IClassFixture<WebApplicationFactory<Startup>>
+public class PersonsControllerTest : IntegrationTestBase
 {
-    private readonly WebApplicationFactory<Startup> _factory;
     private const string Route = "/api/v1/persons";
     private readonly CreatePersonRequest _request;
 
-    public PersonsControllerTest(WebApplicationFactory<Startup> factory)
+    public PersonsControllerTest(WebApplicationFactory<Startup> factory) : base(factory)
     {
-        _factory = factory.WithWebHostBuilder(builder =>
-        {
-            builder.ConfigureTestServices(services =>
-            {
-                services
-                    .AddAuthentication("TestAuthentication")
-                    .AddScheme<AuthenticationSchemeOptions, AdminTestAuthenticationHandler>("TestAuthentication", null);
-            });
-        });
-
+        UserService.GetCurrentUser().Returns(TestUsers.Admin);
         _request = new CreatePersonRequest("Jonas", "Elias", DateTime.Now);
     }
 
     [Fact]
     public async Task PersonsController_Ok()
     {
-        using var client = _factory.CreateClient();
+        using var client = Factory.CreateClient();
 
         var httpContent = new StringContent(JsonSerializer.Serialize(_request), Encoding.UTF8, "application/json");
         var response = await client.PostAsync(Route, httpContent);

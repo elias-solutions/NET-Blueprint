@@ -1,4 +1,5 @@
-﻿using BIT.NET.Backend.Blueprint.Entities;
+﻿using BIT.NET.Backend.Blueprint.Authorization;
+using BIT.NET.Backend.Blueprint.Entities;
 using BIT.NET.Backend.Blueprint.Model;
 using BIT.NET.Backend.Blueprint.Repository.Base;
 
@@ -7,10 +8,12 @@ namespace BIT.NET.Backend.Blueprint.Service
     public class PersonService
     {
         private readonly Repository<Person> _repository;
+        private readonly IUserService _userService;
 
-        public PersonService(Repository<Person> repository)
+        public PersonService(Repository<Person> repository, IUserService userService)
         {
             _repository = repository;
+            _userService = userService;
         }
 
         public async Task<PersonDto> GetPersonByIdAsync(Guid id)
@@ -41,7 +44,8 @@ namespace BIT.NET.Backend.Blueprint.Service
                 Birthday = request.Birthday
             };
 
-            var entityEntry = await _repository.AddAsync(entity, Guid.NewGuid());
+            var currentUser = _userService.GetCurrentUser();
+            var entityEntry = await _repository.AddAsync(entity, currentUser.Id);
             return Map(entityEntry.Entity);
         }
 
