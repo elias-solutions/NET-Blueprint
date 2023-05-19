@@ -5,11 +5,11 @@
         Guid Id, 
         string FirstName, 
         string LastName, 
-        DateTime Birthday,
+        DateTimeOffset Birthday,
         Guid CreatedBy,
-        DateTime Created,
+        DateTimeOffset Created,
         Guid? ModifiedBy,
-        DateTime? Modified);
+        DateTimeOffset? Modified);
 
-    public record CreatePersonRequest(string FirstName, string LastName, DateTime Birthday);
+    public record CreatePersonRequest(string FirstName, string LastName, DateTimeOffset Birthday);
 }

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
+using BIT.NET.Backend.Blueprint.Extensions;
 
 namespace BIT.NET.Backend.Blueprint.Repository.Base
 {
@@ -94,7 +95,7 @@ namespace BIT.NET.Backend.Blueprint.Repository.Base
 
         public async Task<EntityEntry<TEntity>> AddAsync(TEntity entity, Guid createdBy)
         {
-            entity.Created = DateTime.UtcNow;
+            entity.Created = DateTimeOffset.UtcNow.ToDatabaseDateTimeOffset();
             entity.CreatedBy = createdBy;
             var result = await _context.Set<TEntity>().AddAsync(entity);
             await _context.SaveChangesAsync();

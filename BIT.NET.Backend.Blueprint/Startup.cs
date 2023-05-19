@@ -11,9 +11,16 @@ namespace BIT.NET.Backend.Blueprint;
 
 public class Startup
 {
+    private readonly IConfiguration _configuration;
+
+    public Startup(IConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
+
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddDbContextFactory<BlueprintDbContext>(options => options.UseInMemoryDatabase("GenericDatabase"), ServiceLifetime.Scoped);
+        services.AddDbContextFactory<BlueprintDbContext>(options => options.UseNpgsql(_configuration.GetConnectionString("Database")), ServiceLifetime.Scoped);
         services.AddScoped<IUserService, UserService>();
         services.AddScoped(typeof(PersonService));
         services.AddScoped(typeof(Repository<>));

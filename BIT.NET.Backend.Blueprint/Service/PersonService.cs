@@ -18,7 +18,7 @@ namespace BIT.NET.Backend.Blueprint.Service
 
         public async Task<PersonDto> GetPersonByIdAsync(Guid id)
         {
-            var entity = await _repository.GetAsync(x => x.Id == id);
+            var entity = await _repository.GetAsync(person => person.Id == id);
             if (entity == null)
             {
                 throw new BadHttpRequestException($"No person found with id '{id}'");
@@ -45,7 +45,7 @@ namespace BIT.NET.Backend.Blueprint.Service
             };
 
             var currentUser = _userService.GetCurrentUser();
-            var entityEntry = await _repository.AddAsync(entity, currentUser.Id);
+            var entityEntry = await _repository.AddAsync(entity, currentUser!.Id);
             return Map(entityEntry.Entity);
         }
 
@@ -59,16 +59,7 @@ namespace BIT.NET.Backend.Blueprint.Service
 
             await _repository.RemoveAsync(entity);
         }
-
-        public async Task DeletePersonsAsync()
-        {
-            var persons = await _repository.GetAllAsync();
-            foreach (var person in persons)
-            {
-                await _repository.RemoveAsync(person);
-            }
-        }
-
+        
         private PersonDto Map(Person entity)
         {
             return new PersonDto(

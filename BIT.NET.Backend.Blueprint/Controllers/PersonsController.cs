@@ -1,3 +1,4 @@
+using System.Net;
 using BIT.NET.Backend.Blueprint.Authorization;
 using BIT.NET.Backend.Blueprint.Model;
 using BIT.NET.Backend.Blueprint.Service;
@@ -22,6 +23,7 @@ namespace BIT.NET.Backend.Blueprint.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IEnumerable<PersonDto>> GetPersonsAsync()
         {
             var result = await _personService.GetPersonsAsync();
@@ -29,6 +31,8 @@ namespace BIT.NET.Backend.Blueprint.Controllers
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<PersonDto> GetPersonByIdAsync(Guid id)
         {
             var result = await _personService.GetPersonByIdAsync(id);
@@ -36,6 +40,7 @@ namespace BIT.NET.Backend.Blueprint.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<PersonDto> CreatePersonAsync(CreatePersonRequest request)
         {
             var result = await _personService.CreatePersonsAsync(request);
@@ -43,15 +48,11 @@ namespace BIT.NET.Backend.Blueprint.Controllers
         }
 
         [HttpDelete("{id}")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task DeletePersonByIdAsync(Guid id)
         {
             await _personService.DeletePersonByIdAsync(id);
-        }
-
-        [HttpDelete]
-        public async Task DeletePersonsAsync()
-        {
-            await _personService.DeletePersonsAsync();
         }
     }
 }

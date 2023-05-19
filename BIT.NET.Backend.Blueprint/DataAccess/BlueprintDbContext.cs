@@ -5,17 +5,16 @@ namespace BIT.NET.Backend.Blueprint.DataAccess
 {
     public class BlueprintDbContext : DbContext
     {
+        private readonly IConfiguration _configuration;
         public DbSet<Person> Persons { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public BlueprintDbContext(IConfiguration configuration)
         {
-            base.OnConfiguring(optionsBuilder);
-
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseInMemoryDatabase("GenericDatabase");
-            }
+            _configuration = configuration;
         }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+            => optionsBuilder.UseNpgsql(_configuration.GetConnectionString("Database"));
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -3,15 +3,21 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
 using NSubstitute;
+using Respawn;
 using Xunit;
 
 namespace BIT.NET.Backend.Blueprint.Integration.xUnit.Tests.Environments;
 
-public abstract class IntegrationTestBase : IClassFixture<WebApplicationFactory<Startup>>
+public abstract class IntegrationTestBase : IClassFixture<WebApplicationFactory<Startup>>, IAsyncLifetime
 {
-    protected WebApplicationFactory<Startup> Factory { get; }
+    private Respawner _respawner = default!;
+    private readonly NpgsqlConnection _dbConnection = new("Host=localhost; Database=BlueprintDatabase; Username=dev; Password=dev");
+    private WebApplicationFactory<Startup> Factory { get; }
     protected IUserService UserService { get; }
+    protected HttpClient Client { get; }
+
 
     protected IntegrationTestBase(WebApplicationFactory<Startup> factory)
     {
@@ -27,5 +33,26 @@ public abstract class IntegrationTestBase : IClassFixture<WebApplicationFactory<
                     .AddScheme<AuthenticationSchemeOptions, TestAuthenticationHandler>("TestAuthentication", null);
             });
         });
+
+        Client = Factory.CreateClient();
     }
+
+    public async Task InitializeAsync()
+    {
+        await InitializeRespawner();
+    }
+
+    private async Task InitializeRespawner()
+    {
+        var options = new RespawnerOptions
+        {
+            SchemasToInclude = new[] { "public" },
+            DbAdapter = DbAdapter.Postgres
+        };
+        await _dbConnection.OpenAsync();
+        _respawner = await Respawner.CreateAsync(_dbConnection, options);
+    }
+
+
+    public async Task DisposeAsync() => await _respawner.ResetAsync(_dbConnection);
 }

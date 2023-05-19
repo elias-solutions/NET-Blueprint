@@ -8,6 +8,6 @@ namespace BIT.NET.Backend.Blueprint.Entities
 
         public string LastName { get; set; } = default!;
 
-        public DateTime Birthday { get; set; } = default!;
+        public DateTimeOffset Birthday { get; set; }
     }
 }
