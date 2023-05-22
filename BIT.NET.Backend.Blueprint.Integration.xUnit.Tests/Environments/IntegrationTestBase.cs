@@ -1,58 +1,81 @@
+using System.Net;
+using System.Text;
+using System.Text.Json;
 using BIT.NET.Backend.Blueprint.Authorization;
-using Microsoft.AspNetCore.Authentication;
+using BIT.NET.Backend.Blueprint.Extensions;
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.DependencyInjection;
-using Npgsql;
 using NSubstitute;
-using Respawn;
-using Xunit;
 
 namespace BIT.NET.Backend.Blueprint.Integration.xUnit.Tests.Environments;
 
-public abstract class IntegrationTestBase : IClassFixture<WebApplicationFactory<Startup>>, IAsyncLifetime
+public abstract class IntegrationTestBase : TestBase
 {
-    private Respawner _respawner = default!;
-    private readonly NpgsqlConnection _dbConnection = new("Host=localhost; Database=BlueprintDatabase; Username=dev; Password=dev");
-    private WebApplicationFactory<Startup> Factory { get; }
-    protected IUserService UserService { get; }
-    protected HttpClient Client { get; }
-
-
-    protected IntegrationTestBase(WebApplicationFactory<Startup> factory)
+    protected IntegrationTestBase(WebApplicationFactory<Startup> factory) : base(factory)
     {
-        UserService = Substitute.For<IUserService>();
-
-        Factory = factory.WithWebHostBuilder(builder =>
-        {
-            builder.ConfigureTestServices(services =>
-            {
-                services.AddScoped(_ => UserService);
-                services
-                    .AddAuthentication("TestAuthentication")
-                    .AddScheme<AuthenticationSchemeOptions, TestAuthenticationHandler>("TestAuthentication", null);
-            });
-        });
-
-        Client = Factory.CreateClient();
     }
 
-    public async Task InitializeAsync()
+    protected async Task AssertGetUnauthorizedAsync(string route)
     {
-        await InitializeRespawner();
+        var response = await Client.GetAsync(route);
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
-    private async Task InitializeRespawner()
+    protected async Task AssertPostUnauthorizedAsync(string route)
     {
-        var options = new RespawnerOptions
-        {
-            SchemasToInclude = new[] { "public" },
-            DbAdapter = DbAdapter.Postgres
-        };
-        await _dbConnection.OpenAsync();
-        _respawner = await Respawner.CreateAsync(_dbConnection, options);
+        var response = await Client.PostAsync(route, new StringContent(string.Empty));
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
+    protected async Task AssertDeleteUnauthorizedAsync(string route)
+    {
+        var response = await Client.DeleteAsync(route);
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
 
-    public async Task DisposeAsync() => await _respawner.ResetAsync(_dbConnection);
+    protected async Task AssertGetHttpStatusCodeAsync(User user, string route, HttpStatusCode statusCode)
+    {
+        UserService.GetCurrentUser().Returns(user);
+        var response = await Client.GetAsync(route);
+        response.StatusCode.Should().Be(statusCode);
+    }
+
+    protected async Task AssertPostHttpStatusCodeAsync(User user, string route, HttpStatusCode statusCode)
+    {
+        UserService.GetCurrentUser().Returns(user);
+        var response = await Client.PostAsync(route, new StringContent(string.Empty));
+        response.StatusCode.Should().Be(statusCode);
+    }
+
+    protected async Task AssertDeleteHttpStatusCodeAsync(User user, string route, HttpStatusCode statusCode)
+    {
+        UserService.GetCurrentUser().Returns(user);
+        var response = await Client.DeleteAsync(route);
+        response.StatusCode.Should().Be(statusCode);
+    }
+
+    protected async Task<T> AssertGetAsync<T>(User user, string route)
+    {
+        UserService.GetCurrentUser().Returns(user);
+        var response = await Client.GetAsync(route);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        return await response.Content.ReadAsync<T>();
+    }
+
+    protected async Task<TResponse> AssertPostAsync<TResponse>(User user, string route, object request)
+    {
+        UserService.GetCurrentUser().Returns(user);
+        var httpContent = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
+        var response = await Client.PostAsync(route, httpContent);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        return await response.Content.ReadAsync<TResponse>();
+    }
+
+    protected async Task AssertDeleteAsync(User user, string route)
+    {
+        UserService.GetCurrentUser().Returns(user);
+        var response = await Client.DeleteAsync(route);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
 }

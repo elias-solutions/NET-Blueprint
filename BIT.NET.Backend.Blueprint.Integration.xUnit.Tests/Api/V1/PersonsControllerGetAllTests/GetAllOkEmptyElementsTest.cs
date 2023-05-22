@@ -15,15 +15,16 @@ public class GetAllOkEmptyElementsTest : IntegrationTestBase
 
     public GetAllOkEmptyElementsTest(WebApplicationFactory<Startup> factory) : base(factory)
     {
-        UserService.GetCurrentUser().Returns(TestUsers.Admin);
     }
+
+    protected override Task InitAsync() => Task.CompletedTask;
+
+    protected override Task DeInitAsync() => Task.CompletedTask;
 
     [Fact]
     public async Task PersonController_GetAll_Ok()
     {
-        var response = await Client.GetAsync(Route);
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var personsResult = await response.Content.ReadAsync<IEnumerable<PersonDto>>();
-        personsResult.Should().BeEmpty();
+        var result = await AssertGetAsync<IEnumerable<PersonDto>>(TestUsers.Admin, Route);
+        result.Should().BeEmpty();
     }
 }

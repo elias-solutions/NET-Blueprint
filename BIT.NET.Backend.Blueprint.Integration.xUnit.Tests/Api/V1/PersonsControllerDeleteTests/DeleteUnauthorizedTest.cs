@@ -1,6 +1,4 @@
-using System.Net;
 using BIT.NET.Backend.Blueprint.Integration.xUnit.Tests.Environments;
-using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
 
@@ -14,10 +12,13 @@ public class DeleteUnauthorizedTest : IntegrationTestBase
     {
     }
 
+    protected override Task InitAsync() => Task.CompletedTask;
+
+    protected override Task DeInitAsync() => Task.CompletedTask;
+
     [Fact]
     public async Task PersonController_Delete_Unauthorized()
     {
-        var response = await Client.DeleteAsync($"{Route}/{Guid.NewGuid()}");
-        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        await AssertDeleteUnauthorizedAsync($"{Route}/{Guid.NewGuid()}");
     }
 }

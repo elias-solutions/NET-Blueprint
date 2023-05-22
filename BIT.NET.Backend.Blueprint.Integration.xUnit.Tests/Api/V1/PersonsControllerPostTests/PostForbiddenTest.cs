@@ -1,6 +1,5 @@
 using System.Net;
 using BIT.NET.Backend.Blueprint.Integration.xUnit.Tests.Environments;
-using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using NSubstitute;
 using Xunit;
@@ -16,10 +15,13 @@ public class PostForbiddenTest : IntegrationTestBase
         UserService.GetCurrentUser().Returns(TestUsers.Standard);
     }
 
+    protected override Task InitAsync() => Task.CompletedTask;
+
+    protected override Task DeInitAsync() => Task.CompletedTask;
+
     [Fact]
     public async Task PersonController_Post_Forbidden()
     {
-        var response = await Client.PostAsync(Route, new StringContent(string.Empty));
-        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        await AssertPostHttpStatusCodeAsync(TestUsers.Standard, Route, HttpStatusCode.Forbidden);
     }
 }

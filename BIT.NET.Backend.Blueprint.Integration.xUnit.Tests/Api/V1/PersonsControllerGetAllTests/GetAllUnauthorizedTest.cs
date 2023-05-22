@@ -1,6 +1,4 @@
-using System.Net;
 using BIT.NET.Backend.Blueprint.Integration.xUnit.Tests.Environments;
-using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
 
@@ -14,10 +12,13 @@ public class GetAllUnauthorizedTest : IntegrationTestBase
     {
     }
 
+    protected override Task InitAsync() => Task.CompletedTask;
+
+    protected override Task DeInitAsync() => Task.CompletedTask;
+
     [Fact]
     public async Task PersonController_GetAll_Unauthorized()
     {
-        var response = await Client.GetAsync(Route);
-        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        await AssertGetUnauthorizedAsync(Route);
     }
 }

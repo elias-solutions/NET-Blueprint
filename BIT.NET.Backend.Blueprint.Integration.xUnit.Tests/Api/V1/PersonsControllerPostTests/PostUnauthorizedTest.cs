@@ -1,6 +1,4 @@
-using System.Net;
 using BIT.NET.Backend.Blueprint.Integration.xUnit.Tests.Environments;
-using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
 
@@ -14,10 +12,13 @@ public class PostUnauthorizedTest : IntegrationTestBase
     {
     }
 
+    protected override Task InitAsync() => Task.CompletedTask;
+
+    protected override Task DeInitAsync() => Task.CompletedTask;
+
     [Fact]
     public async Task PersonController_Post_Unauthorized()
     {
-        var response = await Client.PostAsync(Route, new StringContent(string.Empty));
-        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        await AssertPostUnauthorizedAsync(Route);
     }
 }

@@ -95,7 +95,7 @@ namespace BIT.NET.Backend.Blueprint.Repository.Base
 
         public async Task<EntityEntry<TEntity>> AddAsync(TEntity entity, Guid createdBy)
         {
-            entity.Created = DateTimeOffset.UtcNow.ToDatabaseDateTimeOffset();
+            entity.Created = DateTime.UtcNow.ToUtcDateTimeOffset();
             entity.CreatedBy = createdBy;
             var result = await _context.Set<TEntity>().AddAsync(entity);
             await _context.SaveChangesAsync();
