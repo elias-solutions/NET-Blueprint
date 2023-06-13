@@ -102,6 +102,17 @@ namespace BIT.NET.Backend.Blueprint.Repository.Base
             return result;
         }
 
+        public async Task<TEntity> UpdateAsync(TEntity entity, Guid modifiedBy)
+        {
+            var modified = DateTime.UtcNow.ToUtcDateTimeOffset();
+            entity.Modified = modified;
+            entity.ModifiedBy = modifiedBy;
+
+            _context.Set<TEntity>().Attach(entity);
+            await _context.SaveChangesAsync();
+            return entity;
+        }
+
         public async Task RemoveAsync(TEntity entity)
         {
             _context.Set<TEntity>().Remove(entity);

@@ -9,7 +9,6 @@ namespace BIT.NET.Backend.Blueprint.Controllers
 {
     [ApiController]
     [Authorize(Roles = Roles.Admin)]
-    //[AllowAnonymous]
     [Route("api/v1/persons")]
     public class PersonsController : ControllerBase
     {
@@ -44,6 +43,20 @@ namespace BIT.NET.Backend.Blueprint.Controllers
         public async Task<PersonDto> CreatePersonAsync(CreatePersonRequest request)
         {
             var result = await _personService.CreatePersonsAsync(request);
+            return result;
+        }
+
+        [HttpPut("{id}")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<PersonDto> UpdatePersonAsync(Guid id, PersonDto personDto)
+        {
+            if (id != personDto.Id)
+            {
+                BadRequest($"PersonId '{id}' invalid");
+            }
+
+            var result = await _personService.UpdatePersonsAsync(personDto);
             return result;
         }
 

@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using BIT.NET.Backend.Blueprint.Authentication;
 using BIT.NET.Backend.Blueprint.Authorization;
 using BIT.NET.Backend.Blueprint.DataAccess;
+using BIT.NET.Backend.Blueprint.Mapper;
 using BIT.NET.Backend.Blueprint.Repository.Base;
 using BIT.NET.Backend.Blueprint.Service;
 using Microsoft.AspNetCore.Authentication;
@@ -21,8 +22,15 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddDbContextFactory<BlueprintDbContext>(options => options.UseNpgsql(_configuration.GetConnectionString("Database")), ServiceLifetime.Scoped);
-        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IUserService, UserService>(); 
+        
+        services.AddScoped<PersonToDtoMapper>();
+        services.AddScoped<PersonToEntityMapper>();
+        services.AddScoped<AddressToDtoMapper>();
+        services.AddScoped<AddressToEntityMapper>();
+
         services.AddScoped(typeof(PersonService));
+        services.AddScoped(typeof(AddressService));
         services.AddScoped(typeof(Repository<>));
         services
             .AddAuthentication("Authentication")

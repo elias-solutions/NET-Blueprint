@@ -1,4 +1,5 @@
 using System.Net;
+using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using BIT.NET.Backend.Blueprint.Authorization;
@@ -67,6 +68,15 @@ public abstract class IntegrationTestBase : TestBase
         UserService.GetCurrentUser().Returns(user);
         var httpContent = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
         var response = await Client.PostAsync(route, httpContent);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        return await response.Content.ReadAsync<TResponse>();
+    }
+
+    protected async Task<TResponse> AssertUpdateAsync<TResponse>(User user, string route, object request)
+    {
+        UserService.GetCurrentUser().Returns(user);
+        var response = await Client.PutAsJsonAsync(route, request);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         return await response.Content.ReadAsync<TResponse>();

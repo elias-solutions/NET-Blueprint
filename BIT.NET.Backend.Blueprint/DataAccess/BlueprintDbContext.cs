@@ -1,5 +1,6 @@
 ﻿using BIT.NET.Backend.Blueprint.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace BIT.NET.Backend.Blueprint.DataAccess
 {
@@ -7,6 +8,7 @@ namespace BIT.NET.Backend.Blueprint.DataAccess
     {
         private readonly IConfiguration _configuration;
         public DbSet<Person> Persons { get; set; }
+        public DbSet<Address> Addresses { get; set; }
 
         public BlueprintDbContext(IConfiguration configuration)
         {
@@ -18,6 +20,11 @@ namespace BIT.NET.Backend.Blueprint.DataAccess
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Person>()
+                .HasMany(x => x.Addresses)
+                .WithOne(x => x.Person)
+                .HasForeignKey(x => x.PersonId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

@@ -24,7 +24,8 @@ public class PostOkTest : IntegrationTestBase
     public async Task PersonsController_Ok()
     {
         var birthday = DateTime.UtcNow.ToUtcDateTimeOffset();
-        var request = new CreatePersonRequest("Jonas", "Elias", birthday);
+        var addressRequest = new CreateAddressRequest("Kirchweg", "7A", "Hägendorf", "4641");
+        var request = new CreatePersonRequest("Jonas", "Elias", birthday, new[] { addressRequest });
         var dbPerson = await AssertPostAsync<PersonDto>(TestUsers.Admin, Route, request);
         
         dbPerson.Id.Should().NotBe(Guid.Empty);

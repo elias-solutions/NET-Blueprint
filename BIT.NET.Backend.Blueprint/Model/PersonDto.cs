@@ -1,4 +1,6 @@
-﻿namespace BIT.NET.Backend.Blueprint.Model
+﻿using BIT.NET.Backend.Blueprint.Entities.Base;
+
+namespace BIT.NET.Backend.Blueprint.Model
 {
     public record PersonDto
     (
@@ -6,10 +8,9 @@
         string FirstName, 
         string LastName, 
         DateTimeOffset Birthday,
+        IEnumerable<AddressDto> Addresses,
         Guid CreatedBy,
         DateTimeOffset Created,
         Guid? ModifiedBy,
         DateTimeOffset? Modified);
-
-    public record CreatePersonRequest(string FirstName, string LastName, DateTimeOffset Birthday);
 }

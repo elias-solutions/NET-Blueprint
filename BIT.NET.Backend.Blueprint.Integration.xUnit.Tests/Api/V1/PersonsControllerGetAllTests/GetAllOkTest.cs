@@ -20,7 +20,8 @@ public class GetAllOkTest : IntegrationTestBase
     protected override async Task InitAsync()
     {
         var birthday = DateTime.UtcNow.ToUtcDateTimeOffset();
-        var request = new CreatePersonRequest("Jonas", "Elias", birthday);
+        var addressRequest = new CreateAddressRequest("Kirchweg", "7A", "Hägendorf", "4641");
+        var request = new CreatePersonRequest("Jonas", "Elias", birthday, new[] { addressRequest });
         _dbPerson = await AssertPostAsync<PersonDto>(TestUsers.Admin, Route, request);
     }
 

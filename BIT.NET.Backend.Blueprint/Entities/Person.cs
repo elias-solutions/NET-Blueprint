@@ -9,5 +9,7 @@ namespace BIT.NET.Backend.Blueprint.Entities
         public string LastName { get; set; } = default!;
 
         public DateTimeOffset Birthday { get; set; }
+
+        public ICollection<Address> Addresses { get; set; } = default!;
     }
 }
