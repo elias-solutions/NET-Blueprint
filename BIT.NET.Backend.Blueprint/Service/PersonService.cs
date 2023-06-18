@@ -1,5 +1,7 @@
-﻿using BIT.NET.Backend.Blueprint.Authorization;
+﻿using System.Net;
+using BIT.NET.Backend.Blueprint.Authorization;
 using BIT.NET.Backend.Blueprint.Entities;
+using BIT.NET.Backend.Blueprint.ErrorHandling;
 using BIT.NET.Backend.Blueprint.Mapper;
 using BIT.NET.Backend.Blueprint.Model;
 using BIT.NET.Backend.Blueprint.Repository.Base;
@@ -37,7 +39,7 @@ namespace BIT.NET.Backend.Blueprint.Service
 
             if (entity == null)
             {
-                throw new BadHttpRequestException($"No person with id '{id}' found.");
+                throw new ProblemDetailsException((int)HttpStatusCode.BadRequest, "No person found", $"No person with id '{id}' found.");
             }
 
             var model = _personToDtoMapper.Map(entity);

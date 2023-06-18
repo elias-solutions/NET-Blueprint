@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using BIT.NET.Backend.Blueprint.Authentication;
 using BIT.NET.Backend.Blueprint.Authorization;
 using BIT.NET.Backend.Blueprint.DataAccess;
+using BIT.NET.Backend.Blueprint.ErrorHandling;
 using BIT.NET.Backend.Blueprint.Mapper;
 using BIT.NET.Backend.Blueprint.Repository.Base;
 using BIT.NET.Backend.Blueprint.Service;
@@ -21,6 +22,8 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
+        services.AddSingleton<ErrorHandlingMiddleware>();
+
         services.AddDbContextFactory<BlueprintDbContext>(options => options.UseNpgsql(_configuration.GetConnectionString("Database")), ServiceLifetime.Scoped);
         services.AddScoped<IUserService, UserService>(); 
         
@@ -43,11 +46,13 @@ public class Startup
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
+        app.UseMiddleware<ErrorHandlingMiddleware>();
+
         if (env.IsDevelopment())
         {
             app.UseSwagger();
             app.UseSwaggerUI();
-            app.UseDeveloperExceptionPage();
+            //app.UseDeveloperExceptionPage();
         }
 
         app.UseHttpsRedirection();
