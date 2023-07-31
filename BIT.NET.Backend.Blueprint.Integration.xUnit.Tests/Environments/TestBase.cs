@@ -6,6 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using NSubstitute;
 using Respawn;
+using System.Net.Http.Headers;
+using System.Net.Mime;
 using Xunit;
 
 namespace BIT.NET.Backend.Blueprint.Integration.xUnit.Tests.Environments;
@@ -34,6 +36,7 @@ public abstract class TestBase : IClassFixture<WebApplicationFactory<Startup>>, 
         });
 
         Client = Factory.CreateClient();
+        Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypeNames.Application.Json));
     }
 
     public async Task InitializeAsync()

@@ -40,7 +40,8 @@ namespace BIT.NET.Backend.Blueprint.Controllers
 
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<PersonDto> CreatePersonAsync(CreatePersonRequest request)
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<PersonDto> CreatePersonAsync([FromBody] CreatePersonRequest request)
         {
             var result = await _personService.CreatePersonsAsync(request);
             return result;
@@ -53,7 +54,7 @@ namespace BIT.NET.Backend.Blueprint.Controllers
         {
             if (id != personDto.Id)
             {
-                BadRequest($"PersonId '{id}' invalid");
+                BadRequest($"Provided Id and Person Id of request object have to be equal '{id}/{personDto.Id}'");
             }
 
             var result = await _personService.UpdatePersonsAsync(personDto);

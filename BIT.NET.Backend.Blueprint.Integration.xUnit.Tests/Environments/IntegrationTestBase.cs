@@ -1,10 +1,6 @@
-using System.Net;
-using System.Net.Http.Json;
-using System.Text;
-using System.Text.Json;
 using BIT.NET.Backend.Blueprint.Authorization;
 using BIT.NET.Backend.Blueprint.Extensions;
-using FluentAssertions;
+using BIT.NET.Backend.Blueprint.Integration.xUnit.Tests.Extensions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using NSubstitute;
 
@@ -21,28 +17,56 @@ public abstract class IntegrationTestBase : TestBase
         UserService.GetCurrentUser().Returns(user);
         return await Client.GetAsync(route);
     }
-
-    protected async Task<HttpResponseMessage> PostAsync(User? user, string route)
+    
+    protected async Task<HttpResponseMessage> PostAsync(User user, string route, string request = "")
     {
+        if (string.IsNullOrEmpty(request))
+        {
+            return await Client.PostAsync(route, new StringContent(string.Empty));
+        }
+
         UserService.GetCurrentUser().Returns(user);
-        return await Client.PostAsync(route, new StringContent(string.Empty));
+        var jsonString = await request.ToJsonStringContentAsync();
+        return await Client.PostAsync(route, jsonString.ToStringContent());
     }
 
-    protected async Task<HttpResponseMessage> PostAsync(User user, string route, object request)
+    protected async Task<HttpResponseMessage> PutAsync(User user, string route, string request = "")
     {
+        if (string.IsNullOrEmpty(request))
+        {
+            return await Client.PutAsync(route, new StringContent(string.Empty));
+        }
+
         UserService.GetCurrentUser().Returns(user);
-        return await Client.PostAsync(route, request.ToStringContent());
+        var jsonString = await request.ToJsonStringContentAsync();
+        return await Client.PutAsync(route, jsonString.ToStringContent());
     }
 
-    protected async Task<HttpResponseMessage> PutAsync(User user, string route, object request)
+    protected async Task<HttpResponseMessage> PutAsync(User user, string route, object? request = null)
     {
+        if (request == null)
+        {
+            return await Client.PutAsync(route, new StringContent(string.Empty));
+        }
+
         UserService.GetCurrentUser().Returns(user);
-        return await Client.PutAsJsonAsync(route, request);
+        return await Client.PutAsync(route, request.ToJson().ToStringContent());
     }
 
     protected async Task<HttpResponseMessage> DeleteAsync(User? user, string route)
     {
         UserService.GetCurrentUser().Returns(user);
         return await Client.DeleteAsync(route);
+    }
+
+    protected async Task<T> CreateExpected<T>(string request)
+    {
+        if (string.IsNullOrEmpty(request))
+        {
+            throw new ArgumentException($"Argument '{nameof(request)}' is null or empty");
+        }
+
+        var jsonString = await request.ToJsonStringContentAsync();
+        return jsonString.ReadFromJson<T>();
     }
 }

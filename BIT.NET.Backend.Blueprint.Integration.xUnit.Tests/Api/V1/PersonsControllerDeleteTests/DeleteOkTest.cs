@@ -3,7 +3,6 @@ using BIT.NET.Backend.Blueprint.Extensions;
 using BIT.NET.Backend.Blueprint.Integration.xUnit.Tests.Environments;
 using BIT.NET.Backend.Blueprint.Model;
 using FluentAssertions;
-using FluentAssertions.Common;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
 
@@ -21,10 +20,8 @@ public class DeleteOkTest : IntegrationTestBase
 
     protected override async Task InitAsync()
     {
-        var birthday = DateTime.UtcNow.ToDateTimeOffset();
-        var addressRequest = new CreateAddressRequest("Kirchweg", "7A", "Hägendorf", "4641");
-        var request = new CreatePersonRequest("Jonas", "Elias", birthday, new []{ addressRequest });
-        var response = await PostAsync(TestUsers.Admin, Route, request);
+        var response = await PostAsync(TestUsers.Admin, Route, "Post_Person_Request.json");
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
         _dbPerson = await response.Content.ReadAsync<PersonDto>();
     } 
 

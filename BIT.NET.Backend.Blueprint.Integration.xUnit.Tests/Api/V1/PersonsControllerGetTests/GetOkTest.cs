@@ -4,7 +4,6 @@ using BIT.NET.Backend.Blueprint.Model;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net;
-using System.Net.Http.Json;
 using Xunit;
 
 namespace BIT.NET.Backend.Blueprint.Integration.xUnit.Tests.Api.V1.PersonsControllerGetTests;
@@ -20,13 +19,11 @@ public class GetOkTest : IntegrationTestBase
     }
 
     protected override async Task InitAsync()
-    {
-        var birthday = DateTime.UtcNow.ToUtcDateTimeOffset();
-        var addressRequest = new CreateAddressRequest("Kirchweg", "7A", "Hägendorf", "4641");
-        var request = new CreatePersonRequest("Jonas", "Elias", birthday, new[] { addressRequest });
-        var response = await PostAsync(TestUsers.Admin, Route, request);
-        _dbPerson = await response.Content.ReadAsync<PersonDto>();
-    } 
+    {;
+        var response = await PostAsync(TestUsers.Admin, Route, "Post_Person_Request.json");
+        _dbPerson = await response.Content.ReadAsync<PersonDto>(); 
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
 
     protected override Task DeInitAsync() => Task.CompletedTask;
 
@@ -37,6 +34,8 @@ public class GetOkTest : IntegrationTestBase
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var result = await response.Content.ReadAsync<PersonDto>();
-        result.Should().BeEquivalentTo(_dbPerson);
+        result.Should().BeEquivalentTo(_dbPerson, options => options
+            .Using<DateTimeOffset>(ctx => ctx.Subject.Should().BeCloseTo(ctx.Expectation, new TimeSpan(1000)))
+            .WhenTypeIs<DateTimeOffset>());
     }
 }

@@ -1,5 +1,7 @@
+using System.Net;
 using BIT.NET.Backend.Blueprint.Extensions;
 using BIT.NET.Backend.Blueprint.Integration.xUnit.Tests.Environments;
+using BIT.NET.Backend.Blueprint.Integration.xUnit.Tests.Extensions;
 using BIT.NET.Backend.Blueprint.Model;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -23,19 +25,21 @@ public class PostOkTest : IntegrationTestBase
     [Fact]
     public async Task PersonsController_Ok()
     {
-        var birthday = DateTime.UtcNow.ToUtcDateTimeOffset();
-        var addressRequest = new CreateAddressRequest("Kirchweg", "7A", "Hägendorf", "4641");
-        var request = new CreatePersonRequest("Jonas", "Elias", birthday, new[] { addressRequest });
-        var response = await PostAsync(TestUsers.Admin, Route, request);
+        var response = await PostAsync(TestUsers.Admin, Route, "Post_Person_Request.json");
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
         var dbPerson = await response.Content.ReadAsync<PersonDto>();
-
-        dbPerson.Id.Should().NotBe(Guid.Empty);
-        dbPerson.FirstName.Should().Be(request.FirstName);
-        dbPerson.LastName.Should().Be(request.LastName);
-        dbPerson.Birthday.Should().Be(request.Birthday);
-        dbPerson.Created.Should().NotBe(DateTimeOffset.MinValue);
-        dbPerson.CreatedBy.Should().NotBe(Guid.Empty);
-        dbPerson.Modified.Should().Be(DateTimeOffset.MinValue);
-        dbPerson.ModifiedBy.Should().Be(Guid.Empty);
+        
+        var expectedPerson =  (await "Post_Person_Request.json".ToJsonStringContentAsync()).ReadFromJson<PersonDto>();
+        dbPerson.Should().BeEquivalentTo(expectedPerson, options => options
+            .Excluding(entity => entity.Id)
+            .Excluding(entity => entity.Created)
+            .Excluding(entity => entity.CreatedBy)
+            .Excluding(entity => entity.Modified)
+            .Excluding(entity => entity.ModifiedBy)
+            .For(entity => entity.Addresses).Exclude(entity => entity.Id)
+            .For(entity => entity.Addresses).Exclude(entity => entity.Created)
+            .For(entity => entity.Addresses).Exclude(entity => entity.CreatedBy)
+            .For(entity => entity.Addresses).Exclude(entity => entity.Modified)
+            .For(entity => entity.Addresses).Exclude(entity => entity.ModifiedBy));
     }
 }

@@ -1,23 +1,14 @@
 ﻿using System.Net.Mime;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace BIT.NET.Backend.Blueprint.Extensions;
 
 public static class ObjectExtensions
 {
-    private const string ApplicationJson = MediaTypeNames.Application.Json;
+    private static readonly JsonSerializerOptions Options = new() { WriteIndented = true };
     
-    public static StringContent ToStringContent(this object value)
-    {
-        if (value == null)
-        {
-            throw new ArgumentException($"Argument '{nameof(value)}' null");
-        }
-            
-        return new StringContent(value.ToJson(), Encoding.UTF8, ApplicationJson);
-    }
-
     public static string ToJson(this object value)
     {
         if (value == null)
@@ -25,6 +16,6 @@ public static class ObjectExtensions
             throw new ArgumentException($"Argument '{nameof(value)}' null");
         }
 
-        return JsonSerializer.Serialize(value);
+        return JsonSerializer.Serialize(value, Options);
     }
 }

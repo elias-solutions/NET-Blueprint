@@ -1,0 +1,13 @@
+{
+  "FirstName": "John",
+  "LastName": "Doe",
+  "Birthday": "1988-05-31T11:40:32.0237468+00:00",
+  "Addresses": [
+    {
+      "Street": "Kirchstrasse",
+      "Number": "8",
+      "City": "Tammerwalde",
+      "PostalCode": "4681"
+    }
+  ]
+}
