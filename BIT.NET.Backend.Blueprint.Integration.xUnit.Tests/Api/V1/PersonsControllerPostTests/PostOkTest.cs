@@ -7,7 +7,7 @@ using Xunit;
 
 namespace BIT.NET.Backend.Blueprint.Integration.xUnit.Tests.Api.V1.PersonsControllerPostTests;
 
-[Collection("Test collection")]
+[Collection(nameof(SharedTestCollection))]
 public class PostOkTest : IntegrationTestBase
 {
     private const string Route = "/api/v1/persons";
@@ -26,8 +26,9 @@ public class PostOkTest : IntegrationTestBase
         var birthday = DateTime.UtcNow.ToUtcDateTimeOffset();
         var addressRequest = new CreateAddressRequest("Kirchweg", "7A", "Hägendorf", "4641");
         var request = new CreatePersonRequest("Jonas", "Elias", birthday, new[] { addressRequest });
-        var dbPerson = await AssertPostAsync<PersonDto>(TestUsers.Admin, Route, request);
-        
+        var response = await PostAsync(TestUsers.Admin, Route, request);
+        var dbPerson = await response.Content.ReadAsync<PersonDto>();
+
         dbPerson.Id.Should().NotBe(Guid.Empty);
         dbPerson.FirstName.Should().Be(request.FirstName);
         dbPerson.LastName.Should().Be(request.LastName);

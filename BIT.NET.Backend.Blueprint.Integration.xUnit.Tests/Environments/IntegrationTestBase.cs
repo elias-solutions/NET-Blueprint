@@ -16,76 +16,33 @@ public abstract class IntegrationTestBase : TestBase
     {
     }
 
-    protected async Task AssertGetUnauthorizedAsync(string route)
-    {
-        var response = await Client.GetAsync(route);
-        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
-    }
-
-    protected async Task AssertPostUnauthorizedAsync(string route)
-    {
-        var response = await Client.PostAsync(route, new StringContent(string.Empty));
-        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
-    }
-
-    protected async Task AssertDeleteUnauthorizedAsync(string route)
-    {
-        var response = await Client.DeleteAsync(route);
-        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
-    }
-
-    protected async Task AssertGetHttpStatusCodeAsync(User user, string route, HttpStatusCode statusCode)
+    protected async Task<HttpResponseMessage> GetAsync(User? user, string route)
     {
         UserService.GetCurrentUser().Returns(user);
-        var response = await Client.GetAsync(route);
-        response.StatusCode.Should().Be(statusCode);
+        return await Client.GetAsync(route);
     }
 
-    protected async Task AssertPostHttpStatusCodeAsync(User user, string route, HttpStatusCode statusCode)
+    protected async Task<HttpResponseMessage> PostAsync(User? user, string route)
     {
         UserService.GetCurrentUser().Returns(user);
-        var response = await Client.PostAsync(route, new StringContent(string.Empty));
-        response.StatusCode.Should().Be(statusCode);
+        return await Client.PostAsync(route, new StringContent(string.Empty));
     }
 
-    protected async Task AssertDeleteHttpStatusCodeAsync(User user, string route, HttpStatusCode statusCode)
+    protected async Task<HttpResponseMessage> PostAsync(User user, string route, object request)
     {
         UserService.GetCurrentUser().Returns(user);
-        var response = await Client.DeleteAsync(route);
-        response.StatusCode.Should().Be(statusCode);
+        return await Client.PostAsync(route, request.ToStringContent());
     }
 
-    protected async Task<T> AssertGetAsync<T>(User user, string route)
+    protected async Task<HttpResponseMessage> PutAsync(User user, string route, object request)
     {
         UserService.GetCurrentUser().Returns(user);
-        var response = await Client.GetAsync(route);
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-        return await response.Content.ReadAsync<T>();
+        return await Client.PutAsJsonAsync(route, request);
     }
 
-    protected async Task<TResponse> AssertPostAsync<TResponse>(User user, string route, object request)
+    protected async Task<HttpResponseMessage> DeleteAsync(User? user, string route)
     {
         UserService.GetCurrentUser().Returns(user);
-        var httpContent = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
-        var response = await Client.PostAsync(route, httpContent);
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-
-        return await response.Content.ReadAsync<TResponse>();
-    }
-
-    protected async Task<TResponse> AssertUpdateAsync<TResponse>(User user, string route, object request)
-    {
-        UserService.GetCurrentUser().Returns(user);
-        var response = await Client.PutAsJsonAsync(route, request);
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-
-        return await response.Content.ReadAsync<TResponse>();
-    }
-
-    protected async Task AssertDeleteAsync(User user, string route)
-    {
-        UserService.GetCurrentUser().Returns(user);
-        var response = await Client.DeleteAsync(route);
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        return await Client.DeleteAsync(route);
     }
 }
