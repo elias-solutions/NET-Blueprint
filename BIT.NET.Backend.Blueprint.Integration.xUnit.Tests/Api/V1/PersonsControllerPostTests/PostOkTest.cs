@@ -1,31 +1,33 @@
 using System.Net;
 using BIT.NET.Backend.Blueprint.Extensions;
-using BIT.NET.Backend.Blueprint.Integration.xUnit.Tests.Environments;
+using BIT.NET.Backend.Blueprint.Integration.xUnit.Tests.Environment;
 using BIT.NET.Backend.Blueprint.Integration.xUnit.Tests.Extensions;
 using BIT.NET.Backend.Blueprint.Model;
 using FluentAssertions;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
 
 namespace BIT.NET.Backend.Blueprint.Integration.xUnit.Tests.Api.V1.PersonsControllerPostTests;
 
 [Collection(nameof(SharedTestCollection))]
-public class PostOkTest : IntegrationTestBase
+public class PostOkTest : IAsyncLifetime
 {
+    private readonly IntegrationTestFixture _fixture;
     private const string Route = "/api/v1/persons";
 
-    public PostOkTest(WebApplicationFactory<Startup> factory) : base(factory)
+    public PostOkTest(IntegrationTestFixture fixture)
     {
+        _fixture = fixture;
     }
 
-    protected override Task InitAsync() => Task.CompletedTask;
 
-    protected override Task DeInitAsync() => Task.CompletedTask;
+    public Task InitializeAsync() => Task.CompletedTask;
+
+    public async Task DisposeAsync() => await _fixture.RespawnerHelper.ResetRespawner();
 
     [Fact]
     public async Task PersonsController_Ok()
     {
-        var response = await PostAsync(TestUsers.Admin, Route, "Post_Person_Request.json");
+        var response = await _fixture.PostAsync(TestUsers.Admin, Route, "Post_Person_Request.json");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var dbPerson = await response.Content.ReadAsync<PersonDto>();
         

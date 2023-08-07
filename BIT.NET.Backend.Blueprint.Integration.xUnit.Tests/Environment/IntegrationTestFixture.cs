@@ -1,36 +1,37 @@
 using BIT.NET.Backend.Blueprint.Authorization;
 using BIT.NET.Backend.Blueprint.Extensions;
 using BIT.NET.Backend.Blueprint.Integration.xUnit.Tests.Extensions;
-using Microsoft.AspNetCore.Mvc.Testing;
 using NSubstitute;
 
-namespace BIT.NET.Backend.Blueprint.Integration.xUnit.Tests.Environments;
+namespace BIT.NET.Backend.Blueprint.Integration.xUnit.Tests.Environment;
 
-public abstract class IntegrationTestBase : TestBase
+public class IntegrationTestFixture : TestBase
 {
-    protected IntegrationTestBase(WebApplicationFactory<Startup> factory) : base(factory)
-    {
-    }
-
-    protected async Task<HttpResponseMessage> GetAsync(User? user, string route)
+    public async Task<HttpResponseMessage> GetAsync(User? user, string route)
     {
         UserService.GetCurrentUser().Returns(user);
         return await Client.GetAsync(route);
     }
     
-    protected async Task<HttpResponseMessage> PostAsync(User user, string route, string request = "")
+    public async Task<HttpResponseMessage> PostAsync(User user, string route)
     {
-        if (string.IsNullOrEmpty(request))
+        UserService.GetCurrentUser().Returns(user);
+        return await Client.PostAsync(route, null);
+    }
+    
+    public async Task<HttpResponseMessage> PostAsync(User user, string route, string jsonFileRequest)
+    {
+        if (string.IsNullOrEmpty(jsonFileRequest))
         {
-            return await Client.PostAsync(route, new StringContent(string.Empty));
+            return await Client.PostAsync(route, null);
         }
 
         UserService.GetCurrentUser().Returns(user);
-        var jsonString = await request.ToJsonStringContentAsync();
+        var jsonString = await jsonFileRequest.ToJsonStringContentAsync();
         return await Client.PostAsync(route, jsonString.ToStringContent());
     }
 
-    protected async Task<HttpResponseMessage> PutAsync(User user, string route, string request = "")
+    public async Task<HttpResponseMessage> PutAsync(User user, string route, string request = "")
     {
         if (string.IsNullOrEmpty(request))
         {
@@ -42,7 +43,7 @@ public abstract class IntegrationTestBase : TestBase
         return await Client.PutAsync(route, jsonString.ToStringContent());
     }
 
-    protected async Task<HttpResponseMessage> PutAsync(User user, string route, object? request = null)
+    public async Task<HttpResponseMessage> PutAsync(User user, string route, object? request = null)
     {
         if (request == null)
         {
@@ -53,13 +54,13 @@ public abstract class IntegrationTestBase : TestBase
         return await Client.PutAsync(route, request.ToJson().ToStringContent());
     }
 
-    protected async Task<HttpResponseMessage> DeleteAsync(User? user, string route)
+    public async Task<HttpResponseMessage> DeleteAsync(User? user, string route)
     {
         UserService.GetCurrentUser().Returns(user);
         return await Client.DeleteAsync(route);
     }
 
-    protected async Task<T> CreateExpected<T>(string request)
+    public async Task<T> CreateExpected<T>(string request)
     {
         if (string.IsNullOrEmpty(request))
         {

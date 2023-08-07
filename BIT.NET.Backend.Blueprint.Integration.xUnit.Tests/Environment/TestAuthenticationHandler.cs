@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace BIT.NET.Backend.Blueprint.Integration.xUnit.Tests.Environments;
+namespace BIT.NET.Backend.Blueprint.Integration.xUnit.Tests.Environment;
 
 public class TestAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
 {

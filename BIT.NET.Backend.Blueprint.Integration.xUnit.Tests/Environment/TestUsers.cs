@@ -1,6 +1,6 @@
 ﻿using BIT.NET.Backend.Blueprint.Authorization;
 
-namespace BIT.NET.Backend.Blueprint.Integration.xUnit.Tests.Environments
+namespace BIT.NET.Backend.Blueprint.Integration.xUnit.Tests.Environment
 {
     public static class TestUsers
     {
