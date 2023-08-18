@@ -1,0 +1,55 @@
+jobs:
+  - job: FrontendNcdsJob
+    displayName: 'Ncds'
+    steps:
+      - task: Npm@1
+        displayName: 'npm config'
+        inputs:
+          command: custom
+          verbose: false
+          customCommand: 'config ls -l'
+
+      - task: Npm@1
+        displayName: 'npm version'
+        inputs:
+          command: custom
+          workingDir: src/Bag.CR.Ncds.UI
+          verbose: false
+          customCommand: 'version "1.0.0-$(Build.DefinitionName)"'
+
+      - task: Npm@1
+        displayName: 'npm ci'
+        inputs:
+          command: custom
+          workingDir: src/Bag.CR.Ncds.UI
+          customCommand: ci
+
+      - task: Npm@1
+        displayName: 'npm lint'
+        inputs:
+          command: custom
+          workingDir: src/Bag.CR.Ncds.UI
+          verbose: false
+          customCommand: 'run lint'
+
+      - task: Npm@1
+        displayName: 'npm build'
+        inputs:
+          command: custom
+          workingDir: src/Bag.CR.Ncds.UI
+          verbose: false
+          customCommand: 'run build -- --output-path $(Build.ArtifactStagingDirectory) --configuration production'
+
+      - task: Npm@1
+        displayName: 'npm test'
+        inputs:
+          command: custom
+          workingDir: src/Bag.CR.Ncds.UI
+          verbose: false
+          customCommand: 'run test -- --configuration production'
+
+      - task: PublishBuildArtifacts@1
+        displayName: 'publish'
+        inputs:
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+          ArtifactName: 'NcdsUi'

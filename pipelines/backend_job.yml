@@ -1,0 +1,41 @@
+jobs:
+- job: BackendJob
+  displayName: 'Build'
+  steps:
+  - script: dotnet --list-sdks
+    displayName: ".NET list SDKs"
+
+  - script: dotnet restore Bag.CR.sln -verbosity:q
+    displayName: '.NET restore'
+    workingDirectory: 'src'
+
+  - script: dotnet build --no-restore Bag.CR.sln --configuration $(buildConfiguration) -verbosity:q
+    displayName: '.NET build'
+    workingDirectory: 'src'
+
+  - task: DotNetCoreCLI@2
+    displayName: 'dotnet integration tests'
+    inputs:
+      workingDir: 'tests'
+      command: test
+      projects: '**\*.IntegrationTests.csproj'
+      arguments: '--configuration $(buildConfiguration)'
+
+  - task: DotNetCoreCLI@2
+    displayName: '.NET publish'
+    inputs:
+      command: 'publish'
+      workingDirectory: 'src'
+      publishWebProjects: false
+      projects: |
+       **\*.Api.csproj  
+       !**\*.Migration.*.csproj
+       !**\*.Tests.csproj
+       !**\*.IntegrationTests.csproj
+      arguments: '--no-build --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory) -verbosity:q'
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'publish artifacts'
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: 'backend'

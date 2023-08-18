@@ -1,0 +1,34 @@
+trigger:
+  branches:
+    include:
+      - Dev
+  paths:
+    exclude:
+    - README.md
+
+pr:
+  branches:
+    include:
+    - Dev
+
+pool:
+  name: Build
+  demands:
+  - npm
+  - Node16
+  - java
+
+variables:
+  BuildPlattform: 'Any CPU'
+  BuildConfiguration: 'Release'
+  
+stages:
+- stage: BackendStage
+  displayName: 'Backend'
+  jobs:
+  - template: ../backend_job.yml
+  
+- stage: FrontendStage
+  displayName: 'Frontend'
+  jobs:
+  - template: ../frontend_job.yml
