@@ -117,7 +117,7 @@ namespace NET.Backend.Blueprint.Api.Repository.Base
             if (dbEntity?.Version != entity.Version)
             {
                 throw new ProblemDetailsException(
-                    HttpStatusCode.BadRequest, "Entity version conflict", "Meanwhile entity has been updated through other user.");
+                    HttpStatusCode.BadRequest, "Entity version conflict", "Entity has been updated through other user.");
             }
 
             var modified = DateTime.UtcNow.ToUtcDateTimeOffset();
