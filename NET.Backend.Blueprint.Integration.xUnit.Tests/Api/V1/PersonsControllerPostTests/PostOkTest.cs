@@ -1,9 +1,9 @@
 using System.Net;
 using FluentAssertions;
+using NET.Backend.Blueprint.Api.Model;
 using NET.Backend.Blueprint.Extensions;
 using NET.Backend.Blueprint.Integration.xUnit.Tests.Environment;
 using NET.Backend.Blueprint.Integration.xUnit.Tests.Extensions;
-using NET.Backend.Blueprint.Model;
 using Xunit;
 
 namespace NET.Backend.Blueprint.Integration.xUnit.Tests.Api.V1.PersonsControllerPostTests;
@@ -38,6 +38,7 @@ public class PostOkTest : IAsyncLifetime
             .Excluding(entity => entity.CreatedBy)
             .Excluding(entity => entity.Modified)
             .Excluding(entity => entity.ModifiedBy)
+            .Excluding(entity => entity.Version)
             .For(entity => entity.Addresses).Exclude(entity => entity.Id)
             .For(entity => entity.Addresses).Exclude(entity => entity.Created)
             .For(entity => entity.Addresses).Exclude(entity => entity.CreatedBy)

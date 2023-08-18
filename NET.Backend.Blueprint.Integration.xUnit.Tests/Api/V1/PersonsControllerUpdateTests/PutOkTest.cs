@@ -1,8 +1,8 @@
 using System.Net;
 using FluentAssertions;
+using NET.Backend.Blueprint.Api.Model;
 using NET.Backend.Blueprint.Extensions;
 using NET.Backend.Blueprint.Integration.xUnit.Tests.Environment;
-using NET.Backend.Blueprint.Model;
 using Xunit;
 
 namespace NET.Backend.Blueprint.Integration.xUnit.Tests.Api.V1.PersonsControllerUpdateTests;
@@ -31,8 +31,8 @@ public class PutOkTest : IAsyncLifetime
     [Fact]
     public async Task PersonsController_Ok()
     {
-        var expectedPerson = await _fixture.CreateExpected<PersonDto>("Put_Person_Request.json") with { Id = _dbPerson!.Id };
-
+        var expectedPerson = await _fixture.CreateExpected<PersonDto>("Put_Person_Request.json") with { Id = _dbPerson!.Id, Version = _dbPerson.Version };
+        
         var response = await _fixture.PutAsync(TestUsers.Admin, $"{Route}/{_dbPerson!.Id}", expectedPerson);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var updatedPerson = await response.Content.ReadAsync<PersonDto>();
@@ -43,6 +43,7 @@ public class PutOkTest : IAsyncLifetime
             .Excluding(entity => entity.CreatedBy)
             .Excluding(entity => entity.Modified)
             .Excluding(entity => entity.ModifiedBy)
+            .Excluding(entity => entity.Version)
             .For(entity => entity.Addresses).Exclude(entity => entity.Id)
             .For(entity => entity.Addresses).Exclude(entity => entity.Created)
             .For(entity => entity.Addresses).Exclude(entity => entity.CreatedBy)

@@ -1,4 +1,4 @@
-using NET.Backend.Blueprint.Authorization;
+using NET.Backend.Blueprint.Api.Authorization;
 using NET.Backend.Blueprint.Extensions;
 using NET.Backend.Blueprint.Integration.xUnit.Tests.Extensions;
 using NSubstitute;

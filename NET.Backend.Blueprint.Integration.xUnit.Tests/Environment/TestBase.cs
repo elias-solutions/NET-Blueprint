@@ -5,7 +5,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
-using NET.Backend.Blueprint.Authorization;
+using NET.Backend.Blueprint.Api;
+using NET.Backend.Blueprint.Api.Authorization;
 using NSubstitute;
 using Xunit;
 

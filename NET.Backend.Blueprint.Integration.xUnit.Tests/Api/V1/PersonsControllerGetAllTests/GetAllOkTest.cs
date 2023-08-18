@@ -1,8 +1,8 @@
 using System.Net;
 using FluentAssertions;
+using NET.Backend.Blueprint.Api.Model;
 using NET.Backend.Blueprint.Extensions;
 using NET.Backend.Blueprint.Integration.xUnit.Tests.Environment;
-using NET.Backend.Blueprint.Model;
 using Xunit;
 
 namespace NET.Backend.Blueprint.Integration.xUnit.Tests.Api.V1.PersonsControllerGetAllTests;

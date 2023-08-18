@@ -1,17 +1,16 @@
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NET.Backend.Blueprint.Api.Authorization;
 
-namespace NET.Backend.Blueprint.Integration.xUnit.Tests.Environment;
+namespace NET.Backend.Blueprint.Api.Authentication;
 
-public class TestAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
+public class AuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
 {
     private readonly IUserService _userService;
 
-    public TestAuthenticationHandler(
+    public AuthenticationHandler(
         IUserService userService,
         IOptionsMonitor<AuthenticationSchemeOptions> options,
         ILoggerFactory logger,

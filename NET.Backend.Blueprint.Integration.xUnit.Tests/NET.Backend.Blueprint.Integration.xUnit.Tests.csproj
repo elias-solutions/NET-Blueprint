@@ -36,8 +36,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\NET.Backend.Blueprint.Api\NET.Backend.Blueprint.Api.csproj" />
     <ProjectReference Include="..\NET.Backend.Blueprint.Extensions\NET.Backend.Blueprint.Extensions.csproj" />
-    <ProjectReference Include="..\NET.Backend.Blueprint\NET.Backend.Blueprint.csproj" />
   </ItemGroup>
 
 </Project>
