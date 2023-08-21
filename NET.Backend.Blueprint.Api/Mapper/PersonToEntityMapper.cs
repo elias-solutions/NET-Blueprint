@@ -24,8 +24,6 @@ public class PersonToEntityMapper
             Addresses = addresses,
             CreatedBy = dto.CreatedBy,
             Created = dto.Created,
-            ModifiedBy = dto.ModifiedBy ?? Guid.Empty,
-            Modified = dto.Modified ?? DateTimeOffset.MinValue,
             Version = dto.Version
         };
     }

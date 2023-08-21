@@ -15,9 +15,7 @@ public class AddressToEntityMapper
             City = dto.City,
             PostalCode = dto.PostalCode,
             CreatedBy = dto.CreatedBy,
-            Created = dto.Created,
-            ModifiedBy = dto.ModifiedBy ?? Guid.Empty,
-            Modified = dto.Modified ?? DateTimeOffset.MinValue
+            Created = dto.Created
         };
     }
 }

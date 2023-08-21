@@ -16,15 +16,12 @@ namespace NET.Backend.Blueprint.Api.Repository.Base
 
         public Repository(BlueprintDbContext context) => _context = context;
 
-        public async Task<TEntity> GetAsync(Guid id, bool disableNoTracking = false)
+        public async Task<TEntity> GetAsync(Guid id, bool asNoTracking = false)
         {
-            var query = _context.Set<TEntity>().AsQueryable();
-            if (disableNoTracking)
-            {
-                query.AsNoTracking();
-            }
-            
-            var entity = await query.SingleOrDefaultAsync(entity => entity.Id == id);
+            var entity = asNoTracking ? 
+                await _context.Set<TEntity>().AsNoTracking().SingleOrDefaultAsync(entity => entity.Id == id) :
+                await _context.Set<TEntity>().SingleOrDefaultAsync(entity => entity.Id == id);
+
             if (entity == null)
             {
                 throw new ProblemDetailsException(HttpStatusCode.BadRequest, "No entity found", $"No entity with id '{id}' found.");
@@ -36,7 +33,7 @@ namespace NET.Backend.Blueprint.Api.Repository.Base
         public async Task<TEntity?> GetAsync(
             Expression<Func<TEntity, bool>>? predicate = null,
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
-            bool disableNoTracking = false)
+            bool asNoTracking = false)
         {
             var query = _context.Set<TEntity>().AsQueryable();
 
@@ -50,12 +47,12 @@ namespace NET.Backend.Blueprint.Api.Repository.Base
                 query = include(query);
             }
             
-            if (disableNoTracking)
+            if (asNoTracking)
             {
-                return await query.FirstOrDefaultAsync();
+                query.AsNoTracking();
             }
 
-            return await query.AsNoTracking().FirstOrDefaultAsync();
+            return await query.FirstOrDefaultAsync();
         }
 
         public async Task<TEntity?> GetAsync(IQueryable<TEntity> query, Expression<Func<TEntity, bool>>? predicate = null)
@@ -83,7 +80,7 @@ namespace NET.Backend.Blueprint.Api.Repository.Base
 
         public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            return await _context.Set<TEntity>().AnyAsync(predicate);
+            return await _context.Set<TEntity>().AsQueryable().AsNoTracking().AnyAsync(predicate);
         }
 
         public async Task<IEnumerable<TEntity>> FindAsync(
@@ -105,7 +102,10 @@ namespace NET.Backend.Blueprint.Api.Repository.Base
         {
             entity.Created = DateTime.UtcNow.ToUtcDateTimeOffset();
             entity.CreatedBy = createdBy;
+            entity.Modified = DateTimeOffset.MinValue;
+            entity.ModifiedBy = Guid.Empty;
             entity.Version = Guid.NewGuid();
+
             var result = await _context.Set<TEntity>().AddAsync(entity);
             await _context.SaveChangesAsync();
             return result;
@@ -113,15 +113,16 @@ namespace NET.Backend.Blueprint.Api.Repository.Base
 
         public async Task<TEntity> UpdateAsync(TEntity entity, Guid modifiedBy)
         {
-            var dbEntity = await GetAsync(entity.Id, true);
-            if (dbEntity?.Version != entity.Version)
+            var hasVersionConflict = await AnyAsync(e => e.Id == entity.Id && e.Version != entity.Version);
+            if (hasVersionConflict)
             {
                 throw new ProblemDetailsException(
                     HttpStatusCode.BadRequest, "Entity version conflict", "Entity has been updated through other user.");
             }
-
-            var modified = DateTime.UtcNow.ToUtcDateTimeOffset();
-            entity.Modified = modified;
+            
+            entity.Created = entity.Created;
+            entity.CreatedBy = entity.CreatedBy;
+            entity.Modified = DateTime.UtcNow.ToUtcDateTimeOffset();
             entity.ModifiedBy = modifiedBy;
             entity.Version = Guid.NewGuid();
 

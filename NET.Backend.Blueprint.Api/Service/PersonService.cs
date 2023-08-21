@@ -55,10 +55,7 @@ namespace NET.Backend.Blueprint.Api.Service
 
         public async Task<PersonDto> UpdatePersonsAsync(PersonDto personDto)
         {
-            var dbPerson = await _repository.GetAsync(
-                person => person.Id == personDto.Id,
-                person => person.Include(x => x.Addresses));
-
+            var dbPerson = await _repository.GetAsync(personDto.Id, true);
             if (dbPerson == null)
             {
                 throw new BadHttpRequestException($"No person with id '{personDto.Id}' found.");
