@@ -5,11 +5,12 @@ using NET.Backend.Blueprint.Api.Authorization;
 using NET.Backend.Blueprint.Api.Model;
 using NET.Backend.Blueprint.Api.Service;
 
-namespace NET.Backend.Blueprint.Api.Controllers
+namespace NET.Backend.Blueprint.Api.Controllers.V1
 {
     [ApiController]
     [Authorize(Roles = Roles.Admin)]
-    [Route("api/v1/persons")]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/persons")]
     public class PersonsController : ControllerBase
     {
         private readonly PersonService _personService;
@@ -23,7 +24,7 @@ namespace NET.Backend.Blueprint.Api.Controllers
 
         [HttpGet]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IEnumerable<PersonDto>> GetPersonsAsync()
+        public async Task<IEnumerable<PersonDto>> GetPersonsV1Async()
         {
             var result = await _personService.GetPersonsAsync();
             return result;

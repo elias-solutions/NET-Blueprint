@@ -5,11 +5,12 @@ using NET.Backend.Blueprint.Api.Authorization;
 using NET.Backend.Blueprint.Api.Model;
 using NET.Backend.Blueprint.Api.Service;
 
-namespace NET.Backend.Blueprint.Api.Controllers;
+namespace NET.Backend.Blueprint.Api.Controllers.V1;
 
 [ApiController]
 [Authorize(Roles = Roles.Admin)]
-[Route("api/v1/addresses")]
+[Route("api/v{version:apiVersion}/addresses")]
+[ApiVersion("1.0")]
 public class AddressesController : ControllerBase
 {
     private readonly AddressService _service;
