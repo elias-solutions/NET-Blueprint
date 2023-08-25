@@ -32,7 +32,6 @@ public class PutOkTest : IAsyncLifetime
     public async Task PersonsController_Ok()
     {
         var expectedPerson = await _fixture.CreateExpected<PersonDto>("Put_Person_Request.json") with { Id = _dbPerson!.Id, Version = _dbPerson.Version };
-        
         var response = await _fixture.PutAsync(TestUsers.Admin, $"{Route}/{_dbPerson!.Id}", expectedPerson);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var updatedPerson = await response.Content.ReadAsync<PersonDto>();

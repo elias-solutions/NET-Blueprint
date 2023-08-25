@@ -16,6 +16,7 @@ namespace NET.Backend.Blueprint.Api.Repository.Base
 
         public Repository(BlueprintDbContext context) => _context = context;
 
+
         public async Task<TEntity> GetAsync(Guid id, bool asNoTracking = false)
         {
             var entity = asNoTracking ? 
@@ -126,7 +127,7 @@ namespace NET.Backend.Blueprint.Api.Repository.Base
             entity.ModifiedBy = modifiedBy;
             entity.Version = Guid.NewGuid();
 
-            _context.Set<TEntity>().Attach(entity);
+            _context.Set<TEntity>().Update(entity);
             await _context.SaveChangesAsync();
             return entity;
         }

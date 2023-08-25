@@ -41,7 +41,7 @@ public class PutOptimisticLockingTest : IAsyncLifetime
         problemDetails.Should().BeEquivalentTo(new ProblemDetails
         {
             Status = (int)HttpStatusCode.BadRequest,
-            Title = "Entity version conflict",
+            Title = "BadRequest - Entity version conflict",
             Detail = "Entity has been updated through other user."
         });
     }

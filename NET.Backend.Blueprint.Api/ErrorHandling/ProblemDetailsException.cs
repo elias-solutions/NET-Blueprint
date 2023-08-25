@@ -9,7 +9,7 @@ public class ProblemDetailsException : Exception
     {
         ProblemDetails = new ProblemDetails
         {
-            Title = title,
+            Title = $"{statusCode} - {title}",
             Detail = details,
             Status = (int)statusCode
         };
