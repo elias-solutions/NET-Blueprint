@@ -9,13 +9,24 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Api\V1\PersonsControllerDeleteTests\Resources\Post_Person_Request.json" />
+    <None Remove="Api\V1\PersonsControllerGetAllTests\Resources\Post_Person_Request.json" />
+    <None Remove="Api\V1\PersonsControllerPostTests\Resources\Post_Person_Request.json" />
+    <None Remove="Api\V1\PersonsControllerPostTests\Resources\Post_Person_Response.json" />
+    <None Remove="Api\V1\PersonsControllerUpdateTests\Resources\Post_Person_Request.json" />
+    <None Remove="Api\V1\PersonsControllerUpdateTests\Resources\Put_Person_Request.json" />
     <None Remove="Api\V1\Post_Person_Request.json" />
     <None Remove="Api\V1\Put_Person_Request.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Api\V1\Put_Person_Request.json" />
-    <EmbeddedResource Include="Api\V1\Post_Person_Request.json" />
+    <EmbeddedResource Include="Api\V1\PersonsControllerDeleteTests\Resources\Post_Person_Request.json" />
+    <EmbeddedResource Include="Api\V1\PersonsControllerGetAllTests\Resources\Post_Person_Request.json" />
+    <EmbeddedResource Include="Api\V1\PersonsControllerGetTests\Resources\Post_Person_Request.json" />
+    <EmbeddedResource Include="Api\V1\PersonsControllerPostTests\Resources\Post_Person_Response.json" />
+    <EmbeddedResource Include="Api\V1\PersonsControllerPostTests\Resources\Post_Person_Request.json" />
+    <EmbeddedResource Include="Api\V1\PersonsControllerUpdateTests\Resources\Post_Person_Request.json" />
+    <EmbeddedResource Include="Api\V1\PersonsControllerUpdateTests\Resources\Put_Person_Request.json" />
   </ItemGroup>
 
   <ItemGroup>

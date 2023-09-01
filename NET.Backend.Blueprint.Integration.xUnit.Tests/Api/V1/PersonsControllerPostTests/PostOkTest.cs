@@ -11,27 +11,29 @@ namespace NET.Backend.Blueprint.Integration.xUnit.Tests.Api.V1.PersonsController
 [Collection(nameof(SharedTestCollection))]
 public class PostOkTest : IAsyncLifetime
 {
-    private readonly IntegrationTestFixture _fixture;
     private const string Route = "/api/v1/persons";
+    private readonly IntegrationTestFixture _fixture;
+    private readonly EmbeddedJsonResourceProvider _jsonResourceProvider;
 
     public PostOkTest(IntegrationTestFixture fixture)
     {
         _fixture = fixture;
+        _jsonResourceProvider = new EmbeddedJsonResourceProvider(GetType().Namespace!);
     }
 
-
-    public Task InitializeAsync() => Task.CompletedTask;
-
-    public async Task DisposeAsync() => await _fixture.RespawnerHelper.ResetAsync();
+    public async Task InitializeAsync() => await _fixture.PostgresDbResetProvider.ResetAsync();
+    
+    public Task DisposeAsync() => Task.CompletedTask;
 
     [Fact]
     public async Task PersonsController_Ok()
     {
-        var response = await _fixture.PostAsync(TestUsers.Admin, Route, "Post_Person_Request.json");
+        var content = await _jsonResourceProvider.CreateHttpContentByResourceAsync("Post_Person_Request.json");
+        var response = await _fixture.PostAsync(TestUsers.Admin, Route, content);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var dbPerson = await response.Content.ReadAsync<PersonDto>();
         
-        var expectedPerson =  (await "Post_Person_Request.json".ToJsonStringContentAsync()).ReadFromJson<PersonDto>();
+        var expectedPerson =  await _jsonResourceProvider.CreateObjectByResourceAsync<PersonDto>("Post_Person_Response.json");
         dbPerson.Should().BeEquivalentTo(expectedPerson, options => options
             .Excluding(entity => entity.Id)
             .Excluding(entity => entity.Created)

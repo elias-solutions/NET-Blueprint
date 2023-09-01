@@ -3,12 +3,12 @@ using Respawn;
 
 namespace NET.Backend.Blueprint.Integration.xUnit.Tests.Environment;
 
-public class RespawnerHelper
+public class PostgresDbResetProvider
 {
     private readonly NpgsqlConnection _dbConnection;
     private Respawner _respawner = default!;
 
-    public RespawnerHelper(string connectionString)
+    public PostgresDbResetProvider(string connectionString)
     {
         _dbConnection = new(connectionString);
     }

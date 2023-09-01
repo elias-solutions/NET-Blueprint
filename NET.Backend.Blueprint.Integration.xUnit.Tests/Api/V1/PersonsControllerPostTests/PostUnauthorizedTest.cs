@@ -19,7 +19,7 @@ public class PostUnauthorizedTest
     [Fact]
     public async Task PersonController_Post_Unauthorized()
     {
-        var response = await _fixture.PostAsync(null, Route);
+        var response = await _fixture.SendAsync(null, Route, HttpMethod.Post);
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 }

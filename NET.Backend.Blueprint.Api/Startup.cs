@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using NET.Backend.Blueprint.Api.Authentication;
 using NET.Backend.Blueprint.Api.Authorization;
 using NET.Backend.Blueprint.Api.DataAccess;

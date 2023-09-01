@@ -16,7 +16,7 @@ public abstract class TestBase : WebApplicationFactory<Startup>, IAsyncLifetime
 {
     private const string ConnectionString = "Host=localhost; Database=BlueprintDatabase; Username=dev; Password=dev";
     public IUserService UserService { get; }
-    public RespawnerHelper RespawnerHelper { get; }
+    public PostgresDbResetProvider PostgresDbResetProvider { get; }
     protected HttpClient Client { get; }
     
     protected TestBase()
@@ -24,7 +24,7 @@ public abstract class TestBase : WebApplicationFactory<Startup>, IAsyncLifetime
         UserService = Substitute.For<IUserService>();
         Client = CreateClient();
         Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypeNames.Application.Json));
-        RespawnerHelper = new RespawnerHelper(ConnectionString);
+        PostgresDbResetProvider = new PostgresDbResetProvider(ConnectionString);
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -37,7 +37,7 @@ public abstract class TestBase : WebApplicationFactory<Startup>, IAsyncLifetime
         });
     }
 
-    public async Task InitializeAsync() => await RespawnerHelper.InitializeAsync();
+    public async Task InitializeAsync() => await PostgresDbResetProvider.InitializeAsync();
 
-    async Task IAsyncLifetime.DisposeAsync() => await RespawnerHelper.DisposeDbConnectionAsync();
+    async Task IAsyncLifetime.DisposeAsync() => await PostgresDbResetProvider.DisposeDbConnectionAsync();
 }
