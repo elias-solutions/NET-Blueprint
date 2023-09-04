@@ -19,7 +19,7 @@ public class GetUnauthorizedTest
     [Fact]
     public async Task PersonController_Get_Unauthorized()
     {
-        var response = await _fixture.GetAsync(null, $"{Route}/{Guid.NewGuid()}");
+        var response = await _fixture.SendAnonymousAsync($"{Route}/{Guid.NewGuid()}", HttpMethod.Get);
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 }

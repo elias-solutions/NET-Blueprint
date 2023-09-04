@@ -19,7 +19,7 @@ public class DeleteForbiddenTest
     [Fact]
     public async Task PersonController_Delete_Forbidden()
     {
-       var response = await _fixture.DeleteAsync(TestUsers.Standard, $"{Route}/{Guid.NewGuid()}");
+       var response = await _fixture.SendAsync(TestUsers.Standard, $"{Route}/{Guid.NewGuid()}", HttpMethod.Delete);
        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 }

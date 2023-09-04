@@ -19,7 +19,7 @@ public class DeleteUnauthorizedTest
     [Fact]
     public async Task PersonController_Delete_Unauthorized()
     {
-        var response = await _fixture.DeleteAsync(null, $"{Route}/{Guid.NewGuid()}");
+        var response = await _fixture.SendAnonymousAsync($"{Route}/{Guid.NewGuid()}", HttpMethod.Delete);
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 }
