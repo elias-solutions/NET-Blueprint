@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using Microsoft.EntityFrameworkCore;
-using NET.Backend.Blueprint.Api.Authorization;
 using NET.Backend.Blueprint.Api.Entities;
 using NET.Backend.Blueprint.Api.ErrorHandling;
 using NET.Backend.Blueprint.Api.Mapper;
@@ -14,26 +13,20 @@ namespace NET.Backend.Blueprint.Api.Service
         private readonly Repository<Person> _repository;
         private readonly PersonToEntityMapper _personToEntityMapper;
         private readonly PersonToDtoMapper _personToDtoMapper;
-        private readonly AddressService _addressService;
-        private readonly IUserService _userService;
 
         public PersonService(
             Repository<Person> repository, 
             PersonToEntityMapper personToEntityMapper,
-            PersonToDtoMapper personToDtoMapper,
-            AddressService addressService,
-            IUserService userService)
+            PersonToDtoMapper personToDtoMapper)
         {
             _repository = repository;
             _personToEntityMapper = personToEntityMapper;
             _personToDtoMapper = personToDtoMapper;
-            _addressService = addressService;
-            _userService = userService;
         }
 
         public async Task<PersonDto> GetPersonByIdAsync(Guid id)
         {
-            var entity = await _repository.GetAsync(
+            var entity = await _repository.FirstOrDefaultAsync(
                 person => person.Id == id, 
                 person => person.Include(x => x.Addresses));
 
@@ -58,11 +51,11 @@ namespace NET.Backend.Blueprint.Api.Service
             var dbPerson = await _repository.GetAsync(personDto.Id, true);
             if (dbPerson == null)
             {
-                throw new BadHttpRequestException($"No person with id '{personDto.Id}' found.");
+                throw new ProblemDetailsException(HttpStatusCode.BadRequest, "No person found", $"No person with id '{personDto.Id}' found.");
             }
 
             var updatePerson = _personToEntityMapper.Map(personDto);
-            var updatedEntity = await _repository.UpdateAsync(updatePerson, _userService.GetCurrentUser()!.Id);
+            var updatedEntity = await _repository.UpdateAsync(updatePerson);
             return _personToDtoMapper.Map(updatedEntity);
         }
 
@@ -84,19 +77,13 @@ namespace NET.Backend.Blueprint.Api.Service
                 Addresses = addresses.ToList()
             };
 
-            var entityEntry = await _repository.AddAsync(entity, _userService.GetCurrentUser()!.Id);
+            var entityEntry = await _repository.AddAsync(entity);
             return _personToDtoMapper.Map(entityEntry.Entity);
         }
 
         public async Task DeletePersonByIdAsync(Guid id)
         {
-            var entity = await _repository.GetAsync(x => x.Id == id);
-            if (entity == null)
-            {
-                throw new BadHttpRequestException($"No person found with id '{id}'");
-            }
-
-            await _repository.RemoveAsync(entity);
+            await _repository.RemoveAsync(id);
         }
     }
 }
