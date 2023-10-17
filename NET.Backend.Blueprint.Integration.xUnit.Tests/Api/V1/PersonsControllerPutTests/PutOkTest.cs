@@ -27,7 +27,7 @@ public class PutOkTest : IAsyncLifetime
         await _fixture.PostgresDbResetProvider.ResetAsync();
 
         var content = await _jsonResourceProvider.CreateHttpContentByResourceAsync("Post_Person_Request.json");
-        var response = await _fixture.PostAsync(TestUsers.Admin, Route, content);
+        var response = await _fixture.SendAsync(TestUsers.Admin, Route, HttpMethod.Post, content);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         _dbPerson = await response.Content.ReadAsync<PersonDto>();
     }
@@ -44,10 +44,10 @@ public class PutOkTest : IAsyncLifetime
             Version = _dbPerson.Version,
         };
         
-        var response = await _fixture.PutAsync(TestUsers.Admin, $"{Route}/{_dbPerson!.Id}", expectedPerson.ToJson().ToStringContent());
+        var response = await _fixture.SendAsync(TestUsers.Admin, $"{Route}/{_dbPerson!.Id}", HttpMethod.Put, expectedPerson.ToJson().ToStringContent());
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         
-        response = await _fixture.GetAsync(TestUsers.Admin, $"{Route}/{_dbPerson.Id}");
+        response = await _fixture.SendAsync(TestUsers.Admin, $"{Route}/{_dbPerson.Id}", HttpMethod.Get);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var person = await response.Content.ReadAsync<PersonDto>();
         

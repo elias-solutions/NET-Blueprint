@@ -28,7 +28,7 @@ public class PutOptimisticLockingTest : IAsyncLifetime
         await _fixture.PostgresDbResetProvider.ResetAsync();
 
         var content = await _jsonResourceProvider.CreateHttpContentByResourceAsync("Post_Person_Request.json");
-        var response = await _fixture.PostAsync(TestUsers.Admin, Route, content);
+        var response = await _fixture.SendAsync(TestUsers.Admin, Route, HttpMethod.Post, content);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         _dbPerson = await response.Content.ReadAsync<PersonDto>();
     }
@@ -39,7 +39,7 @@ public class PutOptimisticLockingTest : IAsyncLifetime
     public async Task PersonsController_Ok()
     {
         var expectedPerson = await _jsonResourceProvider.CreateObjectByResourceAsync<PersonDto>("Put_Person_Request.json") with { Id = _dbPerson!.Id, Version = Guid.NewGuid() };
-        var response = await _fixture.PutAsync(TestUsers.Admin, $"{Route}/{_dbPerson!.Id}", expectedPerson.ToJson().ToStringContent());
+        var response = await _fixture.SendAsync(TestUsers.Admin, $"{Route}/{_dbPerson!.Id}", HttpMethod.Put, expectedPerson.ToJson().ToStringContent());
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         
         var problemDetails = await response.Content.ReadAsync<ProblemDetails>();

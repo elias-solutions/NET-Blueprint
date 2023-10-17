@@ -48,12 +48,6 @@ namespace NET.Backend.Blueprint.Api.Service
 
         public async Task<PersonDto> UpdatePersonsAsync(PersonDto personDto)
         {
-            var dbPerson = await _repository.GetAsync(personDto.Id, true);
-            if (dbPerson == null)
-            {
-                throw new ProblemDetailsException(HttpStatusCode.BadRequest, "No person found", $"No person with id '{personDto.Id}' found.");
-            }
-
             var updatePerson = _personToEntityMapper.Map(personDto);
             var updatedEntity = await _repository.UpdateAsync(updatePerson);
             return _personToDtoMapper.Map(updatedEntity);

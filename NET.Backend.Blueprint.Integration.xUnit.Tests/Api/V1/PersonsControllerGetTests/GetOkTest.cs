@@ -26,7 +26,7 @@ public class GetOkTest : IAsyncLifetime
         await _fixture.PostgresDbResetProvider.ResetAsync();
 
         var content = await _jsonResourceProvider.CreateHttpContentByResourceAsync("Post_Person_Request.json");
-        var response = await _fixture.PostAsync(TestUsers.Admin, Route, content);
+        var response = await _fixture.SendAsync(TestUsers.Admin, Route, HttpMethod.Post, content);
         _dbPerson = await response.Content.ReadAsync<PersonDto>(); 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
@@ -36,7 +36,7 @@ public class GetOkTest : IAsyncLifetime
     [Fact]
     public async Task PersonController_Get_Ok()
     {
-        var response = await _fixture.GetAsync(TestUsers.Admin, $"{Route}/{_dbPerson.Id}");
+        var response = await _fixture.SendAsync(TestUsers.Admin, $"{Route}/{_dbPerson.Id}", HttpMethod.Get);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var result = await response.Content.ReadAsync<PersonDto>();

@@ -29,7 +29,7 @@ public class PostOkTest : IAsyncLifetime
     public async Task PersonsController_Ok()
     {
         var content = await _jsonResourceProvider.CreateHttpContentByResourceAsync("Post_Person_Request.json");
-        var response = await _fixture.PostAsync(TestUsers.Admin, Route, content);
+        var response = await _fixture.SendAsync(TestUsers.Admin, Route, HttpMethod.Post, content);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var dbPerson = await response.Content.ReadAsync<PersonDto>();
         
