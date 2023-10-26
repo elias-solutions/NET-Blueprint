@@ -5,13 +5,9 @@ namespace NET.Backend.Blueprint.Integration.xUnit.Tests.Environment;
 
 public class PostgresDbResetProvider
 {
-    private readonly NpgsqlConnection _dbConnection;
+    private readonly NpgsqlConnection _dbConnection = new ("Host=localhost; Database=BlueprintDatabaseTest; Username=dev; Password=dev");
     private Respawner _respawner = default!;
 
-    public PostgresDbResetProvider(string connectionString)
-    {
-        _dbConnection = new(connectionString);
-    }
     
     public async Task InitializeAsync()
     {

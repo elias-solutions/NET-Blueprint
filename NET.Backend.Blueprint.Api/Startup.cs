@@ -26,7 +26,8 @@ public class Startup
     {
         services.AddSingleton<ErrorHandlingMiddleware>();
 
-        services.AddDbContextFactory<BlueprintDbContext>(options => options.UseNpgsql(_configuration.GetConnectionString("Database")), ServiceLifetime.Scoped);
+        services.AddDbContextFactory<BlueprintDbContext>(options => 
+            options.UseNpgsql(_configuration.GetConnectionString("Database")), ServiceLifetime.Scoped);
         services.AddScoped<IUserService, UserService>(); 
         
         services.AddScoped<PersonToDtoMapper>();

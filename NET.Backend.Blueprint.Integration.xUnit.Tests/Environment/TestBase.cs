@@ -14,7 +14,6 @@ namespace NET.Backend.Blueprint.Integration.xUnit.Tests.Environment;
 
 public abstract class TestBase : WebApplicationFactory<Startup>, IAsyncLifetime
 {
-    private const string ConnectionString = "Host=localhost; Database=BlueprintDatabase; Username=dev; Password=dev";
     public IUserService UserService { get; }
     public PostgresDbResetProvider PostgresDbResetProvider { get; }
     protected HttpClient Client { get; }
@@ -24,17 +23,20 @@ public abstract class TestBase : WebApplicationFactory<Startup>, IAsyncLifetime
         UserService = Substitute.For<IUserService>();
         Client = CreateClient();
         Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypeNames.Application.Json));
-        PostgresDbResetProvider = new PostgresDbResetProvider(ConnectionString);
+        PostgresDbResetProvider = new PostgresDbResetProvider();
     }
-
+    
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {            
-        builder.ConfigureTestServices(services =>
-        {
-            services.AddScoped(_ => UserService);
-            services.AddAuthentication("TestAuthentication")
-                .AddScheme<AuthenticationSchemeOptions, TestAuthenticationHandler>("TestAuthentication", null);
-        });
+        builder
+            .ConfigureTestServices(services =>
+            {
+                services.AddScoped(_ => UserService);
+                services.AddAuthentication("TestAuthentication")
+                    .AddScheme<AuthenticationSchemeOptions, TestAuthenticationHandler>("TestAuthentication", null);
+            });
+
+        builder.UseEnvironment("IntegrationTestPostgres");
     }
 
     public async Task InitializeAsync() => await PostgresDbResetProvider.InitializeAsync();
