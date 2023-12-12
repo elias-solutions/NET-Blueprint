@@ -10,4 +10,5 @@ public record AddressDto
     Guid CreatedBy,
     DateTimeOffset Created,
     Guid? ModifiedBy,
-    DateTimeOffset? Modified);
+    DateTimeOffset? Modified,
+    Guid Version);

@@ -2,8 +2,6 @@ using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NET.Backend.Blueprint.Api.Authorization;
-using NET.Backend.Blueprint.Api.Model;
-using NET.Backend.Blueprint.Api.Service;
 
 namespace NET.Backend.Blueprint.Api.Controllers.V2
 {

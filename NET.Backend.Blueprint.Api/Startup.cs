@@ -7,9 +7,7 @@ using NET.Backend.Blueprint.Api.Authentication;
 using NET.Backend.Blueprint.Api.Authorization;
 using NET.Backend.Blueprint.Api.DataAccess;
 using NET.Backend.Blueprint.Api.ErrorHandling;
-using NET.Backend.Blueprint.Api.Mapper;
 using NET.Backend.Blueprint.Api.Repository.Base;
-using NET.Backend.Blueprint.Api.Service;
 
 namespace NET.Backend.Blueprint.Api;
 
@@ -26,18 +24,12 @@ public class Startup
     {
         services.AddSingleton<ErrorHandlingMiddleware>();
 
-        services.AddDbContextFactory<BlueprintDbContext>(options => 
-            options.UseNpgsql(_configuration.GetConnectionString("Database")), ServiceLifetime.Scoped);
+        services.AddDbContextFactory<BlueprintDbContext>(options => options.UseNpgsql(_configuration.GetConnectionString("Database")));
         services.AddScoped<IUserService, UserService>(); 
-        
-        services.AddScoped<PersonToDtoMapper>();
-        services.AddScoped<PersonToEntityMapper>();
-        services.AddScoped<AddressToDtoMapper>();
-        services.AddScoped<AddressToEntityMapper>();
 
-        services.AddScoped(typeof(PersonService));
-        services.AddScoped(typeof(AddressService));
+        services.AddMediatR(options => options.RegisterServicesFromAssemblyContaining<Program>());
         services.AddScoped(typeof(Repository<>));
+
         services
             .AddAuthentication("Authentication")
             .AddScheme<AuthenticationSchemeOptions, AuthenticationHandler>("Authentication", null);

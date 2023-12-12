@@ -1,0 +1,13 @@
+{
+  "FirstName": "Martin",
+  "LastName": "Müller",
+  "Birthday": "1995-07-06T11:40:32.0237468+00:00",
+  "Addresses": [
+    {
+      "Street": "Waldstrasse",
+      "Number": "178",
+      "City": "Eichelweg",
+      "PostalCode": "4631"
+    }
+  ]
+}

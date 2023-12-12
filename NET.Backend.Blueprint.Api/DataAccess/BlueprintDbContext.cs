@@ -11,7 +11,7 @@ namespace NET.Backend.Blueprint.Api.DataAccess
         public BlueprintDbContext(DbContextOptions options) : base(options)
         {
         }
-
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Person>()

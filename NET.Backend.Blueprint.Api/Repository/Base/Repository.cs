@@ -110,7 +110,7 @@ namespace NET.Backend.Blueprint.Api.Repository.Base
             return await query.ToListAsync();
         }
 
-        public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate)
+        private async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate)
         {
             return await _context.Set<TEntity>().AsQueryable().AsNoTracking().AnyAsync(predicate);
         }

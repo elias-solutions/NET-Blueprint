@@ -23,7 +23,7 @@ public class DeleteOkTest : IAsyncLifetime
 
     public async Task InitializeAsync()
     {
-        await _fixture.PostgresDbResetProvider.ResetAsync();
+        await _fixture.DatabaseResetProvider.ResetAsync();
 
         var content = await _jsonResourceProvider.CreateHttpContentByResourceAsync("Post_Person_Request.json");
         var response = await _fixture.SendAsync(TestUsers.Admin, Route, HttpMethod.Post, content);

@@ -21,7 +21,7 @@ public class PostOkTest : IAsyncLifetime
         _jsonResourceProvider = new EmbeddedJsonResourceProvider(GetType().Namespace!);
     }
 
-    public async Task InitializeAsync() => await _fixture.PostgresDbResetProvider.ResetAsync();
+    public async Task InitializeAsync() => await _fixture.DatabaseResetProvider.ResetAsync();
     
     public Task DisposeAsync() => Task.CompletedTask;
 

@@ -1,7 +1,9 @@
-﻿namespace NET.Backend.Blueprint.Api.Model;
+﻿using MediatR;
+
+namespace NET.Backend.Blueprint.Api.Model;
 
 public record CreatePersonRequest(
     string FirstName, 
     string LastName, 
     DateTimeOffset Birthday,
-    CreateAddressRequest[] Addresses);
+    CreateAddressRequest[] Addresses) : IRequest<PersonDto>;

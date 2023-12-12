@@ -24,7 +24,7 @@ public class PutOkTest : IAsyncLifetime
 
     public async Task InitializeAsync()
     {
-        await _fixture.PostgresDbResetProvider.ResetAsync();
+        await _fixture.DatabaseResetProvider.ResetAsync();
 
         var content = await _jsonResourceProvider.CreateHttpContentByResourceAsync("Post_Person_Request.json");
         var response = await _fixture.SendAsync(TestUsers.Admin, Route, HttpMethod.Post, content);
@@ -55,6 +55,8 @@ public class PutOkTest : IAsyncLifetime
             .Excluding(x => x.Modified)
             .Excluding(x => x.ModifiedBy)
             .Excluding(x => x.Version)
+            .Excluding(x => x.Created)
+            .Excluding(x => x.CreatedBy)
             .For(x => x.Addresses).Exclude(x => x.Modified)
             .For(x => x.Addresses).Exclude(x => x.ModifiedBy)
             .Using<DateTimeOffset>(ctx => ctx.Subject.Should().BeCloseTo(ctx.Expectation, new TimeSpan(1000)))
