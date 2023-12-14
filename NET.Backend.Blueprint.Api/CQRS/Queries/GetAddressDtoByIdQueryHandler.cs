@@ -10,10 +10,7 @@ public class GetAddressDtoByIdQueryHandler : IRequestHandler<GetAddressDtoByIdQu
 {
     private readonly IMediator _mediator;
 
-    public GetAddressDtoByIdQueryHandler(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
+    public GetAddressDtoByIdQueryHandler(IMediator mediator) => _mediator = mediator;
 
     public async Task<AddressDto> Handle(GetAddressDtoByIdQuery request, CancellationToken cancellationToken)
     {

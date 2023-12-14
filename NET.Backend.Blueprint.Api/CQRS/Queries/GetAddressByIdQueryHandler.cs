@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using NET.Backend.Blueprint.Api.Entities;
-using NET.Backend.Blueprint.Api.Model;
 using NET.Backend.Blueprint.Api.Repository.Base;
 
 namespace NET.Backend.Blueprint.Api.CQRS.Queries;
@@ -11,10 +10,7 @@ public class GetAddressByIdQueryHandler : IRequestHandler<GetAddressByIdQuery, A
 {
     private readonly Repository<Address> _repository;
 
-    public GetAddressByIdQueryHandler(Repository<Address> repository)
-    {
-        _repository = repository;
-    }
+    public GetAddressByIdQueryHandler(Repository<Address> repository) => _repository = repository;
 
     public async Task<Address> Handle(GetAddressByIdQuery request, CancellationToken cancellationToken)
     {
