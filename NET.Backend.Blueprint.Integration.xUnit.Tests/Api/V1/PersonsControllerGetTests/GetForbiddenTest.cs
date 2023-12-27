@@ -21,7 +21,7 @@ public class GetForbiddenTest
     [Fact]
     public async Task PersonController_Get_Forbidden()
     {
-        var response = await _fixture.SendAsync(TestUsers.Standard, $"{Route}/{Guid.NewGuid()}", HttpMethod.Get);
+        var response = await _fixture.SendAsync(HttpMethod.Get, $"{Route}/{Guid.NewGuid()}", TestUsers.Standard);
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 }

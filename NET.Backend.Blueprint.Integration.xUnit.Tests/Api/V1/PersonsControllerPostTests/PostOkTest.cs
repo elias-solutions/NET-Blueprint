@@ -3,7 +3,6 @@ using FluentAssertions;
 using NET.Backend.Blueprint.Api.Model;
 using NET.Backend.Blueprint.Extensions;
 using NET.Backend.Blueprint.Integration.xUnit.Tests.Environment;
-using NET.Backend.Blueprint.Integration.xUnit.Tests.Extensions;
 using Xunit;
 
 namespace NET.Backend.Blueprint.Integration.xUnit.Tests.Api.V1.PersonsControllerPostTests;
@@ -29,7 +28,7 @@ public class PostOkTest : IAsyncLifetime
     public async Task PersonsController_Ok()
     {
         var content = await _jsonResourceProvider.CreateHttpContentByResourceAsync("Post_Person_Request.json");
-        var response = await _fixture.SendAsync(TestUsers.Admin, Route, HttpMethod.Post, content);
+        var response = await _fixture.SendAsync(HttpMethod.Post, Route, content, TestUsers.Admin);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var dbPerson = await response.Content.ReadAsync<PersonDto>();
         
@@ -45,6 +44,8 @@ public class PostOkTest : IAsyncLifetime
             .For(entity => entity.Addresses).Exclude(entity => entity.Created)
             .For(entity => entity.Addresses).Exclude(entity => entity.CreatedBy)
             .For(entity => entity.Addresses).Exclude(entity => entity.Modified)
-            .For(entity => entity.Addresses).Exclude(entity => entity.ModifiedBy));
+            .For(entity => entity.Addresses).Exclude(entity => entity.ModifiedBy)
+            .For(entity => entity.Addresses).Exclude(entity => entity.Version)
+        );
     }
 }

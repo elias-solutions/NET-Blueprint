@@ -1,9 +1,9 @@
 ﻿using MediatR;
 using NET.Backend.Blueprint.Api.Entities;
 using NET.Backend.Blueprint.Api.ErrorHandling;
-using NET.Backend.Blueprint.Api.Repository.Base;
 using System.Net;
 using Microsoft.EntityFrameworkCore;
+using NET.Backend.Blueprint.Api.Repository;
 
 namespace NET.Backend.Blueprint.Api.CQRS.Queries;
 

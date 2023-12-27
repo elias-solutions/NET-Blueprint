@@ -7,7 +7,7 @@ using NET.Backend.Blueprint.Api.Authentication;
 using NET.Backend.Blueprint.Api.Authorization;
 using NET.Backend.Blueprint.Api.DataAccess;
 using NET.Backend.Blueprint.Api.ErrorHandling;
-using NET.Backend.Blueprint.Api.Repository.Base;
+using NET.Backend.Blueprint.Api.Repository;
 
 namespace NET.Backend.Blueprint.Api;
 

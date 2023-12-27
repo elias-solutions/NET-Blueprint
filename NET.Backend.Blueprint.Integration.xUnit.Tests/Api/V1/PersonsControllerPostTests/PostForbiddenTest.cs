@@ -21,7 +21,7 @@ public class PostForbiddenTest
     [Fact]
     public async Task PersonController_Post_Forbidden()
     {
-        var response = await _fixture.SendAsync(TestUsers.Standard, Route, HttpMethod.Post);
+        var response = await _fixture.SendAsync(HttpMethod.Post, Route, TestUsers.Standard);
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 }

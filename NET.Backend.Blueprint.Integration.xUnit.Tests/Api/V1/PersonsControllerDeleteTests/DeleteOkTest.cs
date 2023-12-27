@@ -26,7 +26,7 @@ public class DeleteOkTest : IAsyncLifetime
         await _fixture.DatabaseResetProvider.ResetAsync();
 
         var content = await _jsonResourceProvider.CreateHttpContentByResourceAsync("Post_Person_Request.json");
-        var response = await _fixture.SendAsync(TestUsers.Admin, Route, HttpMethod.Post, content);
+        var response = await _fixture.SendAsync(HttpMethod.Post, Route, content, TestUsers.Admin);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         _dbPerson = await response.Content.ReadAsync<PersonDto>();
     } 
@@ -36,7 +36,7 @@ public class DeleteOkTest : IAsyncLifetime
     [Fact]
     public async Task PersonsController_Delete_Ok()
     {
-        var response = await _fixture.SendAsync(TestUsers.Admin, $"{Route}/{_dbPerson.Id}", HttpMethod.Delete);
+        var response = await _fixture.SendAsync(HttpMethod.Delete, $"{Route}/{_dbPerson.Id}", TestUsers.Admin);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 }

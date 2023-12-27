@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using NET.Backend.Blueprint.Api.Entities;
 using NET.Backend.Blueprint.Api.Model;
-using NET.Backend.Blueprint.Api.Repository.Base;
+using NET.Backend.Blueprint.Api.Repository;
 
 namespace NET.Backend.Blueprint.Api.CQRS.Queries;
 

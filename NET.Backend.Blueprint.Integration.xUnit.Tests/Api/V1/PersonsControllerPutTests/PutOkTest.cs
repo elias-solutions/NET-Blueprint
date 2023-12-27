@@ -27,7 +27,7 @@ public class PutOkTest : IAsyncLifetime
         await _fixture.DatabaseResetProvider.ResetAsync();
 
         var content = await _jsonResourceProvider.CreateHttpContentByResourceAsync("Post_Person_Request.json");
-        var response = await _fixture.SendAsync(TestUsers.Admin, Route, HttpMethod.Post, content);
+        var response = await _fixture.SendAsync(HttpMethod.Post, Route, content, TestUsers.Admin);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         _dbPerson = await response.Content.ReadAsync<PersonDto>();
     }
@@ -44,10 +44,10 @@ public class PutOkTest : IAsyncLifetime
             Version = _dbPerson.Version,
         };
         
-        var response = await _fixture.SendAsync(TestUsers.Admin, $"{Route}/{_dbPerson!.Id}", HttpMethod.Put, expectedPerson.ToJson().ToStringContent());
+        var response = await _fixture.SendAsync(HttpMethod.Put, $"{Route}/{_dbPerson!.Id}", expectedPerson.ToJson().ToStringContent(), TestUsers.Admin);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         
-        response = await _fixture.SendAsync(TestUsers.Admin, $"{Route}/{_dbPerson.Id}", HttpMethod.Get);
+        response = await _fixture.SendAsync(HttpMethod.Get, $"{Route}/{_dbPerson.Id}", TestUsers.Admin);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var person = await response.Content.ReadAsync<PersonDto>();
         

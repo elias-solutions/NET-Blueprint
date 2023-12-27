@@ -2,7 +2,7 @@
 using NET.Backend.Blueprint.Api.CQRS.Queries;
 using NET.Backend.Blueprint.Api.Entities;
 using NET.Backend.Blueprint.Api.Model;
-using NET.Backend.Blueprint.Api.Repository.Base;
+using NET.Backend.Blueprint.Api.Repository;
 
 namespace NET.Backend.Blueprint.Api.CQRS.Command;
 
@@ -29,5 +29,6 @@ public class UpdateAddressCommandHandler : IRequestHandler<UpdateAddressCommand>
         dbAddress.Street = request.AddressDto.Street;
 
         await _repository.UpdateAsync(dbAddress);
+        await _repository.SaveChangesAsync();
     }
 }

@@ -9,7 +9,7 @@ using NET.Backend.Blueprint.Api.Entities.Base;
 using NET.Backend.Blueprint.Api.ErrorHandling;
 using NET.Backend.Blueprint.Extensions;
 
-namespace NET.Backend.Blueprint.Api.Repository.Base
+namespace NET.Backend.Blueprint.Api.Repository
 {
     public class Repository<TEntity> where TEntity : EntityBase
     {
@@ -22,10 +22,9 @@ namespace NET.Backend.Blueprint.Api.Repository.Base
             _userService = userService;
         }
 
-
         public async Task<TEntity> GetAsync(Guid id, bool asNoTracking = false)
         {
-            var entity = asNoTracking ? 
+            var entity = asNoTracking ?
                 await _context.Set<TEntity>().AsNoTracking().SingleOrDefaultAsync(entity => entity.Id == id) :
                 await _context.Set<TEntity>().SingleOrDefaultAsync(entity => entity.Id == id);
 
@@ -123,10 +122,10 @@ namespace NET.Backend.Blueprint.Api.Repository.Base
             entity.ModifiedBy = Guid.Empty;
             entity.Version = Guid.NewGuid();
 
-            var result = await _context.Set<TEntity>().AddAsync(entity);
-            await _context.SaveChangesAsync();
-            return result;
+            return await _context.Set<TEntity>().AddAsync(entity);
         }
+
+        public async Task SaveChangesAsync() => await _context.SaveChangesAsync();
 
         public async Task<TEntity> UpdateAsync(TEntity entity)
         {
@@ -136,7 +135,7 @@ namespace NET.Backend.Blueprint.Api.Repository.Base
                 throw new ProblemDetailsException(
                     HttpStatusCode.BadRequest, "Entity version conflict", "Entity has been updated through other user.");
             }
-            
+
             entity.Created = entity.Created;
             entity.CreatedBy = entity.CreatedBy;
             entity.Modified = DateTime.UtcNow.ToUtcDateTimeOffset();
@@ -144,7 +143,6 @@ namespace NET.Backend.Blueprint.Api.Repository.Base
             entity.Version = Guid.NewGuid();
 
             _context.Set<TEntity>().Update(entity);
-            await _context.SaveChangesAsync();
             return entity;
         }
 
@@ -158,7 +156,6 @@ namespace NET.Backend.Blueprint.Api.Repository.Base
             }
 
             _context.Set<TEntity>().Remove(entity);
-            await _context.SaveChangesAsync();
         }
 
         private IQueryable<TEntity> GetEntitiesAsQueryable(Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include, bool asNoTracking)
@@ -178,5 +175,5 @@ namespace NET.Backend.Blueprint.Api.Repository.Base
             return query;
         }
     }
-    
+
 }

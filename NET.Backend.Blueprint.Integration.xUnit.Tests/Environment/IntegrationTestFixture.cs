@@ -6,7 +6,7 @@ namespace NET.Backend.Blueprint.Integration.xUnit.Tests.Environment;
 
 public class IntegrationTestFixture : TestBase
 {
-    public async Task<HttpResponseMessage> SendAnonymousAsync(string route, HttpMethod method)
+    public async Task<HttpResponseMessage> SendAnonymousAsync(HttpMethod method, string route)
     {
         UserService.GetCurrentUser().ReturnsNull();
 
@@ -19,7 +19,7 @@ public class IntegrationTestFixture : TestBase
         return await Client.SendAsync(message);
     }
 
-    public async Task<HttpResponseMessage> SendAsync(User user, string route, HttpMethod method)
+    public async Task<HttpResponseMessage> SendAsync(HttpMethod method, string route, User user)
     {
         UserService.GetCurrentUser().Returns(user);
 
@@ -32,7 +32,7 @@ public class IntegrationTestFixture : TestBase
         return await Client.SendAsync(message);
     }
 
-    public async Task<HttpResponseMessage> SendAsync(User user, string route, HttpMethod method, HttpContent content)
+    public async Task<HttpResponseMessage> SendAsync(HttpMethod method, string route, HttpContent content, User user)
     {
         UserService.GetCurrentUser().Returns(user);
 

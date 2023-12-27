@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using NET.Backend.Blueprint.Api.Entities;
-using NET.Backend.Blueprint.Api.Repository.Base;
+using NET.Backend.Blueprint.Api.Repository;
 
 namespace NET.Backend.Blueprint.Api.CQRS.Command;
 
@@ -18,5 +18,6 @@ public class DeletePersonByIdCommandHandler : IRequestHandler<DeletePersonByIdCo
     public async Task Handle(DeletePersonByIdCommand request, CancellationToken cancellationToken)
     {
         await _repository.RemoveAsync(request.PersonId);
+        await _repository.SaveChangesAsync();
     }
 }
