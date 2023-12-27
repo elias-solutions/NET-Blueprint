@@ -8,6 +8,7 @@ using NET.Backend.Blueprint.Api.Authorization;
 using NET.Backend.Blueprint.Api.DataAccess;
 using NET.Backend.Blueprint.Api.ErrorHandling;
 using NET.Backend.Blueprint.Api.Repository;
+using NET.Backend.Blueprint.Api.SignalR;
 
 namespace NET.Backend.Blueprint.Api;
 
@@ -23,12 +24,13 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddSingleton<ErrorHandlingMiddleware>();
-
         services.AddDbContextFactory<BlueprintDbContext>(options => options.UseNpgsql(_configuration.GetConnectionString("Database")));
-        services.AddScoped<IUserService, UserService>(); 
+        services.AddScoped<IUserService, UserService>();
 
-        services.AddMediatR(options => options.RegisterServicesFromAssemblyContaining<Program>());
         services.AddScoped(typeof(Repository<>));
+        services.AddMediatR(options => options.RegisterServicesFromAssemblyContaining<Program>());
+        services.AddSignalR();
+        services.AddSingleton<StatusChangeHub>();
 
         services
             .AddAuthentication("Authentication")
@@ -62,9 +64,9 @@ public class Startup
         app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
-        
         app.UseEndpoints(endpoints =>
         {
+            endpoints.MapHub<StatusChangeHub>("/StatusChangeHub");
             endpoints.MapControllers();
         });
     }

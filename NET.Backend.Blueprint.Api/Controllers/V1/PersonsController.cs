@@ -16,12 +16,10 @@ namespace NET.Backend.Blueprint.Api.Controllers.V1
     public class PersonsController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly ILogger<PersonsController> _logger;
 
-        public PersonsController(IMediator mediator, ILogger<PersonsController> logger)
+        public PersonsController(IMediator mediator)
         {
             _mediator = mediator;
-            _logger = logger;
         }
 
         [HttpGet]

@@ -3,6 +3,7 @@ using NET.Backend.Blueprint.Api.CQRS.Queries;
 using NET.Backend.Blueprint.Api.Entities;
 using NET.Backend.Blueprint.Api.Model;
 using NET.Backend.Blueprint.Api.Repository;
+using NET.Backend.Blueprint.Api.SignalR;
 
 namespace NET.Backend.Blueprint.Api.CQRS.Command
 {
@@ -12,15 +13,18 @@ namespace NET.Backend.Blueprint.Api.CQRS.Command
     {
         private readonly Repository<Person> _personRepository;
         private readonly Repository<Address> _addressRepository;
+        private readonly StatusChangeHub _statusChangeHub;
         private readonly IMediator _mediator;
 
         public CreatePersonCommandHandler(
             Repository<Person> personRepository, 
-            Repository<Address> addressRepository, 
+            Repository<Address> addressRepository,
+            StatusChangeHub statusChangeHub,
             IMediator mediator)
         {
             _personRepository = personRepository;
             _addressRepository = addressRepository;
+            _statusChangeHub = statusChangeHub;
             _mediator = mediator;
         }
 
@@ -39,6 +43,8 @@ namespace NET.Backend.Blueprint.Api.CQRS.Command
 
             var person = await _personRepository.AddAsync(entity);
             await _personRepository.SaveChangesAsync();
+            await _statusChangeHub.SendMessage(entity.Id, nameof(person), "added");
+
             return await _mediator.Send(new GetPersonDtoByIdQuery(person.Entity.Id), cancellationToken);
         }
 

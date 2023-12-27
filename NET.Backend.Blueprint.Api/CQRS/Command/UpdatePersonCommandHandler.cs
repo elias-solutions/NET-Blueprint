@@ -3,6 +3,8 @@ using NET.Backend.Blueprint.Api.CQRS.Queries;
 using NET.Backend.Blueprint.Api.Entities;
 using NET.Backend.Blueprint.Api.Model;
 using NET.Backend.Blueprint.Api.Repository;
+using NET.Backend.Blueprint.Api.SignalR;
+using System;
 
 namespace NET.Backend.Blueprint.Api.CQRS.Command;
 
@@ -12,11 +14,13 @@ public class UpdatePersonCommandHandler : IRequestHandler<UpdatePersonCommand>
 {
     private readonly Repository<Person> _repository;
     private readonly IMediator _mediator;
+    private readonly StatusChangeHub _statusChangeHub;
 
-    public UpdatePersonCommandHandler(Repository<Person> repository, IMediator mediator)
+    public UpdatePersonCommandHandler(Repository<Person> repository, IMediator mediator, StatusChangeHub statusChangeHub)
     {
         _repository = repository;
         _mediator = mediator;
+        _statusChangeHub = statusChangeHub;
     }
 
     public async Task Handle(UpdatePersonCommand request, CancellationToken cancellationToken)
@@ -33,6 +37,7 @@ public class UpdatePersonCommandHandler : IRequestHandler<UpdatePersonCommand>
 
         await _repository.UpdateAsync(dbEntity);
         await _repository.SaveChangesAsync();
+        await _statusChangeHub.SendMessage(dbEntity.Id, nameof(Person), "updated");
     }
 
     private void EntitiesToUpdate(UpdatePersonCommand request, Person dbEntity)

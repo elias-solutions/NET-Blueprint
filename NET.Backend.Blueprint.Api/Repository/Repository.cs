@@ -28,12 +28,8 @@ namespace NET.Backend.Blueprint.Api.Repository
                 await _context.Set<TEntity>().AsNoTracking().SingleOrDefaultAsync(entity => entity.Id == id) :
                 await _context.Set<TEntity>().SingleOrDefaultAsync(entity => entity.Id == id);
 
-            if (entity == null)
-            {
-                throw new ProblemDetailsException(HttpStatusCode.BadRequest, "No entity found", $"No entity with id '{id}' found.");
-            }
-
-            return entity;
+            return entity ?? throw new ProblemDetailsException(HttpStatusCode.BadRequest, 
+                "No entity found", $"No entity with id '{id}' found.");
         }
 
         public async Task<TEntity?> SingleOrDefaultAsync(

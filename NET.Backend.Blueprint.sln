@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NET.Backend.Blueprint.Integ
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NET.Backend.Blueprint.Api", "NET.Backend.Blueprint.Api\NET.Backend.Blueprint.Api.csproj", "{FC450F92-0EB0-446B-80D3-F0AC7D6FD55B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NET.Frontend.Blueprint.Client", "NET.Frontend.Blueprint.Client\NET.Frontend.Blueprint.Client.csproj", "{C0553746-7AED-4883-A603-778500B118AB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{FC450F92-0EB0-446B-80D3-F0AC7D6FD55B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FC450F92-0EB0-446B-80D3-F0AC7D6FD55B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FC450F92-0EB0-446B-80D3-F0AC7D6FD55B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0553746-7AED-4883-A603-778500B118AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0553746-7AED-4883-A603-778500B118AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0553746-7AED-4883-A603-778500B118AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0553746-7AED-4883-A603-778500B118AB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

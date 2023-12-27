@@ -10,14 +10,10 @@ public record GetPersonDtosQuery : IRequest<IEnumerable<PersonDto>>;
 
 public class GetPersonDtosQueryHandler : IRequestHandler<GetPersonDtosQuery, IEnumerable<PersonDto>>
 {
-    private readonly IMediator _mediator;
     private readonly Repository<Person> _repository;
 
-    public GetPersonDtosQueryHandler(
-        IMediator mediator,
-        Repository<Person> repository)
+    public GetPersonDtosQueryHandler(Repository<Person> repository)
     {
-        _mediator = mediator;
         _repository = repository;
     }
 
