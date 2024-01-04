@@ -4,7 +4,7 @@ using NET.Backend.Blueprint.Api.Entities;
 using NET.Backend.Blueprint.Api.Model;
 using NET.Backend.Blueprint.Api.Repository;
 
-namespace NET.Backend.Blueprint.Api.CQRS.Command;
+namespace NET.Backend.Blueprint.Api.CQRS.Commands;
 
 public record UpdateAddressCommand(AddressDto AddressDto) : IRequest;
 

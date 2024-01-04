@@ -2,9 +2,8 @@
 using NET.Backend.Blueprint.Api.Entities;
 using NET.Backend.Blueprint.Api.Repository;
 using NET.Backend.Blueprint.Api.SignalR;
-using System;
 
-namespace NET.Backend.Blueprint.Api.CQRS.Command;
+namespace NET.Backend.Blueprint.Api.CQRS.Commands;
 
 public record DeletePersonByIdCommand(Guid PersonId) : IRequest;
 

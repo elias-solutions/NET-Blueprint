@@ -3,7 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NET.Backend.Blueprint.Api.Authorization;
-using NET.Backend.Blueprint.Api.CQRS.Command;
+using NET.Backend.Blueprint.Api.CQRS.Commands;
 using NET.Backend.Blueprint.Api.CQRS.Queries;
 using NET.Backend.Blueprint.Api.Model;
 
