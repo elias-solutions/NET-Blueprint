@@ -6,23 +6,16 @@ using NET.Backend.Blueprint.Api.Authorization;
 
 namespace NET.Backend.Blueprint.Api.Authentication;
 
-public class AuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
+public class AuthenticationHandler(
+    IUserService userService,
+    IOptionsMonitor<AuthenticationSchemeOptions> options,
+    ILoggerFactory logger,
+    UrlEncoder encoder)
+    : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder)
 {
-    private readonly IUserService _userService;
-
-    public AuthenticationHandler(
-        IUserService userService,
-        IOptionsMonitor<AuthenticationSchemeOptions> options,
-        ILoggerFactory logger,
-        UrlEncoder encoder,
-        ISystemClock clock) : base(options, logger, encoder, clock)
-    {
-        _userService = userService;
-    }
-
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
-        var user = _userService.GetCurrentUser();
+        var user = userService.GetCurrentUser();
         if (user == null)
         {
             return await Task.FromResult(AuthenticateResult.NoResult());
