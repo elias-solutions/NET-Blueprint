@@ -12,19 +12,12 @@ using NET.Backend.Blueprint.Api.SignalR;
 
 namespace NET.Backend.Blueprint.Api;
 
-public class Startup
+public class Startup(IConfiguration configuration)
 {
-    private readonly IConfiguration _configuration;
-
-    public Startup(IConfiguration configuration)
-    {
-        _configuration = configuration;
-    }
-
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddSingleton<ErrorHandlingMiddleware>();
-        services.AddDbContextFactory<BlueprintDbContext>(options => options.UseNpgsql(_configuration.GetConnectionString("Database")));
+        services.AddDbContextFactory<BlueprintDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("Database")));
         services.AddScoped<IUserService, UserService>();
 
         services.AddScoped(typeof(Repository<>));
