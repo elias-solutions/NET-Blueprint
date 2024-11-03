@@ -5,12 +5,13 @@ using System.Net;
 using Microsoft.EntityFrameworkCore;
 using NET.Backend.Blueprint.Api.Model;
 using NET.Backend.Blueprint.Api.Repository;
+using System;
 
 namespace NET.Backend.Blueprint.Api.CQRS.Queries;
 
 public record GetPersonDtoByIdQuery(Guid PersonId) : IRequest<PersonDto>;
 
-public class GetPersonDtoByIdQueryHandler(Repository<Person> repository)
+public class GetPersonDtoByIdQueryHandler(Repository<Person> repository, IMediator mediator) 
     : IRequestHandler<GetPersonDtoByIdQuery, PersonDto>
 {
     public async Task<PersonDto> Handle(GetPersonDtoByIdQuery request, CancellationToken cancellationToken)
@@ -21,38 +22,6 @@ public class GetPersonDtoByIdQueryHandler(Repository<Person> repository)
                       throw new ProblemDetailsException(
                           HttpStatusCode.BadRequest, "No person found", $"No person with id '{request.PersonId}' found.");
 
-        var personDto = MapToPersonDto(person);
-        return personDto;
-    }
-
-    private PersonDto MapToPersonDto(Person person)
-    {
-        var addressDto = person.Addresses.Select(Map);
-        return new PersonDto(
-            person.Id,
-            person.FirstName,
-            person.LastName,
-            person.Birthday,
-            addressDto,
-            person.CreatedBy,
-            person.Created,
-            person.ModifiedBy,
-            person.Modified,
-            person.Version);
-    }
-
-    private AddressDto Map(Address entity)
-    {
-        return new AddressDto(
-            entity.Id,
-            entity.Street,
-            entity.Number,
-            entity.City,
-            entity.PostalCode,
-            entity.CreatedBy,
-            entity.Created,
-            entity.ModifiedBy,
-            entity.Modified,
-            entity.Version);
+        return await mediator.Send(new PersonToPersonDtoQuery(person));
     }
 }
