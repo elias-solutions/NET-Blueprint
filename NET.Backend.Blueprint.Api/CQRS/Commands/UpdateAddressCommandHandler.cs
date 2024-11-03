@@ -13,14 +13,14 @@ public class UpdateAddressCommandHandler(IMediator mediator, Repository<Address>
 {
     public async Task Handle(UpdateAddressCommand request, CancellationToken cancellationToken)
     {
-        var dbAddress = await mediator.Send(new GetAddressByIdQuery(request.AddressDto.Id), cancellationToken);
+        var address = await mediator.Send(new GetAddressByIdQuery(request.AddressDto.Id), cancellationToken);
 
-        dbAddress.City = request.AddressDto.City;
-        dbAddress.Number = request.AddressDto.Number;
-        dbAddress.PostalCode = request.AddressDto.PostalCode;
-        dbAddress.Street = request.AddressDto.Street;
+        address.City = request.AddressDto.City;
+        address.Number = request.AddressDto.Number;
+        address.PostalCode = request.AddressDto.PostalCode;
+        address.Street = request.AddressDto.Street;
 
-        await repository.UpdateAsync(dbAddress);
+        await repository.UpdateAsync(address);
         await repository.SaveChangesAsync();
     }
 }
