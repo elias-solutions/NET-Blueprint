@@ -9,22 +9,15 @@ namespace NET.Backend.Blueprint.Api.CQRS.Commands;
 
 public record UpdatePersonCommand(PersonDto PersonDto) : IRequest;
 
-public class UpdatePersonCommandHandler : IRequestHandler<UpdatePersonCommand>
+public class UpdatePersonCommandHandler(
+    Repository<Person> repository,
+    IMediator mediator,
+    StatusChangeHub statusChangeHub)
+    : IRequestHandler<UpdatePersonCommand>
 {
-    private readonly Repository<Person> _repository;
-    private readonly IMediator _mediator;
-    private readonly StatusChangeHub _statusChangeHub;
-
-    public UpdatePersonCommandHandler(Repository<Person> repository, IMediator mediator, StatusChangeHub statusChangeHub)
-    {
-        _repository = repository;
-        _mediator = mediator;
-        _statusChangeHub = statusChangeHub;
-    }
-
     public async Task Handle(UpdatePersonCommand request, CancellationToken cancellationToken)
     {
-        var dbEntity = await _mediator.Send(new GetPersonByIdQuery(request.PersonDto.Id), cancellationToken);
+        var dbEntity = await mediator.Send(new GetPersonByIdQuery(request.PersonDto.Id), cancellationToken);
         dbEntity.FirstName = request.PersonDto.FirstName;
         dbEntity.LastName = request.PersonDto.LastName;
         dbEntity.Birthday = request.PersonDto.Birthday;
@@ -34,9 +27,9 @@ public class UpdatePersonCommandHandler : IRequestHandler<UpdatePersonCommand>
         EntitiesToDelete(request, dbEntity);
         EntitiesToAdd(request, dbEntity);
 
-        await _repository.UpdateAsync(dbEntity);
-        await _repository.SaveChangesAsync();
-        await _statusChangeHub.SendMessage(dbEntity.Id, nameof(Person), "updated");
+        await repository.UpdateAsync(dbEntity);
+        await repository.SaveChangesAsync();
+        await statusChangeHub.SendMessage(dbEntity.Id, nameof(Person), "updated");
     }
 
     private void EntitiesToUpdate(UpdatePersonCommand request, Person dbEntity)

@@ -10,18 +10,12 @@ namespace NET.Backend.Blueprint.Api.CQRS.Queries;
 
 public record GetPersonDtoByIdQuery(Guid PersonId) : IRequest<PersonDto>;
 
-public class GetPersonDtoByIdQueryHandler : IRequestHandler<GetPersonDtoByIdQuery, PersonDto>
+public class GetPersonDtoByIdQueryHandler(Repository<Person> repository)
+    : IRequestHandler<GetPersonDtoByIdQuery, PersonDto>
 {
-    private readonly Repository<Person> _repository;
-
-    public GetPersonDtoByIdQueryHandler(Repository<Person> repository)
-    {
-        _repository = repository;
-    }
-
     public async Task<PersonDto> Handle(GetPersonDtoByIdQuery request, CancellationToken cancellationToken)
     {
-        var person =  await _repository.FirstOrDefaultAsync(
+        var person =  await repository.FirstOrDefaultAsync(
                           person => person.Id == request.PersonId, 
                           person => person.Include(x => x.Addresses)) ?? 
                       throw new ProblemDetailsException(

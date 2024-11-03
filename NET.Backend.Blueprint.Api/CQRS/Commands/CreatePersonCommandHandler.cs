@@ -9,53 +9,36 @@ namespace NET.Backend.Blueprint.Api.CQRS.Commands;
 
 public record CreatePersonCommand(CreatePersonRequest CreatePersonRequest) : IRequest<PersonDto>;
 
-public class CreatePersonCommandHandler : IRequestHandler<CreatePersonCommand, PersonDto>
+public class CreatePersonCommandHandler(
+    Repository<Person> personRepository,
+    StatusChangeHub statusChangeHub,
+    IMediator mediator)
+    : IRequestHandler<CreatePersonCommand, PersonDto>
 {
-    private readonly Repository<Person> _personRepository;
-    private readonly Repository<Address> _addressRepository;
-    private readonly StatusChangeHub _statusChangeHub;
-    private readonly IMediator _mediator;
-
-    public CreatePersonCommandHandler(
-        Repository<Person> personRepository, 
-        Repository<Address> addressRepository,
-        StatusChangeHub statusChangeHub,
-        IMediator mediator)
-    {
-        _personRepository = personRepository;
-        _addressRepository = addressRepository;
-        _statusChangeHub = statusChangeHub;
-        _mediator = mediator;
-    }
-
     public async Task<PersonDto> Handle(CreatePersonCommand request, CancellationToken cancellationToken)
     {
-        var createAddresses = request.CreatePersonRequest.Addresses;
-        var createPerson = request.CreatePersonRequest;
-        var collection = await CreateAddressesAsync(createAddresses);
-        var entity = new Person
-        {
-            FirstName = createPerson.FirstName,
-            LastName = createPerson.LastName,
-            Birthday = createPerson.Birthday,
-            Addresses = collection.ToList(),
-        };
+        var entity = CreatePerson(request);
 
-        var person = await _personRepository.AddAsync(entity);
-        await _personRepository.SaveChangesAsync();
-        await _statusChangeHub.SendMessage(entity.Id, nameof(person), "added");
-
-        return await _mediator.Send(new GetPersonDtoByIdQuery(person.Entity.Id), cancellationToken);
+        var person = await personRepository.AddAsync(entity);
+        await personRepository.SaveChangesAsync();
+        await statusChangeHub.SendMessage(entity.Id, nameof(person), "added");
+        return await mediator.Send(new GetPersonDtoByIdQuery(person.Entity.Id), cancellationToken);
     }
 
-    private async Task<IEnumerable<Address>> CreateAddressesAsync(IEnumerable<CreateAddressRequest> addresses)
+    private static Person CreatePerson(CreatePersonCommand request)
     {
-        var entities = addresses.Select(x => new Address { City = x.City, Number = x.Number, PostalCode = x.PostalCode, Street = x.Street }).ToList();
-        foreach (var address in entities)
+        var entity = new Person
         {
-            await _addressRepository.AddAsync(address);
-        }
+            FirstName = request.CreatePersonRequest.FirstName,
+            LastName = request.CreatePersonRequest.LastName,
+            Birthday = request.CreatePersonRequest.Birthday,
+            Addresses = request.CreatePersonRequest.Addresses.Select(CreateAddress).ToList()
+        };
+        return entity;
+    }
 
-        return entities;
+    private static Address CreateAddress(CreateAddressRequest x)
+    {
+        return new Address { City = x.City, Number = x.Number, PostalCode = x.PostalCode, Street = x.Street };
     }
 }

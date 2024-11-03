@@ -13,15 +13,8 @@ namespace NET.Backend.Blueprint.Api.Controllers.V1;
 [Authorize(Roles = Roles.Admin)]
 [Route("api/v{version:apiVersion}/addresses")]
 [ApiVersion("1.0")]
-public class AddressesController : ControllerBase
+public class AddressesController(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-
-    public AddressesController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [HttpPut("{id}")]
     [ProducesResponseType((int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -32,7 +25,7 @@ public class AddressesController : ControllerBase
             BadRequest($"Provided Id '{id}' and AddressId '{addressDto.Id}' are not equal.'");
         }
 
-        await _mediator.Send(new UpdateAddressCommand(addressDto));
-        return await _mediator.Send(new GetAddressDtoByIdQuery(addressDto.Id));
+        await mediator.Send(new UpdateAddressCommand(addressDto));
+        return await mediator.Send(new GetAddressDtoByIdQuery(addressDto.Id));
     }
 }

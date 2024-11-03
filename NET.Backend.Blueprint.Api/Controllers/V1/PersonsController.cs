@@ -13,20 +13,13 @@ namespace NET.Backend.Blueprint.Api.Controllers.V1
     [Authorize(Roles = Roles.Admin)]
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/persons")]
-    public class PersonsController : ControllerBase
+    public class PersonsController(IMediator mediator) : ControllerBase
     {
-        private readonly IMediator _mediator;
-
-        public PersonsController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
-
         [HttpGet]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IEnumerable<PersonDto>> GetPersonsV1Async()
         {
-            var result = await _mediator.Send(new GetPersonDtosQuery());
+            var result = await mediator.Send(new GetPersonDtosQuery());
             return result;
         }
 
@@ -35,7 +28,7 @@ namespace NET.Backend.Blueprint.Api.Controllers.V1
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<PersonDto> GetPersonByIdAsync(Guid id)
         {
-            var result = await _mediator.Send(new GetPersonDtoByIdQuery(id));
+            var result = await mediator.Send(new GetPersonDtoByIdQuery(id));
             return result;
         }
 
@@ -44,7 +37,7 @@ namespace NET.Backend.Blueprint.Api.Controllers.V1
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<PersonDto> CreatePersonAsync([FromBody] CreatePersonRequest request)
         {
-            var result = await _mediator.Send(new CreatePersonCommand(request));
+            var result = await mediator.Send(new CreatePersonCommand(request));
             return result;
         }
 
@@ -58,8 +51,8 @@ namespace NET.Backend.Blueprint.Api.Controllers.V1
                 BadRequest($"Provided Id '{id}' and AddressId '{personDto.Id}' are not equal.'");
             }
 
-            await _mediator.Send(new UpdatePersonCommand(personDto));
-            return await _mediator.Send(new GetPersonDtoByIdQuery(id));
+            await mediator.Send(new UpdatePersonCommand(personDto));
+            return await mediator.Send(new GetPersonDtoByIdQuery(id));
         }
 
         [HttpDelete("{id}")]
@@ -67,7 +60,7 @@ namespace NET.Backend.Blueprint.Api.Controllers.V1
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task DeletePersonByIdAsync(Guid id)
         {
-            await _mediator.Send(new DeletePersonByIdCommand(id));
+            await mediator.Send(new DeletePersonByIdCommand(id));
         }
     }
 }

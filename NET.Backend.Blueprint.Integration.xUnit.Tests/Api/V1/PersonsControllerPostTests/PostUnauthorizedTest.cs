@@ -6,20 +6,14 @@ using Xunit;
 namespace NET.Backend.Blueprint.Integration.xUnit.Tests.Api.V1.PersonsControllerPostTests;
 
 [Collection(nameof(SharedTestCollection))]
-public class PostUnauthorizedTest
+public class PostUnauthorizedTest(IntegrationTestFixture fixture)
 {
-    private readonly IntegrationTestFixture _fixture;
     private const string Route = "/api/v1/persons";
 
-    public PostUnauthorizedTest(IntegrationTestFixture fixture)
-    {
-        _fixture = fixture;
-    }
-    
     [Fact]
     public async Task PersonController_Post_Unauthorized()
     {
-        var response = await _fixture.SendAnonymousAsync(HttpMethod.Post, Route);
+        var response = await fixture.SendAnonymousAsync(HttpMethod.Post, Route);
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 }

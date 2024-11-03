@@ -11,22 +11,14 @@ using NET.Backend.Blueprint.Extensions;
 
 namespace NET.Backend.Blueprint.Api.Repository
 {
-    public class Repository<TEntity> where TEntity : EntityBase
+    public class Repository<TEntity>(BlueprintDbContext context, IUserService userService)
+        where TEntity : EntityBase
     {
-        private readonly BlueprintDbContext _context;
-        private readonly IUserService _userService;
-
-        public Repository(BlueprintDbContext context, IUserService userService)
-        {
-            _context = context;
-            _userService = userService;
-        }
-
         public async Task<TEntity> GetAsync(Guid id, bool asNoTracking = false)
         {
             var entity = asNoTracking ?
-                await _context.Set<TEntity>().AsNoTracking().SingleOrDefaultAsync(entity => entity.Id == id) :
-                await _context.Set<TEntity>().SingleOrDefaultAsync(entity => entity.Id == id);
+                await context.Set<TEntity>().AsNoTracking().SingleOrDefaultAsync(entity => entity.Id == id) :
+                await context.Set<TEntity>().SingleOrDefaultAsync(entity => entity.Id == id);
 
             return entity ?? throw new ProblemDetailsException(HttpStatusCode.BadRequest, 
                 "No entity found", $"No entity with id '{id}' found.");
@@ -95,7 +87,7 @@ namespace NET.Backend.Blueprint.Api.Repository
         public async Task<IEnumerable<TEntity>> GetAllAsync(
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null)
         {
-            var query = _context.Set<TEntity>().AsQueryable();
+            var query = context.Set<TEntity>().AsQueryable();
 
             if (include != null)
             {
@@ -107,21 +99,21 @@ namespace NET.Backend.Blueprint.Api.Repository
 
         private async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            return await _context.Set<TEntity>().AsQueryable().AsNoTracking().AnyAsync(predicate);
+            return await context.Set<TEntity>().AsQueryable().AsNoTracking().AnyAsync(predicate);
         }
 
         public async Task<EntityEntry<TEntity>> AddAsync(TEntity entity)
         {
             entity.Created = DateTime.UtcNow.ToUtcDateTimeOffset();
-            entity.CreatedBy = _userService.GetCurrentUser()!.Id;
+            entity.CreatedBy = userService.GetCurrentUser()!.Id;
             entity.Modified = DateTimeOffset.MinValue;
             entity.ModifiedBy = Guid.Empty;
             entity.Version = Guid.NewGuid();
 
-            return await _context.Set<TEntity>().AddAsync(entity);
+            return await context.Set<TEntity>().AddAsync(entity);
         }
 
-        public async Task SaveChangesAsync() => await _context.SaveChangesAsync();
+        public async Task SaveChangesAsync() => await context.SaveChangesAsync();
 
         public async Task<TEntity> UpdateAsync(TEntity entity)
         {
@@ -135,10 +127,10 @@ namespace NET.Backend.Blueprint.Api.Repository
             entity.Created = entity.Created;
             entity.CreatedBy = entity.CreatedBy;
             entity.Modified = DateTime.UtcNow.ToUtcDateTimeOffset();
-            entity.ModifiedBy = _userService.GetCurrentUser()!.Id;
+            entity.ModifiedBy = userService.GetCurrentUser()!.Id;
             entity.Version = Guid.NewGuid();
 
-            _context.Set<TEntity>().Update(entity);
+            context.Set<TEntity>().Update(entity);
             return entity;
         }
 
@@ -151,12 +143,12 @@ namespace NET.Backend.Blueprint.Api.Repository
                     HttpStatusCode.BadRequest, $"Entity not found", $"No Entity found with id '{id}'");
             }
 
-            _context.Set<TEntity>().Remove(entity);
+            context.Set<TEntity>().Remove(entity);
         }
 
         private IQueryable<TEntity> GetEntitiesAsQueryable(Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include, bool asNoTracking)
         {
-            var query = _context.Set<TEntity>().AsQueryable();
+            var query = context.Set<TEntity>().AsQueryable();
 
             if (include != null)
             {

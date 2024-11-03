@@ -17,7 +17,7 @@ public class Startup(IConfiguration configuration)
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddSingleton<ErrorHandlingMiddleware>();
-        services.AddDbContextFactory<BlueprintDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("Database")));
+        services.AddDbContextFactory<BlueprintDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("Database")));
         services.AddScoped<IUserService, UserService>();
 
         services.AddScoped(typeof(Repository<>));

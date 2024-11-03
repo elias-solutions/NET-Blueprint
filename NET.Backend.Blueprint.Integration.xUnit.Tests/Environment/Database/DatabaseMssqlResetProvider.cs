@@ -4,10 +4,9 @@ using Respawn;
 
 namespace NET.Backend.Blueprint.Integration.xUnit.Tests.Environment.Database;
 
-public class DatabasePostgresResetProvider : IDatabaseResetProvider
+public class DatabaseMssqlResetProvider : IDatabaseResetProvider
 {
-    private readonly DbConnection _dbConnection = 
-        new SqlConnection("Server=localhost;Database=BlueprintDatabaseTest;User Id=dev;Password=dev;");
+    private readonly DbConnection _dbConnection = new SqlConnection("Server=localhost;Database=BlueprintDatabaseTest;TrustServerCertificate=True;Integrated Security=True;");
     private Respawner respawner = default!;
 
     public async Task InitializeAsync()
@@ -17,7 +16,10 @@ public class DatabasePostgresResetProvider : IDatabaseResetProvider
         respawner = await Respawner.CreateAsync(_dbConnection, options);
     }
 
-    public async Task ResetAsync() => await respawner.ResetAsync(_dbConnection);
+    public async Task ResetAsync()
+    {
+        await respawner.ResetAsync(_dbConnection);
+    }
 
     public async Task DisposeDbConnectionAsync() => await _dbConnection.DisposeAsync();
 }

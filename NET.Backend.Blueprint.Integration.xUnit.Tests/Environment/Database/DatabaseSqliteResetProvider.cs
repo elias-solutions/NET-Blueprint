@@ -4,20 +4,13 @@ using NET.Backend.Blueprint.Api.DataAccess;
 
 namespace NET.Backend.Blueprint.Integration.xUnit.Tests.Environment.Database;
 
-public class DatabaseSqliteResetProvider : IDatabaseResetProvider
+public class DatabaseSqliteResetProvider(IServiceProvider serviceProvider) : IDatabaseResetProvider
 {
-    private readonly IServiceProvider _serviceProvider;
-
-    public DatabaseSqliteResetProvider(IServiceProvider serviceProvider)
-    {
-        _serviceProvider = serviceProvider;
-    }
-
     public Task InitializeAsync() => Task.CompletedTask;
 
     public async Task ResetAsync()
     {
-        var scopeFactory = _serviceProvider.GetService<IServiceScopeFactory>()!;
+        var scopeFactory = serviceProvider.GetService<IServiceScopeFactory>()!;
         using var scope = scopeFactory.CreateScope();
         var context = scope.ServiceProvider.GetService<BlueprintDbContext>()!;
         await context.Database.EnsureCreatedAsync();

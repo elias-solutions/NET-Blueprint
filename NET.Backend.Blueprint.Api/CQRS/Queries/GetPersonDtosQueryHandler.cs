@@ -8,18 +8,12 @@ namespace NET.Backend.Blueprint.Api.CQRS.Queries;
 
 public record GetPersonDtosQuery : IRequest<IEnumerable<PersonDto>>;
 
-public class GetPersonDtosQueryHandler : IRequestHandler<GetPersonDtosQuery, IEnumerable<PersonDto>>
+public class GetPersonDtosQueryHandler(Repository<Person> repository)
+    : IRequestHandler<GetPersonDtosQuery, IEnumerable<PersonDto>>
 {
-    private readonly Repository<Person> _repository;
-
-    public GetPersonDtosQueryHandler(Repository<Person> repository)
-    {
-        _repository = repository;
-    }
-
     public async Task<IEnumerable<PersonDto>> Handle(GetPersonDtosQuery request, CancellationToken cancellationToken)
     {
-        var entities = await _repository.GetAllAsync(person => person.Include(x => x.Addresses));
+        var entities = await repository.GetAllAsync(person => person.Include(x => x.Addresses));
         return entities.Select(MapToPersonDto);
     }
 

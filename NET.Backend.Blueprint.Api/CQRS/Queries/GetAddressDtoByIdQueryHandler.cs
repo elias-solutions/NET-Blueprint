@@ -6,15 +6,11 @@ namespace NET.Backend.Blueprint.Api.CQRS.Queries;
 
 public record GetAddressDtoByIdQuery(Guid AddressId) : IRequest<AddressDto>;
 
-public class GetAddressDtoByIdQueryHandler : IRequestHandler<GetAddressDtoByIdQuery, AddressDto>
+public class GetAddressDtoByIdQueryHandler(IMediator mediator) : IRequestHandler<GetAddressDtoByIdQuery, AddressDto>
 {
-    private readonly IMediator _mediator;
-
-    public GetAddressDtoByIdQueryHandler(IMediator mediator) => _mediator = mediator;
-
     public async Task<AddressDto> Handle(GetAddressDtoByIdQuery request, CancellationToken cancellationToken)
     {
-        var address = await _mediator.Send(new GetAddressByIdQuery(request.AddressId), cancellationToken);
+        var address = await mediator.Send(new GetAddressByIdQuery(request.AddressId), cancellationToken);
         return Map(address);
     }
 

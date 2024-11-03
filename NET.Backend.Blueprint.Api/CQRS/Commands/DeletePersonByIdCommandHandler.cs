@@ -7,21 +7,13 @@ namespace NET.Backend.Blueprint.Api.CQRS.Commands;
 
 public record DeletePersonByIdCommand(Guid PersonId) : IRequest;
 
-public class DeletePersonByIdCommandHandler : IRequestHandler<DeletePersonByIdCommand>
+public class DeletePersonByIdCommandHandler(Repository<Person> repository, StatusChangeHub statusChangeHub)
+    : IRequestHandler<DeletePersonByIdCommand>
 {
-    private readonly Repository<Person> _repository;
-    private readonly StatusChangeHub _statusChangeHub;
-
-    public DeletePersonByIdCommandHandler(Repository<Person> repository, StatusChangeHub statusChangeHub)
-    {
-        _repository = repository;
-        _statusChangeHub = statusChangeHub;
-    }
-
     public async Task Handle(DeletePersonByIdCommand request, CancellationToken cancellationToken)
     {
-        await _repository.RemoveAsync(request.PersonId);
-        await _repository.SaveChangesAsync();
-        await _statusChangeHub.SendMessage(request.PersonId, nameof(Person), "deleted");
+        await repository.RemoveAsync(request.PersonId);
+        await repository.SaveChangesAsync();
+        await statusChangeHub.SendMessage(request.PersonId, nameof(Person), "deleted");
     }
 }

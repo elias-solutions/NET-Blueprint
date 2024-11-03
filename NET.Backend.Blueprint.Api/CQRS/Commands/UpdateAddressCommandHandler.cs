@@ -8,27 +8,19 @@ namespace NET.Backend.Blueprint.Api.CQRS.Commands;
 
 public record UpdateAddressCommand(AddressDto AddressDto) : IRequest;
 
-public class UpdateAddressCommandHandler : IRequestHandler<UpdateAddressCommand>
+public class UpdateAddressCommandHandler(IMediator mediator, Repository<Address> repository) 
+    : IRequestHandler<UpdateAddressCommand>
 {
-    private readonly IMediator _mediator;
-    private readonly Repository<Address> _repository;
-
-    public UpdateAddressCommandHandler(IMediator mediator, Repository<Address> repository)
-    {
-        _mediator = mediator;
-        _repository = repository;
-    }
-
     public async Task Handle(UpdateAddressCommand request, CancellationToken cancellationToken)
     {
-        var dbAddress = await _mediator.Send(new GetAddressByIdQuery(request.AddressDto.Id), cancellationToken);
+        var dbAddress = await mediator.Send(new GetAddressByIdQuery(request.AddressDto.Id), cancellationToken);
 
         dbAddress.City = request.AddressDto.City;
         dbAddress.Number = request.AddressDto.Number;
         dbAddress.PostalCode = request.AddressDto.PostalCode;
         dbAddress.Street = request.AddressDto.Street;
 
-        await _repository.UpdateAsync(dbAddress);
-        await _repository.SaveChangesAsync();
+        await repository.UpdateAsync(dbAddress);
+        await repository.SaveChangesAsync();
     }
 }
