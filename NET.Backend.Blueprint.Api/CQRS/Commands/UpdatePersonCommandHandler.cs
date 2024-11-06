@@ -1,76 +1,63 @@
 ﻿using MediatR;
-using NET.Backend.Blueprint.Api.CQRS.Queries;
+using Microsoft.EntityFrameworkCore;
 using NET.Backend.Blueprint.Api.Entities;
-using NET.Backend.Blueprint.Api.Model;
+using NET.Backend.Blueprint.Api.ErrorHandling;
+using NET.Backend.Blueprint.Api.Extensions;
+using NET.Backend.Blueprint.Api.Model.Commands;
 using NET.Backend.Blueprint.Api.Repository;
 using NET.Backend.Blueprint.Api.SignalR;
+using System.Net;
 
 namespace NET.Backend.Blueprint.Api.CQRS.Commands;
-
 
 public record UpdatePersonCommand(UpdatePersonRequest Request) : IRequest;
 
 public class UpdatePersonCommandHandler(
     Repository<Person> repository,
-    IMediator mediator,
     StatusChangeHub statusChangeHub)
     : IRequestHandler<UpdatePersonCommand>
 {
     public async Task Handle(UpdatePersonCommand request, CancellationToken cancellationToken)
     {
-        var dbEntity = await mediator.Send(new GetPersonByIdQuery(request.Request.Id), cancellationToken);
-        dbEntity.FirstName = request.Request.FirstName;
-        dbEntity.LastName = request.Request.LastName;
-        dbEntity.Birthday = request.Request.Birthday;
-        dbEntity.Version = request.Request.Version;
+        var person = await repository.FirstOrDefaultAsync(
+                   person => person.Id == request.Request.Id,
+                   person => person.Include(x => x.Addresses)) ??
+               throw new ProblemDetailsException(
+                   HttpStatusCode.BadRequest, "No person found", $"No person with id '{request.Request.Id}' found.");
 
-        EntitiesToUpdate(request, dbEntity);
-        EntitiesToDelete(request, dbEntity);
-        EntitiesToAdd(request, dbEntity);
+        person.FirstName = request.Request.FirstName;
+        person.LastName = request.Request.LastName;
+        person.Birthday = request.Request.Birthday;
+        person.Version = request.Request.Version;
 
-        await repository.UpdateAsync(dbEntity);
+        var addressIdsEdit = person.Addresses.Select(x => x.Id).Intersect(request.Request.Addresses.Select(x => x.AddressId));
+        var dbAddresses = person.Addresses.Where(x => addressIdsEdit.Contains(x.Id));
+        foreach (var dbAddress in dbAddresses)
+        {
+            var newAddress = request.Request.Addresses.Single(x => x.AddressId == dbAddress.Id);
+            dbAddress.City = newAddress.City;
+            dbAddress.Number = newAddress.Number;
+            dbAddress.Street = newAddress.Street;
+            dbAddress.PostalCode = newAddress.PostalCode;
+        }
+
+        var addressIdsToDelete = person.Addresses
+            .Select(x => x.Id)
+            .Except(request.Request.Addresses.Select(x => x.AddressId))
+            .ToList();
+        person.Addresses
+            .Where(x => addressIdsToDelete.Contains(x.Id))
+            .ToList()
+            .ForEach(x => person.Addresses.Remove(x));
+
+        request.Request.Addresses
+            .Where(updateAddress => updateAddress.AddressId == Guid.Empty)
+            .Select(updateAddress => updateAddress.ToNewAddress())
+            .ToList()
+            .ForEach(person.Addresses.Add);
+
+        await repository.UpdateAsync(person);
         await repository.SaveChangesAsync();
-        await statusChangeHub.SendMessage(dbEntity.Id, nameof(Person), "updated");
-    }
-
-    private void EntitiesToUpdate(UpdatePersonCommand request, Person dbEntity)
-    {
-        var entitiesToUpdate = dbEntity.Addresses.Select(x => x.Id).Intersect(request.Request.Addresses.Select(x => x.AddressId));
-        foreach (var id in entitiesToUpdate)
-        {
-            var newAddress = request.Request.Addresses.Single(x => x.AddressId == id);
-            var oldAddress = dbEntity.Addresses.Single(x => x.Id == id);
-            UpdateAddress(oldAddress, newAddress);
-        }
-    }
-
-    private static void EntitiesToAdd(UpdatePersonCommand request, Person dbEntity)
-    {
-        var entitiesToAdd = request.Request.Addresses.Select(x => x.AddressId).Except(dbEntity.Addresses.Select(x => x.Id));
-        foreach (var id in entitiesToAdd)
-        {
-            var address = request.Request.Addresses.Single(x => x.AddressId == id);
-            var newAddress = new Address 
-                { City = address.City, PostalCode = address.PostalCode, Number = address.Number, Street = address.Street };
-            dbEntity.Addresses.Add(newAddress);
-        }
-    }
-
-    private static void EntitiesToDelete(UpdatePersonCommand request, Person dbEntity)
-    {
-        var entitiesToDelete = dbEntity.Addresses.Select(x => x.Id).Except(request.Request.Addresses.Select(x => x.AddressId));
-        foreach (var id in entitiesToDelete)
-        {
-            var dbAddress = dbEntity.Addresses.Single(x => x.Id == id);
-            dbEntity.Addresses.Remove(dbAddress);
-        }
-    }
-
-    private void UpdateAddress(Address address, UpdateAddressRequest addressRequest)
-    {   
-        address.City = addressRequest.City;
-        address.Number = addressRequest.Number;
-        address.Street = addressRequest.Street;
-        address.PostalCode = addressRequest.PostalCode;
+        await statusChangeHub.SendMessage(person.Id, nameof(Person), "updated");
     }
 }

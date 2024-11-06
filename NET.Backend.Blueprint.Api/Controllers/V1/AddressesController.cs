@@ -5,7 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using NET.Backend.Blueprint.Api.Authorization;
 using NET.Backend.Blueprint.Api.CQRS.Commands;
 using NET.Backend.Blueprint.Api.CQRS.Queries;
-using NET.Backend.Blueprint.Api.Model;
+using NET.Backend.Blueprint.Api.Model.Commands;
+using NET.Backend.Blueprint.Api.Model.Queries;
 
 namespace NET.Backend.Blueprint.Api.Controllers.V1;
 
@@ -22,7 +23,7 @@ public class AddressesController(IMediator mediator) : ControllerBase
     {
         if (id != request.AddressId)
         {
-            BadRequest($"Provided Id '{id}' and AddressId '{request.AddressId}' are not equal.'");
+            BadRequest($"Provided AddressId '{id}' and AddressId '{request.AddressId}' are not equal.'");
         }
 
         await mediator.Send(new UpdateAddressCommand(request));

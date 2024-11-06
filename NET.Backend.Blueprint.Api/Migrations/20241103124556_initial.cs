@@ -53,7 +53,7 @@ namespace NET.Backend.Blueprint.Api.Migrations
                         name: "FK_Addresses_Persons_PersonId",
                         column: x => x.PersonId,
                         principalTable: "Persons",
-                        principalColumn: "Id",
+                        principalColumn: "AddressId",
                         onDelete: ReferentialAction.Cascade);
                 });
 

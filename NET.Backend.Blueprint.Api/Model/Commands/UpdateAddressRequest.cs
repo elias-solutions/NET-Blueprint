@@ -1,8 +1,9 @@
-﻿namespace NET.Backend.Blueprint.Api.Model;
+﻿namespace NET.Backend.Blueprint.Api.Model.Commands;
 
 public record UpdateAddressRequest(
     Guid AddressId,
     string Street,
     string Number,
     string City,
-    string PostalCode);
+    string PostalCode,
+    Guid Version);

@@ -1,4 +1,4 @@
-﻿namespace NET.Backend.Blueprint.Api.Model;
+﻿namespace NET.Backend.Blueprint.Api.Model.Queries;
 
 public record GetAddressResponse
 (
@@ -12,4 +12,3 @@ public record GetAddressResponse
     Guid? ModifiedBy,
     DateTimeOffset? Modified,
     Guid Version);
-

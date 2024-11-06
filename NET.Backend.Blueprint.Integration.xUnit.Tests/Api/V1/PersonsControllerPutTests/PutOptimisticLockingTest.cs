@@ -1,7 +1,7 @@
 using System.Net;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using NET.Backend.Blueprint.Api.Model;
+using NET.Backend.Blueprint.Api.Model.Queries;
 using NET.Backend.Blueprint.Extensions;
 using NET.Backend.Blueprint.Integration.xUnit.Tests.Environment;
 using NET.Backend.Blueprint.Integration.xUnit.Tests.Extensions;
@@ -46,8 +46,8 @@ public class PutOptimisticLockingTest : IAsyncLifetime
         problemDetails.Should().BeEquivalentTo(new ProblemDetails
         {
             Status = (int)HttpStatusCode.BadRequest,
-            Title = "BadRequest - Entity version conflict",
-            Detail = "Entity has been updated through other user."
+            Title = "BadRequest - EntityAddress version conflict",
+            Detail = "EntityAddress has been updated through other user."
         });
     }
 }

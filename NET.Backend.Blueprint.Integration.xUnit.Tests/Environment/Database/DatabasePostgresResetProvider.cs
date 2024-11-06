@@ -7,7 +7,7 @@ namespace NET.Backend.Blueprint.Integration.xUnit.Tests.Environment.Database;
 public class DatabasePostgresResetProvider : IDatabaseResetProvider
 {
     private readonly DbConnection _dbConnection = 
-        new SqlConnection("Server=localhost;Database=BlueprintDatabaseTest;User Id=dev;Password=dev;");
+        new SqlConnection("Server=localhost;Database=BlueprintDatabaseTest;User AddressId=dev;Password=dev;");
     private Respawner respawner = default!;
 
     public async Task InitializeAsync()

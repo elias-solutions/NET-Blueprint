@@ -1,10 +1,10 @@
-﻿namespace NET.Backend.Blueprint.Api.Model;
+﻿namespace NET.Backend.Blueprint.Api.Model.Queries;
 
 public record GetPersonResponse
 (
-    Guid Id, 
-    string FirstName, 
-    string LastName, 
+    Guid Id,
+    string FirstName,
+    string LastName,
     DateTimeOffset Birthday,
     IEnumerable<GetAddressResponse> Addresses,
     Guid CreatedBy,

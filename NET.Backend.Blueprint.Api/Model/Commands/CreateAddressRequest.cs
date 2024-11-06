@@ -1,4 +1,4 @@
-﻿namespace NET.Backend.Blueprint.Api.Model;
+﻿namespace NET.Backend.Blueprint.Api.Model.Commands;
 
 public record CreateAddressRequest(
     string Street,

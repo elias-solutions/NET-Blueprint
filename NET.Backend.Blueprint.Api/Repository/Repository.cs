@@ -121,7 +121,7 @@ namespace NET.Backend.Blueprint.Api.Repository
             if (hasVersionConflict)
             {
                 throw new ProblemDetailsException(
-                    HttpStatusCode.BadRequest, "Entity version conflict", "Entity has been updated through other user.");
+                    HttpStatusCode.BadRequest, "EntityAddress version conflict", "EntityAddress has been updated through other user.");
             }
 
             entity.Created = entity.Created;
@@ -140,7 +140,7 @@ namespace NET.Backend.Blueprint.Api.Repository
             if (entity == null)
             {
                 throw new ProblemDetailsException(
-                    HttpStatusCode.BadRequest, $"Entity not found", $"No Entity found with id '{id}'");
+                    HttpStatusCode.BadRequest, $"EntityAddress not found", $"No EntityAddress found with id '{id}'");
             }
 
             context.Set<TEntity>().Remove(entity);

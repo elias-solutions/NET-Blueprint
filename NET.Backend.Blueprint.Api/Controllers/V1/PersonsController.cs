@@ -5,7 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using NET.Backend.Blueprint.Api.Authorization;
 using NET.Backend.Blueprint.Api.CQRS.Commands;
 using NET.Backend.Blueprint.Api.CQRS.Queries;
-using NET.Backend.Blueprint.Api.Model;
+using NET.Backend.Blueprint.Api.Model.Commands;
+using NET.Backend.Blueprint.Api.Model.Queries;
 
 namespace NET.Backend.Blueprint.Api.Controllers.V1
 {
@@ -19,7 +20,7 @@ namespace NET.Backend.Blueprint.Api.Controllers.V1
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IEnumerable<GetPersonResponse>> GetPersonsV1Async()
         {
-            var result = await mediator.Send(new GetPersonsRequestQuery());
+            var result = await mediator.Send(new GetPersonsResponseQuery());
             return result;
         }
 
@@ -48,7 +49,7 @@ namespace NET.Backend.Blueprint.Api.Controllers.V1
         {
             if (id != request.Id)
             {
-                BadRequest($"Provided Id '{id}' and AddressId '{request.Id}' are not equal.'");
+                BadRequest($"Provided AddressId '{id}' and AddressId '{request.Id}' are not equal.'");
             }
 
             await mediator.Send(new UpdatePersonCommand(request));

@@ -1,4 +1,4 @@
-﻿namespace NET.Backend.Blueprint.Api.Model;
+﻿namespace NET.Backend.Blueprint.Api.Model.Commands;
 
 public record UpdatePersonRequest
 (
@@ -7,8 +7,4 @@ public record UpdatePersonRequest
     string LastName,
     DateTimeOffset Birthday,
     IEnumerable<UpdateAddressRequest> Addresses,
-    Guid CreatedBy,
-    DateTimeOffset Created,
-    Guid? ModifiedBy,
-    DateTimeOffset? Modified,
     Guid Version);

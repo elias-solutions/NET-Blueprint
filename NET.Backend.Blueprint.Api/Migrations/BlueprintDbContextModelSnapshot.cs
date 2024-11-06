@@ -24,7 +24,7 @@ namespace NET.Backend.Blueprint.Api.Migrations
 
             modelBuilder.Entity("NET.Backend.Blueprint.Api.Entities.Address", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("AddressId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -62,7 +62,7 @@ namespace NET.Backend.Blueprint.Api.Migrations
                     b.Property<Guid>("Version")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("Id");
+                    b.HasKey("AddressId");
 
                     b.HasIndex("PersonId");
 
@@ -71,7 +71,7 @@ namespace NET.Backend.Blueprint.Api.Migrations
 
             modelBuilder.Entity("NET.Backend.Blueprint.Api.Entities.Person", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("AddressId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -101,7 +101,7 @@ namespace NET.Backend.Blueprint.Api.Migrations
                     b.Property<Guid>("Version")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("Id");
+                    b.HasKey("AddressId");
 
                     b.ToTable("Persons");
                 });
