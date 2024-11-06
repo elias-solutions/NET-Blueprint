@@ -1,7 +1,7 @@
 ﻿using MediatR;
+using NET.Backend.Blueprint.Api.DataAccess;
 using NET.Backend.Blueprint.Api.Entities;
 using NET.Backend.Blueprint.Api.Model.Commands;
-using NET.Backend.Blueprint.Api.Repository;
 
 namespace NET.Backend.Blueprint.Api.CQRS.Commands;
 

@@ -4,12 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Query;
 using NET.Backend.Blueprint.Api.Authorization;
-using NET.Backend.Blueprint.Api.DataAccess;
 using NET.Backend.Blueprint.Api.Entities.Base;
 using NET.Backend.Blueprint.Api.ErrorHandling;
 using NET.Backend.Blueprint.Extensions;
 
-namespace NET.Backend.Blueprint.Api.Repository
+namespace NET.Backend.Blueprint.Api.DataAccess
 {
     public class Repository<TEntity>(BlueprintDbContext context, IUserService userService)
         where TEntity : EntityBase
@@ -20,7 +19,7 @@ namespace NET.Backend.Blueprint.Api.Repository
                 await context.Set<TEntity>().AsNoTracking().SingleOrDefaultAsync(entity => entity.Id == id) :
                 await context.Set<TEntity>().SingleOrDefaultAsync(entity => entity.Id == id);
 
-            return entity ?? throw new ProblemDetailsException(HttpStatusCode.BadRequest, 
+            return entity ?? throw new ProblemDetailsException(HttpStatusCode.BadRequest,
                 "No entity found", $"No entity with id '{id}' found.");
         }
 
