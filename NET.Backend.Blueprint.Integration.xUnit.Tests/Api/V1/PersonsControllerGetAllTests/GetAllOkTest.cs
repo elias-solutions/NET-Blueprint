@@ -13,7 +13,7 @@ public class GetAllOkTest : IAsyncLifetime
     private const string Route = "/api/v1/persons";
     private readonly IntegrationTestFixture _fixture;
     private readonly EmbeddedJsonResourceProvider _jsonResourceProvider;
-    private PersonDto _dbPerson = default!;
+    private GetPersonRequest _dbGetPerson = default!;
 
     public GetAllOkTest(IntegrationTestFixture fixture)
     {
@@ -25,7 +25,7 @@ public class GetAllOkTest : IAsyncLifetime
         await _fixture.DatabaseResetProvider.ResetAsync();
         var content = await _jsonResourceProvider.CreateHttpContentByResourceAsync("Post_Person_Request.json");
         var response = await _fixture.SendAsync(HttpMethod.Post, Route, content, TestUsers.Admin);  
-        _dbPerson = await response.Content.ReadAsync<PersonDto>(); 
+        _dbGetPerson = await response.Content.ReadAsync<GetPersonRequest>(); 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
     
@@ -37,8 +37,8 @@ public class GetAllOkTest : IAsyncLifetime
         var response = await _fixture.SendAsync(HttpMethod.Get, Route, TestUsers.Admin);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var result = await response.Content.ReadAsync<IEnumerable<PersonDto>>();
-        result.Should().BeEquivalentTo(new[] { _dbPerson }, options => options
+        var result = await response.Content.ReadAsync<IEnumerable<GetPersonRequest>>();
+        result.Should().BeEquivalentTo(new[] { _dbGetPerson }, options => options
             .Using<DateTimeOffset>(ctx => ctx.Subject.Should().BeCloseTo(ctx.Expectation, new TimeSpan(1000)))
             .WhenTypeIs<DateTimeOffset>());
     }

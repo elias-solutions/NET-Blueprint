@@ -30,9 +30,9 @@ public class PostOkTest : IAsyncLifetime
         var content = await _jsonResourceProvider.CreateHttpContentByResourceAsync("Post_Person_Request.json");
         var response = await _fixture.SendAsync(HttpMethod.Post, Route, content, TestUsers.Admin);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var dbPerson = await response.Content.ReadAsync<PersonDto>();
+        var dbPerson = await response.Content.ReadAsync<GetPersonRequest>();
         
-        var expectedPerson =  await _jsonResourceProvider.CreateObjectByResourceAsync<PersonDto>("Post_Person_Response.json");
+        var expectedPerson =  await _jsonResourceProvider.CreateObjectByResourceAsync<GetPersonRequest>("Post_Person_Response.json");
         dbPerson.Should().BeEquivalentTo(expectedPerson, options => options
             .Excluding(entity => entity.Id)
             .Excluding(entity => entity.Created)

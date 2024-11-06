@@ -4,19 +4,19 @@ using NET.Backend.Blueprint.Api.Model;
 
 namespace NET.Backend.Blueprint.Api.CQRS.Queries;
 
-public record GetAddressDtoByIdQuery(Guid AddressId) : IRequest<AddressDto>;
+public record GetAddressResponseByIdQuery(Guid AddressId) : IRequest<GetAddressResponse>;
 
-public class GetAddressDtoByIdQueryHandler(IMediator mediator) : IRequestHandler<GetAddressDtoByIdQuery, AddressDto>
+public class GetAddressResponseByIdQueryHandler(IMediator mediator) : IRequestHandler<GetAddressResponseByIdQuery, GetAddressResponse>
 {
-    public async Task<AddressDto> Handle(GetAddressDtoByIdQuery request, CancellationToken cancellationToken)
+    public async Task<GetAddressResponse> Handle(GetAddressResponseByIdQuery request, CancellationToken cancellationToken)
     {
         var address = await mediator.Send(new GetAddressByIdQuery(request.AddressId), cancellationToken);
         return Map(address);
     }
 
-    private AddressDto Map(Address address)
+    private GetAddressResponse Map(Address address)
     {
-        return new AddressDto(
+        return new GetAddressResponse(
             address.Id,
             address.Street,
             address.Number,

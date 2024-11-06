@@ -1,0 +1,14 @@
+﻿namespace NET.Backend.Blueprint.Api.Model;
+
+public record GetPersonResponse
+(
+    Guid Id, 
+    string FirstName, 
+    string LastName, 
+    DateTimeOffset Birthday,
+    IEnumerable<GetAddressResponse> Addresses,
+    Guid CreatedBy,
+    DateTimeOffset Created,
+    Guid? ModifiedBy,
+    DateTimeOffset? Modified,
+    Guid Version);

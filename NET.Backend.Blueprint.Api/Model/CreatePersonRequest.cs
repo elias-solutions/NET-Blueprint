@@ -6,4 +6,4 @@ public record CreatePersonRequest(
     string FirstName, 
     string LastName, 
     DateTimeOffset Birthday,
-    CreateAddressRequest[] Addresses) : IRequest<PersonDto>;
+    CreateAddressRequest[] Addresses) : IRequest<GetPersonRequest>;

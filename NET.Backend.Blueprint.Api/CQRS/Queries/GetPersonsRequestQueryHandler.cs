@@ -6,21 +6,20 @@ using NET.Backend.Blueprint.Api.Repository;
 
 namespace NET.Backend.Blueprint.Api.CQRS.Queries;
 
-public record GetPersonDtosQuery : IRequest<IEnumerable<PersonDto>>;
+public record GetPersonsRequestQuery : IRequest<IEnumerable<GetPersonResponse>>;
 
-public class GetPersonDtosQueryHandler(Repository<Person> repository)
-    : IRequestHandler<GetPersonDtosQuery, IEnumerable<PersonDto>>
+public class GetPersonsRequestQueryHandler(Repository<Person> repository) : IRequestHandler<GetPersonsRequestQuery, IEnumerable<GetPersonResponse>>
 {
-    public async Task<IEnumerable<PersonDto>> Handle(GetPersonDtosQuery request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<GetPersonResponse>> Handle(GetPersonsRequestQuery request, CancellationToken cancellationToken)
     {
         var entities = await repository.GetAllAsync(person => person.Include(x => x.Addresses));
         return entities.Select(MapToPersonDto);
     }
 
-    private PersonDto MapToPersonDto(Person person)
+    private GetPersonResponse MapToPersonDto(Person person)
     {
         var addressDto = person.Addresses.Select(MapAddress);
-        return new PersonDto(
+        return new GetPersonResponse(
             person.Id,
             person.FirstName,
             person.LastName,
@@ -33,9 +32,9 @@ public class GetPersonDtosQueryHandler(Repository<Person> repository)
             person.Version);
     }
 
-    private AddressDto MapAddress(Address entity)
+    private GetAddressResponse MapAddress(Address entity)
     {
-        return new AddressDto(
+        return new GetAddressResponse(
             entity.Id,
             entity.Street,
             entity.Number,

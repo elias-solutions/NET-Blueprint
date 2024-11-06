@@ -1,12 +1,12 @@
 ﻿namespace NET.Backend.Blueprint.Api.Model;
 
-public record AddressDto
+public record UpdatePersonRequest
 (
     Guid Id,
-    string Street,
-    string Number,
-    string City,
-    string PostalCode,
+    string FirstName,
+    string LastName,
+    DateTimeOffset Birthday,
+    IEnumerable<UpdateAddressRequest> Addresses,
     Guid CreatedBy,
     DateTimeOffset Created,
     Guid? ModifiedBy,

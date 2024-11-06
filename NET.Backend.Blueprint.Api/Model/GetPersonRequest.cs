@@ -1,12 +1,12 @@
 ﻿namespace NET.Backend.Blueprint.Api.Model
 {
-    public record PersonDto
+    public record GetPersonRequest
     (
-        Guid Id, 
-        string FirstName, 
-        string LastName, 
+        Guid Id,
+        string FirstName,
+        string LastName,
         DateTimeOffset Birthday,
-        IEnumerable<AddressDto> Addresses,
+        IEnumerable<GetAddressResponse> Addresses,
         Guid CreatedBy,
         DateTimeOffset Created,
         Guid? ModifiedBy,

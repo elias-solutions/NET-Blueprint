@@ -14,7 +14,7 @@ public class PutOkTest : IAsyncLifetime
     private const string Route = "/api/v1/persons";
     private readonly IntegrationTestFixture _fixture;
     private readonly EmbeddedJsonResourceProvider _jsonResourceProvider;
-    private PersonDto? _dbPerson;
+    private GetPersonRequest? _dbPerson;
 
     public PutOkTest(IntegrationTestFixture fixture)
     {
@@ -29,7 +29,7 @@ public class PutOkTest : IAsyncLifetime
         var content = await _jsonResourceProvider.CreateHttpContentByResourceAsync("Post_Person_Request.json");
         var response = await _fixture.SendAsync(HttpMethod.Post, Route, content, TestUsers.Admin);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        _dbPerson = await response.Content.ReadAsync<PersonDto>();
+        _dbPerson = await response.Content.ReadAsync<GetPersonRequest>();
     }
     
     public Task DisposeAsync() => Task.CompletedTask;
@@ -37,7 +37,7 @@ public class PutOkTest : IAsyncLifetime
     [Fact]
     public async Task PersonsController_Ok()
     {
-        var expectedPerson = await _jsonResourceProvider.CreateObjectByResourceAsync<PersonDto>("Put_Person_Request.json") with
+        var expectedPerson = await _jsonResourceProvider.CreateObjectByResourceAsync<GetPersonRequest>("Put_Person_Request.json") with
         {
             Id = _dbPerson!.Id, 
             Addresses = _dbPerson.Addresses.Select(address => address with { Id = address.Id }),
@@ -49,7 +49,7 @@ public class PutOkTest : IAsyncLifetime
         
         response = await _fixture.SendAsync(HttpMethod.Get, $"{Route}/{_dbPerson.Id}", TestUsers.Admin);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var person = await response.Content.ReadAsync<PersonDto>();
+        var person = await response.Content.ReadAsync<GetPersonRequest>();
         
         person.Should().BeEquivalentTo(expectedPerson, options => options
             .Excluding(x => x.Modified)
@@ -57,6 +57,7 @@ public class PutOkTest : IAsyncLifetime
             .Excluding(x => x.Version)
             .Excluding(x => x.Created)
             .Excluding(x => x.CreatedBy)
+            .For(x => x.Addresses).Exclude(x => x.Id)
             .For(x => x.Addresses).Exclude(x => x.Modified)
             .For(x => x.Addresses).Exclude(x => x.ModifiedBy)
             .Using<DateTimeOffset>(ctx => ctx.Subject.Should().BeCloseTo(ctx.Expectation, new TimeSpan(1000)))

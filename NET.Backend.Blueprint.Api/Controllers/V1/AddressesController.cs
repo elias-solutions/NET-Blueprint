@@ -18,14 +18,14 @@ public class AddressesController(IMediator mediator) : ControllerBase
     [HttpPut("{id}")]
     [ProducesResponseType((int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-    public async Task<AddressDto> UpdateAddressAsync(Guid id, AddressDto addressDto)
+    public async Task<GetAddressResponse> UpdateAddressAsync(Guid id, UpdateAddressRequest request)
     {
-        if (id != addressDto.Id)
+        if (id != request.AddressId)
         {
-            BadRequest($"Provided Id '{id}' and AddressId '{addressDto.Id}' are not equal.'");
+            BadRequest($"Provided Id '{id}' and AddressId '{request.AddressId}' are not equal.'");
         }
 
-        await mediator.Send(new UpdateAddressCommand(addressDto));
-        return await mediator.Send(new GetAddressDtoByIdQuery(addressDto.Id));
+        await mediator.Send(new UpdateAddressCommand(request));
+        return await mediator.Send(new GetAddressResponseByIdQuery(request.AddressId));
     }
 }

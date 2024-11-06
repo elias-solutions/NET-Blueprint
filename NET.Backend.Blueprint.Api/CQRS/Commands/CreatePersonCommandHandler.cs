@@ -7,22 +7,22 @@ using NET.Backend.Blueprint.Api.SignalR;
 
 namespace NET.Backend.Blueprint.Api.CQRS.Commands;
 
-public record CreatePersonCommand(CreatePersonRequest CreatePersonRequest) : IRequest<PersonDto>;
+public record CreatePersonCommand(CreatePersonRequest CreatePersonRequest) : IRequest<GetPersonResponse>;
 
 public class CreatePersonCommandHandler(
     Repository<Person> personRepository,
     StatusChangeHub statusChangeHub,
     IMediator mediator)
-    : IRequestHandler<CreatePersonCommand, PersonDto>
+    : IRequestHandler<CreatePersonCommand, GetPersonResponse>
 {
-    public async Task<PersonDto> Handle(CreatePersonCommand request, CancellationToken cancellationToken)
+    public async Task<GetPersonResponse> Handle(CreatePersonCommand request, CancellationToken cancellationToken)
     {
         var entity = CreatePerson(request);
 
         var person = await personRepository.AddAsync(entity);
         await personRepository.SaveChangesAsync();
         await statusChangeHub.SendMessage(entity.Id, nameof(person), "added");
-        return await mediator.Send(new GetPersonDtoByIdQuery(person.Entity.Id), cancellationToken);
+        return await mediator.Send(new GetPersonResponseByIdQuery(person.Entity.Id), cancellationToken);
     }
 
     private static Person CreatePerson(CreatePersonCommand request)

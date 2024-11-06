@@ -17,25 +17,25 @@ namespace NET.Backend.Blueprint.Api.Controllers.V1
     {
         [HttpGet]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IEnumerable<PersonDto>> GetPersonsV1Async()
+        public async Task<IEnumerable<GetPersonResponse>> GetPersonsV1Async()
         {
-            var result = await mediator.Send(new GetPersonDtosQuery());
+            var result = await mediator.Send(new GetPersonsRequestQuery());
             return result;
         }
 
         [HttpGet("{id}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<PersonDto> GetPersonByIdAsync(Guid id)
+        public async Task<GetPersonResponse> GetPersonByIdAsync(Guid id)
         {
-            var result = await mediator.Send(new GetPersonDtoByIdQuery(id));
+            var result = await mediator.Send(new GetPersonResponseByIdQuery(id));
             return result;
         }
 
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<PersonDto> CreatePersonAsync([FromBody] CreatePersonRequest request)
+        public async Task<GetPersonResponse> CreatePersonAsync([FromBody] CreatePersonRequest request)
         {
             var result = await mediator.Send(new CreatePersonCommand(request));
             return result;
@@ -44,15 +44,15 @@ namespace NET.Backend.Blueprint.Api.Controllers.V1
         [HttpPut("{id}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<PersonDto> UpdatePersonAsync(Guid id, PersonDto personDto)
+        public async Task<GetPersonResponse> UpdatePersonAsync(Guid id, UpdatePersonRequest request)
         {
-            if (id != personDto.Id)
+            if (id != request.Id)
             {
-                BadRequest($"Provided Id '{id}' and AddressId '{personDto.Id}' are not equal.'");
+                BadRequest($"Provided Id '{id}' and AddressId '{request.Id}' are not equal.'");
             }
 
-            await mediator.Send(new UpdatePersonCommand(personDto));
-            return await mediator.Send(new GetPersonDtoByIdQuery(id));
+            await mediator.Send(new UpdatePersonCommand(request));
+            return await mediator.Send(new GetPersonResponseByIdQuery(id));
         }
 
         [HttpDelete("{id}")]

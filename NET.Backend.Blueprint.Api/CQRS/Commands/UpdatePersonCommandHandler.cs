@@ -7,7 +7,8 @@ using NET.Backend.Blueprint.Api.SignalR;
 
 namespace NET.Backend.Blueprint.Api.CQRS.Commands;
 
-public record UpdatePersonCommand(PersonDto PersonDto) : IRequest;
+
+public record UpdatePersonCommand(UpdatePersonRequest Request) : IRequest;
 
 public class UpdatePersonCommandHandler(
     Repository<Person> repository,
@@ -17,11 +18,11 @@ public class UpdatePersonCommandHandler(
 {
     public async Task Handle(UpdatePersonCommand request, CancellationToken cancellationToken)
     {
-        var dbEntity = await mediator.Send(new GetPersonByIdQuery(request.PersonDto.Id), cancellationToken);
-        dbEntity.FirstName = request.PersonDto.FirstName;
-        dbEntity.LastName = request.PersonDto.LastName;
-        dbEntity.Birthday = request.PersonDto.Birthday;
-        dbEntity.Version = request.PersonDto.Version;
+        var dbEntity = await mediator.Send(new GetPersonByIdQuery(request.Request.Id), cancellationToken);
+        dbEntity.FirstName = request.Request.FirstName;
+        dbEntity.LastName = request.Request.LastName;
+        dbEntity.Birthday = request.Request.Birthday;
+        dbEntity.Version = request.Request.Version;
 
         EntitiesToUpdate(request, dbEntity);
         EntitiesToDelete(request, dbEntity);
@@ -34,10 +35,10 @@ public class UpdatePersonCommandHandler(
 
     private void EntitiesToUpdate(UpdatePersonCommand request, Person dbEntity)
     {
-        var entitiesToUpdate = dbEntity.Addresses.Select(x => x.Id).Intersect(request.PersonDto.Addresses.Select(x => x.Id));
+        var entitiesToUpdate = dbEntity.Addresses.Select(x => x.Id).Intersect(request.Request.Addresses.Select(x => x.AddressId));
         foreach (var id in entitiesToUpdate)
         {
-            var newAddress = request.PersonDto.Addresses.Single(x => x.Id == id);
+            var newAddress = request.Request.Addresses.Single(x => x.AddressId == id);
             var oldAddress = dbEntity.Addresses.Single(x => x.Id == id);
             UpdateAddress(oldAddress, newAddress);
         }
@@ -45,10 +46,10 @@ public class UpdatePersonCommandHandler(
 
     private static void EntitiesToAdd(UpdatePersonCommand request, Person dbEntity)
     {
-        var entitiesToAdd = request.PersonDto.Addresses.Select(x => x.Id).Except(dbEntity.Addresses.Select(x => x.Id));
+        var entitiesToAdd = request.Request.Addresses.Select(x => x.AddressId).Except(dbEntity.Addresses.Select(x => x.Id));
         foreach (var id in entitiesToAdd)
         {
-            var address = request.PersonDto.Addresses.Single(x => x.Id == id);
+            var address = request.Request.Addresses.Single(x => x.AddressId == id);
             var newAddress = new Address 
                 { City = address.City, PostalCode = address.PostalCode, Number = address.Number, Street = address.Street };
             dbEntity.Addresses.Add(newAddress);
@@ -57,7 +58,7 @@ public class UpdatePersonCommandHandler(
 
     private static void EntitiesToDelete(UpdatePersonCommand request, Person dbEntity)
     {
-        var entitiesToDelete = dbEntity.Addresses.Select(x => x.Id).Except(request.PersonDto.Addresses.Select(x => x.Id));
+        var entitiesToDelete = dbEntity.Addresses.Select(x => x.Id).Except(request.Request.Addresses.Select(x => x.AddressId));
         foreach (var id in entitiesToDelete)
         {
             var dbAddress = dbEntity.Addresses.Single(x => x.Id == id);
@@ -65,11 +66,11 @@ public class UpdatePersonCommandHandler(
         }
     }
 
-    private void UpdateAddress(Address dbAddressDto, AddressDto address)
+    private void UpdateAddress(Address address, UpdateAddressRequest addressRequest)
     {   
-        dbAddressDto.City = address.City;
-        dbAddressDto.Number = address.Number;
-        dbAddressDto.Street = address.Street;
-        dbAddressDto.PostalCode = address.PostalCode;
+        address.City = addressRequest.City;
+        address.Number = addressRequest.Number;
+        address.Street = addressRequest.Street;
+        address.PostalCode = addressRequest.PostalCode;
     }
 }
