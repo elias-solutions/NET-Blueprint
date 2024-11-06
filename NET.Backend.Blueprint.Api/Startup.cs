@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using NET.Backend.Blueprint.Api.Authentication;
 using NET.Backend.Blueprint.Api.Authorization;
 using NET.Backend.Blueprint.Api.DataAccess;
@@ -17,7 +18,8 @@ public class Startup(IConfiguration configuration)
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddSingleton<ErrorHandlingMiddleware>();
-        services.AddDbContextFactory<BlueprintDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("Database")));
+        services.AddDbContextFactory<BlueprintDbContext>((sp, options) => 
+            options.UseSqlServer(configuration.GetConnectionString("Database")).AddInterceptors(new CommandInterceptor(sp)));
         services.AddScoped<IUserService, UserService>();
 
         services.AddScoped(typeof(Repository<>));
