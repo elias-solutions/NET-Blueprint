@@ -105,8 +105,8 @@ namespace NET.Backend.Blueprint.Api.DataAccess
         {
             entity.Created = DateTime.UtcNow.ToUtcDateTimeOffset();
             entity.CreatedBy = userService.GetCurrentUser()!.Id;
-            entity.Modified = DateTimeOffset.MinValue;
-            entity.ModifiedBy = Guid.Empty;
+            entity.Modified = null;
+            entity.ModifiedBy = null;
             entity.Version = Guid.NewGuid();
 
             return await context.Set<TEntity>().AddAsync(entity);
@@ -120,7 +120,7 @@ namespace NET.Backend.Blueprint.Api.DataAccess
             if (hasVersionConflict)
             {
                 throw new ProblemDetailsException(
-                    HttpStatusCode.BadRequest, "EntityAddress version conflict", "EntityAddress has been updated through other user.");
+                    HttpStatusCode.BadRequest, "Entity version conflict", "Entity has been updated through other user.");
             }
 
             entity.Created = entity.Created;

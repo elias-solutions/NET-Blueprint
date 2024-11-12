@@ -12,8 +12,8 @@ using NET.Backend.Blueprint.Api.DataAccess;
 namespace NET.Backend.Blueprint.Api.Migrations
 {
     [DbContext(typeof(BlueprintDbContext))]
-    [Migration("20241103124556_initial")]
-    partial class initial
+    [Migration("20241106154006_initialCreate")]
+    partial class initialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -78,8 +78,8 @@ namespace NET.Backend.Blueprint.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTimeOffset>("Birthday")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateOnly>("Birthday")
+                        .HasColumnType("date");
 
                     b.Property<DateTimeOffset>("Created")
                         .HasColumnType("datetimeoffset");

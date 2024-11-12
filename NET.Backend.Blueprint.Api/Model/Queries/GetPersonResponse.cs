@@ -5,7 +5,7 @@ public record GetPersonResponse
     Guid Id,
     string FirstName,
     string LastName,
-    DateTimeOffset Birthday,
+    DateOnly Birthday,
     IEnumerable<GetAddressResponse> Addresses,
     Guid CreatedBy,
     DateTimeOffset Created,

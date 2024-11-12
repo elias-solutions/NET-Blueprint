@@ -8,7 +8,7 @@ namespace NET.Backend.Blueprint.Api.Entities
 
         public string LastName { get; set; } = default!;
 
-        public DateTimeOffset Birthday { get; set; }
+        public DateOnly Birthday { get; set; }
 
         public ICollection<Address> Addresses { get; set; } = default!;
     }

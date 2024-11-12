@@ -15,7 +15,7 @@ public class PutOptimisticLockingTest : IAsyncLifetime
     private const string Route = "/api/v1/persons";
     private readonly IntegrationTestFixture _fixture;
     private readonly EmbeddedJsonResourceProvider _jsonResourceProvider;
-    private GetPersonRequest? _dbPerson;
+    private GetPersonResponse? _dbPerson;
 
     public PutOptimisticLockingTest(IntegrationTestFixture fixture)
     {
@@ -30,7 +30,7 @@ public class PutOptimisticLockingTest : IAsyncLifetime
         var content = await _jsonResourceProvider.CreateHttpContentByResourceAsync("Post_Person_Request.json");
         var response = await _fixture.SendAsync(HttpMethod.Post, Route, content, TestUsers.Admin);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        _dbPerson = await response.Content.ReadAsync<GetPersonRequest>();
+        _dbPerson = await response.Content.ReadAsync<GetPersonResponse>();
     }
 
     public Task DisposeAsync() => Task.CompletedTask;
@@ -38,7 +38,7 @@ public class PutOptimisticLockingTest : IAsyncLifetime
     [Fact]
     public async Task PersonsController_Ok()
     {
-        var expectedPerson = await _jsonResourceProvider.CreateObjectByResourceAsync<GetPersonRequest>("Put_Person_Request.json") with { Id = _dbPerson!.Id, Version = Guid.NewGuid() };
+        var expectedPerson = await _jsonResourceProvider.CreateObjectByResourceAsync<GetPersonResponse>("Put_Person_Request.json") with { Id = _dbPerson!.Id, Version = Guid.NewGuid() };
         var response = await _fixture.SendAsync(HttpMethod.Put, $"{Route}/{_dbPerson!.Id}", expectedPerson.ToJson().ToStringContent(), TestUsers.Admin);
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         
@@ -46,8 +46,8 @@ public class PutOptimisticLockingTest : IAsyncLifetime
         problemDetails.Should().BeEquivalentTo(new ProblemDetails
         {
             Status = (int)HttpStatusCode.BadRequest,
-            Title = "BadRequest - EntityAddress version conflict",
-            Detail = "EntityAddress has been updated through other user."
+            Title = "BadRequest - Entity version conflict",
+            Detail = "Entity has been updated through other user."
         });
     }
 }

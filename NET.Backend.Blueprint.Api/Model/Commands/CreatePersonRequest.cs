@@ -6,5 +6,5 @@ namespace NET.Backend.Blueprint.Api.Model.Commands;
 public record CreatePersonRequest(
     string FirstName,
     string LastName,
-    DateTimeOffset Birthday,
+    DateOnly Birthday,
     CreateAddressRequest[] Addresses) : IRequest<GetPersonRequest>;
