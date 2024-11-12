@@ -15,7 +15,7 @@ public class PutOkTest : IAsyncLifetime
     private const string Route = "/api/v1/persons";
     private readonly IntegrationTestFixture _fixture;
     private readonly EmbeddedJsonResourceProvider _jsonResourceProvider;
-    private GetPersonResponse _dbPerson = default;
+    private GetPersonResponse _dbPerson = default!;
 
     public PutOkTest(IntegrationTestFixture fixture)
     {
@@ -48,16 +48,27 @@ public class PutOkTest : IAsyncLifetime
         var expectedPerson = await _jsonResourceProvider.CreateObjectByResourceAsync<GetPersonRequest>("Put_Person_Request.json");
         person.Should().BeEquivalentTo(expectedPerson, options => options
             .Excluding(x => x.Id)
+            .Excluding(x => x.Created)
+            .Excluding(x => x.CreatedBy)
             .Excluding(x => x.Modified)
             .Excluding(x => x.ModifiedBy)
             .Excluding(x => x.Version)
-            .Excluding(x => x.Created)
-            .Excluding(x => x.CreatedBy)
             .For(x => x.Addresses).Exclude(x => x.Id)
+            .For(x => x.Addresses).Exclude(x => x.Created)
+            .For(x => x.Addresses).Exclude(x => x.CreatedBy)
             .For(x => x.Addresses).Exclude(x => x.Modified)
             .For(x => x.Addresses).Exclude(x => x.ModifiedBy)
+            .For(x => x.Addresses).Exclude(x => x.Version)
             .Using<DateTimeOffset>(ctx => ctx.Subject.Should().BeCloseTo(ctx.Expectation, new TimeSpan(1000)))
             .WhenTypeIs<DateTimeOffset>());
+
+        person.Addresses.Select(x => x.Created.Should().NotBe(null));
+        person.Addresses.Select(x => x.CreatedBy.Should().NotBe(Guid.Empty));
+        person.Addresses.Should().ContainSingle(x => x.Modified == null && x.ModifiedBy == null);
+        person.Addresses.Select(x => x.Version.Should().NotBe(Guid.Empty));
+
+        person.CreatedBy.Should().Be(_dbPerson.CreatedBy);
+        person.Addresses.Select(x => x.ModifiedBy.Should().Be(_dbPerson.CreatedBy));
     }
 
     private UpdateAddressRequest Map(GetAddressResponse address)

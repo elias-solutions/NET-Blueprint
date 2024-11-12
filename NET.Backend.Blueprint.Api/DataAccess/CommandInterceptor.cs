@@ -10,7 +10,7 @@ public class CommandInterceptor(ILogger<CommandInterceptor> logger) : DbCommandI
     private const bool IsActive = true;
     private const int MaxDuration = 1000;
 
-    public CommandInterceptor(IServiceProvider serviceProvider) : this(serviceProvider.GetService<ILogger<CommandInterceptor>>())
+    public CommandInterceptor(IServiceProvider serviceProvider) : this(serviceProvider.GetService<ILogger<CommandInterceptor>>()!)
     {
     }
 

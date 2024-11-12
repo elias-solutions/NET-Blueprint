@@ -1,6 +1,8 @@
 using System.Net;
+using System.Security.Claims;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NET.Backend.Blueprint.Api.Authorization;
 using NET.Backend.Blueprint.Api.CQRS.Commands;

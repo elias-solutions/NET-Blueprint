@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore.Query;
 using NET.Backend.Blueprint.Api.Authorization;
 using NET.Backend.Blueprint.Api.Entities.Base;
 using NET.Backend.Blueprint.Api.ErrorHandling;
-using NET.Backend.Blueprint.Extensions;
 
 namespace NET.Backend.Blueprint.Api.DataAccess
 {
@@ -103,16 +102,14 @@ namespace NET.Backend.Blueprint.Api.DataAccess
 
         public async Task<EntityEntry<TEntity>> AddAsync(TEntity entity)
         {
-            entity.Created = DateTime.UtcNow.ToUtcDateTimeOffset();
-            entity.CreatedBy = userService.GetCurrentUser()!.Id;
-            entity.Modified = null;
-            entity.ModifiedBy = null;
-            entity.Version = Guid.NewGuid();
-
             return await context.Set<TEntity>().AddAsync(entity);
         }
 
-        public async Task SaveChangesAsync() => await context.SaveChangesAsync();
+        public async Task SaveChangesAsync()
+        {
+            var user = userService.GetCurrentUser()!; 
+            await context.SaveChangesAsync(user);
+        }
 
         public async Task<TEntity> UpdateAsync(TEntity entity)
         {
@@ -122,12 +119,6 @@ namespace NET.Backend.Blueprint.Api.DataAccess
                 throw new ProblemDetailsException(
                     HttpStatusCode.BadRequest, "Entity version conflict", "Entity has been updated through other user.");
             }
-
-            entity.Created = entity.Created;
-            entity.CreatedBy = entity.CreatedBy;
-            entity.Modified = DateTime.UtcNow.ToUtcDateTimeOffset();
-            entity.ModifiedBy = userService.GetCurrentUser()!.Id;
-            entity.Version = Guid.NewGuid();
 
             context.Set<TEntity>().Update(entity);
             return entity;
