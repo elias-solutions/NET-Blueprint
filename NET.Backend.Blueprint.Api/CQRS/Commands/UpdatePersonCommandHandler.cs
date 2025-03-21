@@ -5,17 +5,13 @@ using NET.Backend.Blueprint.Api.Entities;
 using NET.Backend.Blueprint.Api.ErrorHandling;
 using NET.Backend.Blueprint.Api.Extensions;
 using NET.Backend.Blueprint.Api.Model.Commands;
-using NET.Backend.Blueprint.Api.SignalR;
 using System.Net;
 
 namespace NET.Backend.Blueprint.Api.CQRS.Commands;
 
 public record UpdatePersonCommand(UpdatePersonRequest Request) : IRequest;
 
-public class UpdatePersonCommandHandler(
-    Repository<Person> repository,
-    StatusChangeHub statusChangeHub)
-    : IRequestHandler<UpdatePersonCommand>
+public class UpdatePersonCommandHandler(Repository<Person> repository) : IRequestHandler<UpdatePersonCommand>
 {
     public async Task Handle(UpdatePersonCommand request, CancellationToken cancellationToken)
     {
@@ -28,6 +24,10 @@ public class UpdatePersonCommandHandler(
         person.FirstName = request.Request.FirstName;
         person.LastName = request.Request.LastName;
         person.Birthday = request.Request.Birthday;
+        person.CreatedId = request.Request.CreatedId;
+        person.CreatedDate = request.Request.CreatedDate;
+        person.ModifiedId = request.Request.ModifiedId;
+        person.ModifiedDate = request.Request.ModifiedDate;
         person.Version = request.Request.Version;
 
         var addressIdsEdit = person.Addresses.Select(x => x.Id).Intersect(request.Request.Addresses.Select(x => x.AddressId));
@@ -39,6 +39,10 @@ public class UpdatePersonCommandHandler(
             dbAddress.Number = newAddress.Number;
             dbAddress.Street = newAddress.Street;
             dbAddress.PostalCode = newAddress.PostalCode;
+            dbAddress.CreatedId = newAddress.CreatedId;
+            dbAddress.CreatedDate = newAddress.CreatedDate;
+            dbAddress.ModifiedId = newAddress.ModifiedId;
+            dbAddress.ModifiedDate = newAddress.ModifiedDate;
         }
 
         var addressIdsToDelete = person.Addresses
@@ -58,6 +62,5 @@ public class UpdatePersonCommandHandler(
 
         await repository.UpdateAsync(person);
         await repository.SaveChangesAsync();
-        await statusChangeHub.SendMessage(person.Id, nameof(Person), "updated");
     }
 }

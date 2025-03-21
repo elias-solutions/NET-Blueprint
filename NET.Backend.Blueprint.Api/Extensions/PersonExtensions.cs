@@ -13,10 +13,10 @@ public static class PersonExtensions
             person.LastName,
             person.Birthday,
             person.Addresses.Select(a => a.ToGetAddressResponse()),
-            person.CreatedBy,
-            person.Created,
-            person.ModifiedBy,
-            person.Modified,
+            person.CreatedId,
+            person.CreatedDate,
+            person.ModifiedId,
+            person.ModifiedDate,
             person.Version);
     }
 }

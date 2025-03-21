@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace NET.Backend.Blueprint.Api.Migrations
 {
     /// <inheritdoc />
-    public partial class initialCreate : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,10 +19,10 @@ namespace NET.Backend.Blueprint.Api.Migrations
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Birthday = table.Column<DateOnly>(type: "date", nullable: false),
-                    Created = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Modified = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    ModifiedId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ModifiedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     Version = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -40,10 +40,10 @@ namespace NET.Backend.Blueprint.Api.Migrations
                     City = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PostalCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PersonId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Created = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Modified = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    ModifiedId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ModifiedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     Version = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>

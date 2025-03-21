@@ -12,8 +12,8 @@ using NET.Backend.Blueprint.Api.DataAccess;
 namespace NET.Backend.Blueprint.Api.Migrations
 {
     [DbContext(typeof(BlueprintDbContext))]
-    [Migration("20241106154006_initialCreate")]
-    partial class initialCreate
+    [Migration("20250321143517_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -35,16 +35,16 @@ namespace NET.Backend.Blueprint.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTimeOffset>("Created")
+                    b.Property<DateTimeOffset>("CreatedDate")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<Guid>("CreatedBy")
+                    b.Property<Guid>("CreatedId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTimeOffset>("Modified")
+                    b.Property<DateTimeOffset?>("ModifiedDate")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<Guid>("ModifiedBy")
+                    b.Property<Guid?>("ModifiedId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Number")
@@ -81,10 +81,10 @@ namespace NET.Backend.Blueprint.Api.Migrations
                     b.Property<DateOnly>("Birthday")
                         .HasColumnType("date");
 
-                    b.Property<DateTimeOffset>("Created")
+                    b.Property<DateTimeOffset>("CreatedDate")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<Guid>("CreatedBy")
+                    b.Property<Guid>("CreatedId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("FirstName")
@@ -95,10 +95,10 @@ namespace NET.Backend.Blueprint.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTimeOffset>("Modified")
+                    b.Property<DateTimeOffset?>("ModifiedDate")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<Guid>("ModifiedBy")
+                    b.Property<Guid?>("ModifiedId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("Version")

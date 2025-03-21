@@ -1,7 +1,11 @@
-﻿namespace NET.Backend.Blueprint.Api.Model.Commands;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace NET.Backend.Blueprint.Api.Model.Commands;
 
 public record CreateAddressRequest(
-    string Street,
-    string Number,
-    string City,
-    string PostalCode);
+    [Required] string Street,
+    [Required] string Number,
+    [Required] string City,
+    [Required] string PostalCode,
+    [Required] Guid CreatedId,
+    [Required] DateTimeOffset CreatedDate);

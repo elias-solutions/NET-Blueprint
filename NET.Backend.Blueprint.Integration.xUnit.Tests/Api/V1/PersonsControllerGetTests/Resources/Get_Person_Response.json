@@ -1,13 +1,21 @@
 {
-  "FirstName": "Josef",
-  "LastName": "Strauss",
-  "Birthday": "1995-07-06",
-  "Addresses": [
-    {
-      "Street": "Waldwg",
-      "Number": "14",
-      "City": "Eichelberg",
-      "PostalCode": "4641"
-    }
-  ]
+    "FirstName": "Josef",
+    "LastName": "Strauss",
+    "Birthday": "1995-07-06",
+    "CreatedId": "E3D3D338-2053-4CE9-877D-DE4563FE321C",
+    "CreatedDate": "2023-10-10T14:30:00+00:00",
+    "ModifiedId": null,
+    "ModifiedDate": null,
+    "Addresses": [
+        {
+            "Street": "Waldwg",
+            "Number": "14",
+            "City": "Eichelberg",
+            "PostalCode": "4641",
+            "CreatedId": "E3D3D338-2053-4CE9-877D-DE4563FE321C",
+            "CreatedDate": "2023-10-10T14:30:00+00:00",
+            "ModifiedId": null,
+            "ModifiedDate": null
+        }
+    ]
 }

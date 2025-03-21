@@ -14,6 +14,11 @@ public static class UpdateAddressRequestExtensions
             Number = request.Number,
             City = request.City,
             PostalCode = request.PostalCode,
+            CreatedId = request.CreatedId,
+            CreatedDate = request.CreatedDate,
+            ModifiedId = request.ModifiedId,
+            ModifiedDate = request.ModifiedDate,
+            Version = request.Version
         };
     }
 }

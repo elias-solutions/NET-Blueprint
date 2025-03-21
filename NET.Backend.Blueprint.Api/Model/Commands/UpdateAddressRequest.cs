@@ -1,9 +1,15 @@
-﻿namespace NET.Backend.Blueprint.Api.Model.Commands;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace NET.Backend.Blueprint.Api.Model.Commands;
 
 public record UpdateAddressRequest(
-    Guid AddressId,
-    string Street,
-    string Number,
-    string City,
-    string PostalCode,
-    Guid Version);
+    [Required] Guid AddressId,
+    [Required] string Street,
+    [Required] string Number,
+    [Required] string City,
+    [Required] string PostalCode,
+    [Required] Guid CreatedId,
+    [Required] DateTimeOffset CreatedDate,
+    [Required] Guid ModifiedId,
+    [Required] DateTimeOffset ModifiedDate,
+    [Required] Guid Version);

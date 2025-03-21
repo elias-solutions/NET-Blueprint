@@ -3,12 +3,10 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using NET.Backend.Blueprint.Api.Authentication;
 using NET.Backend.Blueprint.Api.Authorization;
 using NET.Backend.Blueprint.Api.DataAccess;
 using NET.Backend.Blueprint.Api.ErrorHandling;
-using NET.Backend.Blueprint.Api.SignalR;
 
 namespace NET.Backend.Blueprint.Api;
 
@@ -17,20 +15,24 @@ public class Startup(IConfiguration configuration)
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddSingleton<ErrorHandlingMiddleware>();
-        services.AddDbContextFactory<BlueprintDbContext>((sp, options) => 
-            options.UseSqlServer(configuration.GetConnectionString("Database")).AddInterceptors(new CommandInterceptor(sp)));
+        services.AddDbContextFactory<BlueprintDbContext>((sp, options) =>
+        {
+            options.UseSqlServer(configuration.GetConnectionString("Database"))
+                .AddInterceptors(new CommandInterceptor(sp));
+        });
         services.AddScoped<IUserService, UserService>();
 
         services.AddScoped(typeof(Repository<>));
         services.AddMediatR(options => options.RegisterServicesFromAssemblyContaining<Program>());
-        services.AddSignalR();
-        services.AddSingleton<StatusChangeHub>();
 
         services
             .AddAuthentication("Authentication")
             .AddScheme<AuthenticationSchemeOptions, AuthenticationHandler>("Authentication", null);
         services.AddAuthorization();
-        services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+        services.AddControllers().AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        });
         services.AddApiVersioning(options =>
         {
             options.ReportApiVersions = true;
@@ -50,7 +52,6 @@ public class Startup(IConfiguration configuration)
         {
             app.UseSwagger();
             app.UseSwaggerUI();
-            //app.UseDeveloperExceptionPage();
         }
 
         app.UseHttpsRedirection();
@@ -58,10 +59,6 @@ public class Startup(IConfiguration configuration)
         app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapHub<StatusChangeHub>("/StatusChangeHub");
-            endpoints.MapControllers();
-        });
+        app.UseEndpoints(endpoints => endpoints.MapControllers());
     }
 }

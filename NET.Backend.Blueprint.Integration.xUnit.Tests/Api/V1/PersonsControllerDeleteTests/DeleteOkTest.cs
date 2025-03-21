@@ -13,7 +13,7 @@ public class DeleteOkTest : IAsyncLifetime
     private const string Route = "/api/v1/persons";
     private readonly IntegrationTestFixture _fixture;
     private readonly EmbeddedJsonResourceProvider _jsonResourceProvider;
-    private GetPersonRequest _dbGetPerson = default!;
+    private GetPersonResponse _dbGetPerson = default!;
 
     public DeleteOkTest(IntegrationTestFixture fixture)
     {
@@ -28,7 +28,7 @@ public class DeleteOkTest : IAsyncLifetime
         var content = await _jsonResourceProvider.CreateHttpContentByResourceAsync("Post_Person_Request.json");
         var response = await _fixture.SendAsync(HttpMethod.Post, Route, content, TestUsers.Admin);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        _dbGetPerson = await response.Content.ReadAsync<GetPersonRequest>();
+        _dbGetPerson = await response.Content.ReadAsync<GetPersonResponse>();
     } 
 
     public Task DisposeAsync() => Task.CompletedTask;

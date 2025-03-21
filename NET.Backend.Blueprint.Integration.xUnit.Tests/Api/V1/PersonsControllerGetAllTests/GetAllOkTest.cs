@@ -42,12 +42,8 @@ public class GetAllOkTest : IAsyncLifetime
         result.Should().BeEquivalentTo(expected, options => options
             .Excluding(x => x.Id)
             .Excluding(x => x.Version)
-            .Excluding(x => x.Created)
-            .Excluding(x => x.CreatedBy)
             .For(x => x.Addresses).Exclude(x => x.Id)
             .For(x => x.Addresses).Exclude(x => x.Version)
-            .For(x => x.Addresses).Exclude(x => x.Created)
-            .For(x => x.Addresses).Exclude(x => x.CreatedBy)
         );
     }
 }

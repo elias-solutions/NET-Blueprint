@@ -7,8 +7,7 @@ namespace NET.Backend.Blueprint.Api.CQRS.Commands;
 
 public record UpdateAddressCommand(UpdateAddressRequest Request) : IRequest;
 
-public class UpdateAddressCommandHandler( Repository<Address> repository) 
-    : IRequestHandler<UpdateAddressCommand>
+public class UpdateAddressCommandHandler( Repository<Address> repository) : IRequestHandler<UpdateAddressCommand>
 {
     public async Task Handle(UpdateAddressCommand command, CancellationToken cancellationToken)
     {
@@ -17,6 +16,9 @@ public class UpdateAddressCommandHandler( Repository<Address> repository)
         entity.Number = command.Request.Number;
         entity.PostalCode = command.Request.PostalCode;
         entity.Street = command.Request.Street;
+        entity.ModifiedId = command.Request.ModifiedId;
+        entity.ModifiedDate = command.Request.ModifiedDate;
+        entity.Version = command.Request.Version;
 
         await repository.UpdateAsync(entity);
         await repository.SaveChangesAsync();

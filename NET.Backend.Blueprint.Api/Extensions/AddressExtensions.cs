@@ -15,10 +15,10 @@ public static class AddressExtensions
             address.Number,
             address.City,
             address.PostalCode,
-            address.CreatedBy,
-            address.Created,
-            address.ModifiedBy,
-            address.Modified,
+            address.CreatedId,
+            address.CreatedDate,
+            address.ModifiedId,
+            address.ModifiedDate,
             address.Version);
     }
 }

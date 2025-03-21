@@ -7,8 +7,8 @@ public record GetAddressResponse
     string Number,
     string City,
     string PostalCode,
-    Guid CreatedBy,
-    DateTimeOffset Created,
-    Guid? ModifiedBy,
-    DateTimeOffset? Modified,
+    Guid CreatedId,
+    DateTimeOffset CreatedDate,
+    Guid? ModifiedId,
+    DateTimeOffset? ModifiedDate,
     Guid Version);

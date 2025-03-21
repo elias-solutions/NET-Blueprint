@@ -10,4 +10,8 @@ public class Address : EntityBase
     public string PostalCode { get; set; } = default!;
     public Guid PersonId { get; set; } = default!;
     public Person Person { get; set; } = default!;
+    public Guid CreatedId { get; set; } = default!;
+    public DateTimeOffset CreatedDate { get; set; }
+    public Guid? ModifiedId { get; set; }
+    public DateTimeOffset? ModifiedDate { get; set; }
 }

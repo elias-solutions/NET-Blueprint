@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NET.Backend.Blueprint.Api;
 using NET.Backend.Blueprint.Api.Authorization;
@@ -18,7 +18,7 @@ namespace NET.Backend.Blueprint.Integration.xUnit.Tests.Environment;
 
 public abstract class TestBase : WebApplicationFactory<Startup>, IAsyncLifetime
 {
-    private SqliteConnection _connection = default!;
+    private IConfiguration _configuration = default!;
     public IUserService UserService { get; }
     public IDatabaseResetProvider DatabaseResetProvider { get; }
     protected HttpClient Client { get; }
@@ -28,22 +28,30 @@ public abstract class TestBase : WebApplicationFactory<Startup>, IAsyncLifetime
         UserService = Substitute.For<IUserService>();
         Client = CreateClient();
         Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypeNames.Application.Json));
-        DatabaseResetProvider = new DatabaseSqliteResetProvider(Services);
+        DatabaseResetProvider = new DatabaseMssqlResetProvider();
     }
     
     protected override void ConfigureWebHost(IWebHostBuilder builder)
-    {            
+    {
+        builder.ConfigureAppConfiguration((context, config) =>
+        {
+            // Add configuration sources
+            config.AddJsonFile("appsettings.json")
+                .AddJsonFile($"appsettings.{context.HostingEnvironment.EnvironmentName}.json", optional: true)
+                .AddEnvironmentVariables();
+
+            _configuration = config.Build();
+        });
+
         builder
             .ConfigureTestServices(services =>
             {
                 RemoveDbContext(services);
                 services.AddDbContextFactory<BlueprintDbContext>(options =>
                 {
-                    _connection = new SqliteConnection("Data Source=:memory:");
-                    _connection.Open();
+                    options.UseSqlServer(_configuration.GetConnectionString("DatabaseTest"));
 
-                    var optionsBuilder = options.UseSqlite(_connection);
-                    var context = new BlueprintDbContext(optionsBuilder.Options);
+                    var context = new BlueprintDbContext(options.Options);
                     context.Database.EnsureCreated();
                 });
 
@@ -59,7 +67,6 @@ public abstract class TestBase : WebApplicationFactory<Startup>, IAsyncLifetime
     async Task IAsyncLifetime.DisposeAsync()
     {
         await DatabaseResetProvider.DisposeDbConnectionAsync();
-        await _connection.CloseAsync();
     }
 
     private static void RemoveDbContext(IServiceCollection services)

@@ -13,6 +13,8 @@ public static class CreatePersonRequestExtensions
             FirstName = source.FirstName,
             LastName = source.LastName,
             Birthday = source.Birthday,
+            CreatedId = source.CreatedId,
+            CreatedDate = source.CreatedDate,
             Addresses = source.Addresses.Select(x => x.ToNewAddress()).ToList()
         };
     }

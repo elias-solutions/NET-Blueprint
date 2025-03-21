@@ -13,8 +13,9 @@ public static class CreateAddressRequestExtensions
             City = source.City, 
             Number = source.Number, 
             PostalCode = source.PostalCode, 
-            Street = source.Street
+            Street = source.Street,
+            CreatedDate = source.CreatedDate,
+            CreatedId = source.CreatedId
         };
-
     }
 }

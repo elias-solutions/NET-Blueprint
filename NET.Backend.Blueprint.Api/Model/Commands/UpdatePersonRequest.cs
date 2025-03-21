@@ -1,10 +1,15 @@
-﻿namespace NET.Backend.Blueprint.Api.Model.Commands;
+﻿using System.ComponentModel.DataAnnotations;
 
-public record UpdatePersonRequest
-(
-    Guid Id,
-    string FirstName,
-    string LastName,
-    DateOnly Birthday,
-    IEnumerable<UpdateAddressRequest> Addresses,
-    Guid Version);
+namespace NET.Backend.Blueprint.Api.Model.Commands;
+
+public record UpdatePersonRequest(
+    [Required] Guid Id,
+    [Required] string FirstName,
+    [Required] string LastName,
+    [Required] DateOnly Birthday,
+    [Required] IEnumerable<UpdateAddressRequest> Addresses,
+    [Required] Guid CreatedId,
+    [Required] DateTimeOffset CreatedDate,
+    [Required] Guid ModifiedId,
+    [Required] DateTimeOffset ModifiedDate,
+    [Required] Guid Version);

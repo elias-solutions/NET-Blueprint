@@ -7,8 +7,8 @@ public record GetPersonResponse
     string LastName,
     DateOnly Birthday,
     IEnumerable<GetAddressResponse> Addresses,
-    Guid CreatedBy,
-    DateTimeOffset Created,
-    Guid? ModifiedBy,
-    DateTimeOffset? Modified,
+    Guid CreatedId,
+    DateTimeOffset CreatedDate,
+    Guid? ModifiedId,
+    DateTimeOffset? ModifiedDate,
     Guid Version);

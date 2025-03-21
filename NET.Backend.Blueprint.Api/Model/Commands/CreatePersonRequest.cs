@@ -1,10 +1,11 @@
-﻿using MediatR;
-using NET.Backend.Blueprint.Api.Model.Queries;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace NET.Backend.Blueprint.Api.Model.Commands;
 
 public record CreatePersonRequest(
-    string FirstName,
-    string LastName,
-    DateOnly Birthday,
-    CreateAddressRequest[] Addresses) : IRequest<GetPersonRequest>;
+    [Required] string FirstName,
+    [Required] string LastName,
+    [Required] DateOnly Birthday,
+    [Required] Guid CreatedId,
+    [Required] DateTimeOffset CreatedDate,
+    [Required] CreateAddressRequest[] Addresses);
