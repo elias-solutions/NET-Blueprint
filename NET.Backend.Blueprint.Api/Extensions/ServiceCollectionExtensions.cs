@@ -1,3 +1,5 @@
+using Asp.Versioning;
+using Asp.Versioning.Conventions;
 using Microsoft.AspNetCore.RateLimiting;
 
 namespace NET.Backend.Blueprint.Api.Extensions;
@@ -16,5 +18,23 @@ public static class ServiceCollectionExtensions
             });
             options.RejectionStatusCode = StatusCodes.Status400BadRequest;
         });
+    }
+    public static void AddVersioning(this IServiceCollection services)
+    {
+        services.AddApiVersioning(o =>
+            {
+                o.AssumeDefaultVersionWhenUnspecified = true;
+                o.DefaultApiVersion = new ApiVersion(1, 0);
+                o.ReportApiVersions = true;
+                o.ApiVersionReader = new HeaderApiVersionReader();
+            }).AddMvc(o =>
+            {
+                o.Conventions.Add(new VersionByNamespaceConvention());
+            })
+            .AddApiExplorer(o =>
+            {
+                o.GroupNameFormat = "'v'V";
+                o.SubstituteApiVersionInUrl = true;
+            });
     }
 }
