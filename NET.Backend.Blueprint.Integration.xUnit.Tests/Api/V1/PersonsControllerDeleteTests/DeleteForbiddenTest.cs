@@ -6,7 +6,7 @@ using Xunit;
 namespace NET.Backend.Blueprint.Integration.xUnit.Tests.Api.V1.PersonsControllerDeleteTests;
 
 [Collection(nameof(SharedTestCollection))]
-public class DeleteForbiddenTest(IntegrationTestFixture fixture)
+public class DeleteForbiddenTest(Fixture fixture)
 {
     private const string Route = "/api/v1/persons";
 

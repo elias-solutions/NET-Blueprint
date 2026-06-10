@@ -8,35 +8,22 @@ using Xunit;
 namespace NET.Backend.Blueprint.Integration.xUnit.Tests.Api.V1.PersonsControllerGetAllTests;
 
 [Collection(nameof(SharedTestCollection))]
-public class GetAllOkTest : IAsyncLifetime
+public class GetAllOkTest(Fixture fixture) : IAsyncLifetime
 {
     private const string Route = "/api/v1/persons";
-    private readonly IntegrationTestFixture _fixture;
-    private readonly EmbeddedJsonResourceProvider _jsonResourceProvider;
+    private readonly EmbeddedJsonResourceProvider _jsonResourceProvider = new(typeof(GetAllOkTest).Namespace);
+    public async Task InitializeAsync() => await fixture.ResetDatabaseAsync();
 
-    public GetAllOkTest(IntegrationTestFixture fixture)
-    {
-        _fixture = fixture;
-        _jsonResourceProvider = new EmbeddedJsonResourceProvider(GetType().Namespace!);
-    }
-    public async Task InitializeAsync()
-    {
-        if (_fixture.DatabaseResetProvider != null)
-        {
-            await _fixture.DatabaseResetProvider.ResetAsync();
-        }
-
-        var content = await _jsonResourceProvider.CreateHttpContentByResourceAsync("Post_Person_Request.json");
-        var response = await _fixture.SendAsync(HttpMethod.Post, Route, content, TestUsers.Admin);  
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-    }
-    
     public Task DisposeAsync() => Task.CompletedTask;
 
     [Fact]
     public async Task PersonController_GetAll_Ok()
     {
-        var response = await _fixture.SendAsync(HttpMethod.Get, Route, null, TestUsers.Admin);
+        var content = await _jsonResourceProvider.CreateHttpContentByResourceAsync("Post_Person_Request.json");
+        var response = await fixture.SendAsync(HttpMethod.Post, Route, content, TestUsers.Admin);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        response = await fixture.SendAsync(HttpMethod.Get, Route, null, TestUsers.Admin);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var result = await response.Content.ReadAsync<IEnumerable<GetPersonResponse>>();

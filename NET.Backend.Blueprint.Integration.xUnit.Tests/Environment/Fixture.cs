@@ -7,28 +7,18 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using NET.Backend.Blueprint.Api;
 using NET.Backend.Blueprint.Api.Authorization;
 using NET.Backend.Blueprint.Api.DataAccess;
-using NET.Backend.Blueprint.Integration.xUnit.Tests.Environment.Database;
 using NSubstitute;
 using Xunit;
 
 namespace NET.Backend.Blueprint.Integration.xUnit.Tests.Environment;
 
-public class IntegrationTestFixture : WebApplicationFactory<Program>, IAsyncLifetime
+public class Fixture : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    public IUserService UserService { get; }
-    public HttpClient Client { get; private set; } = null!;
-    private readonly string _databaseName;
-    public IDatabaseResetProvider? DatabaseResetProvider { get; private set; }
-
-    public IntegrationTestFixture()
-    {
-        _databaseName = Guid.NewGuid().ToString();
-        UserService = Substitute.For<IUserService>();
-    }
-
+    public IUserService UserService { get; } = Substitute.For<IUserService>();
+    private HttpClient Client { get; set; } = null!;
+    
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureAppConfiguration((context, config) =>
@@ -42,23 +32,13 @@ public class IntegrationTestFixture : WebApplicationFactory<Program>, IAsyncLife
         builder
             .ConfigureTestServices(services =>
             {
-                // Remove existing DbContext registration
-                var descriptor = services.SingleOrDefault(d =>
-                    d.ServiceType == typeof(DbContextOptions<BlueprintDbContext>));
+                var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<BlueprintDbContext>));
                 if (descriptor != null)
                 {
                     services.Remove(descriptor);
                 }
 
-                // Use unique database name
-                services.AddDbContextFactory<BlueprintDbContext>(options =>
-                    options.UseInMemoryDatabase(_databaseName));
-
-                // Optional: Set up a database reset provider if needed
-                DatabaseResetProvider = new DatabaseInMemoryResetProvider(
-                    services.BuildServiceProvider().GetRequiredService<IDbContextFactory<BlueprintDbContext>>());
-                services.AddSingleton(_ => DatabaseResetProvider);
-
+                services.AddDbContextFactory<BlueprintDbContext>(options => options.UseInMemoryDatabase("Database"));
                 services.AddScoped(_ => UserService);
                 services.AddAuthentication("TestAuthentication")
                     .AddScheme<AuthenticationSchemeOptions, TestAuthenticationHandler>("TestAuthentication", null);
@@ -74,7 +54,7 @@ public class IntegrationTestFixture : WebApplicationFactory<Program>, IAsyncLife
         return Task.CompletedTask;
     }
 
-    public Task DisposeAsync()
+    Task IAsyncLifetime.DisposeAsync()
     {
         Client?.Dispose();
         return Task.CompletedTask;
@@ -92,5 +72,15 @@ public class IntegrationTestFixture : WebApplicationFactory<Program>, IAsyncLife
         };
 
         return await Client.SendAsync(message);
+    }
+
+    public async Task ResetDatabaseAsync()
+    {
+        var contextFactory = Services.GetRequiredService<IDbContextFactory<BlueprintDbContext>>();
+        await using var dbContext = await contextFactory.CreateDbContextAsync();
+
+        dbContext.Addresses.RemoveRange(dbContext.Addresses);
+        dbContext.Persons.RemoveRange(dbContext.Persons);
+        await dbContext.SaveChangesAsync();
     }
 }

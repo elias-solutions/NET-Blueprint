@@ -10,27 +10,21 @@ using Xunit;
 namespace NET.Backend.Blueprint.Integration.xUnit.Tests.Api.V1.PersonsControllerPostTests;
 
 [Collection(nameof(SharedTestCollection))]
-public class PostOkTest
+public class PostOkTest(Fixture fixture)
 {
     private const string Route = "/api/v1/persons";
-    private readonly IntegrationTestFixture _fixture;
-    private readonly EmbeddedJsonResourceProvider _jsonResourceProvider;
-
-    public PostOkTest(IntegrationTestFixture fixture)
-    {
-        _fixture = fixture;
-        _jsonResourceProvider = new EmbeddedJsonResourceProvider(GetType().Namespace!);
-    }
+    private readonly EmbeddedJsonResourceProvider _jsonResourceProvider = new(typeof(PostOkTest).Namespace);
 
     [Fact]
     public async Task PersonsController_Ok()
     {
+        await fixture.ResetDatabaseAsync();
         var content = await _jsonResourceProvider.CreateHttpContentByResourceAsync("Post_Person_Request.json");
-        var response = await _fixture.SendAsync(HttpMethod.Post, Route, content, TestUsers.Admin);
+        var response = await fixture.SendAsync(HttpMethod.Post, Route, content, TestUsers.Admin);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var createPersonResponse = await response.Content.ReadFromJsonAsync<CreatePersonResponse>();
 
-        response = await _fixture.SendAsync(HttpMethod.Get, $"{Route}/{createPersonResponse!.Id}", null, TestUsers.Admin);
+        response = await fixture.SendAsync(HttpMethod.Get, $"{Route}/{createPersonResponse!.Id}", null, TestUsers.Admin);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var dbPerson = await response.Content.ReadAsync<GetPersonResponse>();

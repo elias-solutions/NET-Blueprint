@@ -10,31 +10,12 @@ using Xunit;
 namespace NET.Backend.Blueprint.Integration.xUnit.Tests.Api.V1.PersonsControllerPutTests;
 
 [Collection(nameof(SharedTestCollection))]
-public class PutOptimisticLockingTest : IAsyncLifetime
+public class PutOptimisticLockingTest(Fixture fixture) : IAsyncLifetime
 {
     private const string Route = "/api/v1/persons";
-    private readonly IntegrationTestFixture _fixture;
-    private readonly EmbeddedJsonResourceProvider _jsonResourceProvider;
-    private GetPersonResponse? _dbPerson;
+    private readonly EmbeddedJsonResourceProvider _jsonResourceProvider = new(typeof(PutOptimisticLockingTest).Namespace!);
 
-    public PutOptimisticLockingTest(IntegrationTestFixture fixture)
-    {
-        _fixture = fixture;
-        _jsonResourceProvider = new EmbeddedJsonResourceProvider(GetType().Namespace!);
-    }
-
-    public async Task InitializeAsync()
-    {
-        if (_fixture.DatabaseResetProvider != null)
-        {
-            await _fixture.DatabaseResetProvider.ResetAsync();
-        }
-
-        var content = await _jsonResourceProvider.CreateHttpContentByResourceAsync("Post_Person_Request.json");
-        var response = await _fixture.SendAsync(HttpMethod.Post, Route, content, TestUsers.Admin);
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-        _dbPerson = await response.Content.ReadAsync<GetPersonResponse>();
-    }
+    public async Task InitializeAsync() => await fixture.ResetDatabaseAsync();
 
     public Task DisposeAsync() => Task.CompletedTask;
 
@@ -42,8 +23,13 @@ public class PutOptimisticLockingTest : IAsyncLifetime
     [Fact]
     public async Task PersonsController_Ok()
     {
-        var expectedPerson = await _jsonResourceProvider.CreateObjectByResourceAsync<GetPersonResponse>("Put_Person_Request.json") with { Id = _dbPerson!.Id, Version = Guid.NewGuid() };
-        var response = await _fixture.SendAsync(HttpMethod.Put, $"{Route}/{_dbPerson!.Id}", expectedPerson.ToJson().ToStringContent(), TestUsers.Admin);
+        var content = await _jsonResourceProvider.CreateHttpContentByResourceAsync("Post_Person_Request.json");
+        var response = await fixture.SendAsync(HttpMethod.Post, Route, content, TestUsers.Admin);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var getPersonResponse = await response.Content.ReadAsync<GetPersonResponse>();
+
+        var expectedPerson = await _jsonResourceProvider.CreateObjectByResourceAsync<GetPersonResponse>("Put_Person_Request.json") with { Id = getPersonResponse!.Id, Version = Guid.NewGuid() };
+        response = await fixture.SendAsync(HttpMethod.Put, $"{Route}/{getPersonResponse!.Id}", expectedPerson.ToJson().ToStringContent(), TestUsers.Admin);
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         
         var problemDetails = await response.Content.ReadAsync<ProblemDetails>();

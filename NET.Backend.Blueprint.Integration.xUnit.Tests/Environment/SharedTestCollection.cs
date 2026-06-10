@@ -1,9 +1,8 @@
 ﻿using Xunit;
 
-namespace NET.Backend.Blueprint.Integration.xUnit.Tests.Environment
+namespace NET.Backend.Blueprint.Integration.xUnit.Tests.Environment;
+
+[CollectionDefinition(nameof(SharedTestCollection))]
+public class SharedTestCollection : ICollectionFixture<Fixture>
 {
-    [CollectionDefinition(nameof(SharedTestCollection))]
-    public class SharedTestCollection : ICollectionFixture<IntegrationTestFixture>
-    {
-    }
 }

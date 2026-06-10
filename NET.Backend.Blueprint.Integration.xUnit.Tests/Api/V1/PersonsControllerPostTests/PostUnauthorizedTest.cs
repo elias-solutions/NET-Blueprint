@@ -6,7 +6,7 @@ using Xunit;
 namespace NET.Backend.Blueprint.Integration.xUnit.Tests.Api.V1.PersonsControllerPostTests;
 
 [Collection(nameof(SharedTestCollection))]
-public class PostUnauthorizedTest(IntegrationTestFixture fixture)
+public class PostUnauthorizedTest(Fixture fixture)
 {
     private const string Route = "/api/v1/persons";
 
