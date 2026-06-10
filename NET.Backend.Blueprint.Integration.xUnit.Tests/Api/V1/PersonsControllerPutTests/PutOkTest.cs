@@ -1,5 +1,6 @@
 using System.Net;
 using FluentAssertions;
+using NET.Backend.Blueprint.Api.CQRS.Commands;
 using NET.Backend.Blueprint.Api.Model.Commands;
 using NET.Backend.Blueprint.Api.Model.Queries;
 using NET.Backend.Blueprint.Extensions;
@@ -17,7 +18,6 @@ public class PutOkTest : IAsyncLifetime
     private const string ModifiedDate = "2023-11-10T14:30:00+00:00";
     private readonly IntegrationTestFixture _fixture;
     private readonly EmbeddedJsonResourceProvider _jsonResourceProvider;
-    private GetPersonResponse _dbPerson = default!;
 
     public PutOkTest(IntegrationTestFixture fixture)
     {
@@ -25,22 +25,19 @@ public class PutOkTest : IAsyncLifetime
         _jsonResourceProvider = new EmbeddedJsonResourceProvider(GetType().Namespace!);
     }
 
-    public async Task InitializeAsync()
-    {
-        await _fixture.DatabaseResetProvider.ResetAsync();
+    public Task InitializeAsync() => Task.CompletedTask;
 
-        var content = await _jsonResourceProvider.CreateHttpContentByResourceAsync("Post_Person_Request.json");
-        var response = await _fixture.SendAsync(HttpMethod.Post, Route, content, TestUsers.Admin);
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-        _dbPerson = await response.Content.ReadAsync<GetPersonResponse>();
-    }
-    
     public Task DisposeAsync() => Task.CompletedTask;
 
     [Fact]
     public async Task PersonsController_Ok()
     {
-        var response = await _fixture.SendAsync(HttpMethod.Get, $"{Route}/{_dbPerson!.Id}", TestUsers.Admin);
+        var content = await _jsonResourceProvider.CreateHttpContentByResourceAsync("Post_Person_Request.json");
+        var response = await _fixture.SendAsync(HttpMethod.Post, Route, content, TestUsers.Admin);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var createPersonResponse = await response.Content.ReadAsync<CreatePersonResponse>();
+
+        response = await _fixture.SendAsync(HttpMethod.Get, $"{Route}/{createPersonResponse!.Id}", null, TestUsers.Admin);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var person = await response.Content.ReadAsync<GetPersonResponse>();
 
@@ -48,7 +45,10 @@ public class PutOkTest : IAsyncLifetime
 
         response = await _fixture.SendAsync(HttpMethod.Put, $"{Route}/{personRequest!.Id}", personRequest.ToJson().ToStringContent(), TestUsers.Admin);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var updatedPerson = await response.Content.ReadAsync<GetPersonResponse>();
+
+        response = await _fixture.SendAsync(HttpMethod.Get, $"{Route}/{createPersonResponse!.Id}", null, TestUsers.Admin);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var updatedPerson  = await response.Content.ReadAsync<GetPersonResponse>();
 
         var expectedPerson = await _jsonResourceProvider.CreateObjectByResourceAsync<GetPersonResponse>("Get_Person_Response.json");
         updatedPerson.Should().BeEquivalentTo(expectedPerson, options => options

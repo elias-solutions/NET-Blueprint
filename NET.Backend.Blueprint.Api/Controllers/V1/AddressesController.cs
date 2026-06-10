@@ -1,6 +1,5 @@
 using System.Net;
 using Asp.Versioning;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NET.Backend.Blueprint.Api.Authorization;
@@ -15,19 +14,21 @@ namespace NET.Backend.Blueprint.Api.Controllers.V1;
 [Authorize(Roles = Roles.Admin)]
 [Route("api/v{version:apiVersion}/addresses")]
 [ApiVersion("1.0")]
-public class AddressesController(IMediator mediator) : ControllerBase
+public class AddressesController(
+    ICommandHandler<UpdateAddressCommand> updateCommandHandler,
+    IQueryHandler<GetAddressResponseByIdQuery, GetAddressResponse> addressQueryHandler) : ControllerBase
 {
     [HttpPut("{id}")]
     [ProducesResponseType((int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-    public async Task<GetAddressResponse> UpdateAddressAsync(Guid id, UpdateAddressRequest request)
+    public async Task<GetAddressResponse> UpdateAddressAsync(Guid id, UpdateAddressRequest request, CancellationToken cancellation)
     {
         if (id != request.AddressId)
         {
             BadRequest($"Provided AddressId '{id}' and AddressId '{request.AddressId}' are not equal.'");
         }
 
-        await mediator.Send(new UpdateAddressCommand(request));
-        return await mediator.Send(new GetAddressResponseByIdQuery(request.AddressId));
+        await updateCommandHandler.HandleAsync(new UpdateAddressCommand(request), cancellation);
+        return await addressQueryHandler.HandleAsync(new GetAddressResponseByIdQuery(request.AddressId), cancellation);
     }
 }

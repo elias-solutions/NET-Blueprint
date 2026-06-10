@@ -24,8 +24,6 @@ public class GetOkTest : IAsyncLifetime
     
     public async Task InitializeAsync()
     {
-        await _fixture.DatabaseResetProvider.ResetAsync();
-
         var content = await _jsonResourceProvider.CreateHttpContentByResourceAsync("Post_Person_Request.json");
         var response = await _fixture.SendAsync(HttpMethod.Post, Route, content, TestUsers.Admin);
         _dbGetPerson = await response.Content.ReadAsync<GetPersonResponse>(); 
@@ -37,7 +35,7 @@ public class GetOkTest : IAsyncLifetime
     [Fact]
     public async Task PersonController_Get_Ok()
     {
-        var response = await _fixture.SendAsync(HttpMethod.Get, $"{Route}/{_dbGetPerson.Id}", TestUsers.Admin);
+        var response = await _fixture.SendAsync(HttpMethod.Get, $"{Route}/{_dbGetPerson.Id}", null, TestUsers.Admin);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var expected = await _jsonResourceProvider.CreateObjectByResourceAsync<GetPersonResponse>("Get_Person_Response.json");

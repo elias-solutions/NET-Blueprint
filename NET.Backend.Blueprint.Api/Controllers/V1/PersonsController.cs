@@ -1,6 +1,5 @@
 using System.Net;
 using Asp.Versioning;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NET.Backend.Blueprint.Api.Authorization;
@@ -15,53 +14,56 @@ namespace NET.Backend.Blueprint.Api.Controllers.V1;
 [Authorize(Roles = Roles.Admin)]
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/persons")]
-public class PersonsController(IMediator mediator) : ControllerBase
+public class PersonsController(
+    IQueryHandler<GetPersonsResponseQuery, IEnumerable<GetPersonResponse>> getPersonsResponseQueryHandler,
+    IQueryHandler<GetPersonResponseByIdQuery, GetPersonResponse> getPersonByIdResponseQueryHandler,
+    ICommandHandler<CreatePersonCommand, CreatePersonResponse> createPersonCommandHandler,
+    ICommandHandler<UpdatePersonCommand> updatePersonCommandHandler,
+    ICommandHandler<DeletePersonByIdCommand> deletePersonByIdCommandHandler) : ControllerBase
 {
     [HttpGet]
     [ProducesResponseType((int)HttpStatusCode.OK)]
-    public async Task<IEnumerable<GetPersonResponse>> GetPersonsV1Async()
+    public async Task<IEnumerable<GetPersonResponse>> GetPersonsV1Async(CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(new GetPersonsResponseQuery());
+        var result = await getPersonsResponseQueryHandler.HandleAsync(new GetPersonsResponseQuery(), cancellationToken);
         return result;
     }
 
     [HttpGet("{id}")]
     [ProducesResponseType((int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-    public async Task<GetPersonResponse> GetPersonByIdAsync(Guid id)
+    public async Task<GetPersonResponse> GetPersonByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(new GetPersonResponseByIdQuery(id));
+        var result = await getPersonByIdResponseQueryHandler.HandleAsync(new GetPersonResponseByIdQuery(id), cancellationToken);
         return result;
     }
 
     [HttpPost]
     [ProducesResponseType((int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-    public async Task<GetPersonResponse> CreatePersonAsync([FromBody] CreatePersonRequest request)
+    public async Task<CreatePersonResponse> CreatePersonAsync([FromBody] CreatePersonRequest request, CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(new CreatePersonCommand(request));
-        return result;
+        return await createPersonCommandHandler.HandleAsync(new CreatePersonCommand(request), cancellationToken);
     }
 
     [HttpPut("{id}")]
     [ProducesResponseType((int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-    public async Task<GetPersonResponse> UpdatePersonAsync(Guid id, UpdatePersonRequest request)
+    public async Task UpdatePersonAsync(Guid id, UpdatePersonRequest request, CancellationToken cancellationToken)
     {
         if (id != request.Id)
         {
             BadRequest($"Provided AddressId '{id}' and AddressId '{request.Id}' are not equal.'");
         }
 
-        await mediator.Send(new UpdatePersonCommand(request));
-        return await mediator.Send(new GetPersonResponseByIdQuery(id));
+        await updatePersonCommandHandler.HandleAsync(new UpdatePersonCommand(request), cancellationToken);
     }
 
     [HttpDelete("{id}")]
     [ProducesResponseType((int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-    public async Task DeletePersonByIdAsync(Guid id)
+    public async Task DeletePersonByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        await mediator.Send(new DeletePersonByIdCommand(id));
+        await deletePersonByIdCommandHandler.HandleAsync(new DeletePersonByIdCommand(id), cancellationToken);
     }
 }

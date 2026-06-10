@@ -13,7 +13,7 @@ public class GetUnauthorizedTest(IntegrationTestFixture fixture)
     [Fact]
     public async Task PersonController_Get_Unauthorized()
     {
-        var response = await fixture.SendAnonymousAsync(HttpMethod.Get, $"{Route}/{Guid.NewGuid()}");
+        var response = await fixture.SendAsync(HttpMethod.Get, $"{Route}/{Guid.NewGuid()}", null, null);
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 }

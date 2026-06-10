@@ -1,6 +1,4 @@
-﻿using Azure.Core;
-using NET.Backend.Blueprint.Api.CQRS.Commands;
-using NET.Backend.Blueprint.Api.Entities;
+﻿using NET.Backend.Blueprint.Api.Entities;
 using NET.Backend.Blueprint.Api.Model.Queries;
 
 namespace NET.Backend.Blueprint.Api.Extensions;

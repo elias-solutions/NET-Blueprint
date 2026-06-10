@@ -1,8 +1,9 @@
-using System.Net;
 using FluentAssertions;
-using NET.Backend.Blueprint.Api.Model.Queries;
+using NET.Backend.Blueprint.Api.CQRS.Commands;
 using NET.Backend.Blueprint.Extensions;
 using NET.Backend.Blueprint.Integration.xUnit.Tests.Environment;
+using System.Net;
+using System.Net.Http.Json;
 using Xunit;
 
 namespace NET.Backend.Blueprint.Integration.xUnit.Tests.Api.V1.PersonsControllerDeleteTests;
@@ -13,7 +14,7 @@ public class DeleteOkTest : IAsyncLifetime
     private const string Route = "/api/v1/persons";
     private readonly IntegrationTestFixture _fixture;
     private readonly EmbeddedJsonResourceProvider _jsonResourceProvider;
-    private GetPersonResponse _dbGetPerson = default!;
+    private Guid _personId;
 
     public DeleteOkTest(IntegrationTestFixture fixture)
     {
@@ -21,22 +22,20 @@ public class DeleteOkTest : IAsyncLifetime
         _jsonResourceProvider = new EmbeddedJsonResourceProvider(GetType().Namespace!);
     }
 
-    public async Task InitializeAsync()
-    {
-        await _fixture.DatabaseResetProvider.ResetAsync();
-
-        var content = await _jsonResourceProvider.CreateHttpContentByResourceAsync("Post_Person_Request.json");
-        var response = await _fixture.SendAsync(HttpMethod.Post, Route, content, TestUsers.Admin);
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-        _dbGetPerson = await response.Content.ReadAsync<GetPersonResponse>();
-    } 
+    public Task InitializeAsync() => Task.CompletedTask;
 
     public Task DisposeAsync() => Task.CompletedTask;
 
     [Fact]
     public async Task PersonsController_Delete_Ok()
     {
-        var response = await _fixture.SendAsync(HttpMethod.Delete, $"{Route}/{_dbGetPerson.Id}", TestUsers.Admin);
+        var content = await _jsonResourceProvider.CreateHttpContentByResourceAsync("Post_Person_Request.json");
+        var response = await _fixture.SendAsync(HttpMethod.Post, Route, content, TestUsers.Admin);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var personResponse = await response.Content.ReadFromJsonAsync<CreatePersonResponse>();
+
+        response = await _fixture.SendAsync(HttpMethod.Delete, $"{Route}/{personResponse!.Id}", null, TestUsers.Admin);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 }

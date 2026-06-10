@@ -1,5 +1,4 @@
-﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using NET.Backend.Blueprint.Api.DataAccess;
 using NET.Backend.Blueprint.Api.Entities;
 using NET.Backend.Blueprint.Api.ErrorHandling;
@@ -9,11 +8,11 @@ using System.Net;
 
 namespace NET.Backend.Blueprint.Api.CQRS.Commands;
 
-public record UpdatePersonCommand(UpdatePersonRequest Request) : IRequest;
+public record UpdatePersonCommand(UpdatePersonRequest Request) : ICommand;
 
-public class UpdatePersonCommandHandler(Repository<Person> repository) : IRequestHandler<UpdatePersonCommand>
+public class UpdatePersonCommandHandler(Repository<Person> repository) : ICommandHandler<UpdatePersonCommand>
 {
-    public async Task Handle(UpdatePersonCommand request, CancellationToken cancellationToken)
+    public async Task HandleAsync(UpdatePersonCommand request, CancellationToken cancellationToken)
     {
         var person = await repository.FirstOrDefaultAsync(
                    person => person.Id == request.Request.Id,

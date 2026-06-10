@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using NET.Backend.Blueprint.Integration.xUnit.Tests.Converters;
 
 namespace NET.Backend.Blueprint.Extensions
 {
@@ -8,10 +9,14 @@ namespace NET.Backend.Blueprint.Extensions
     {
         private static readonly JsonSerializerOptions Options = new()
         {
-            Converters = { new JsonStringEnumConverter() },
             PropertyNameCaseInsensitive = true,
             IncludeFields = true,
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            Converters =
+            {
+                new JsonStringEnumConverter(),
+                new DateOnlyJsonConverter(),
+                new DateOnlyNullableJsonConverter(),
+            }
         };
 
         public static async Task<T> ReadAsync<T>(this HttpContent source)

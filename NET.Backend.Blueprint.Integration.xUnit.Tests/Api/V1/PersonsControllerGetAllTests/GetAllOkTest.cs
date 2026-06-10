@@ -1,6 +1,5 @@
 using System.Net;
 using FluentAssertions;
-using NET.Backend.Blueprint.Api.Model.Commands;
 using NET.Backend.Blueprint.Api.Model.Queries;
 using NET.Backend.Blueprint.Extensions;
 using NET.Backend.Blueprint.Integration.xUnit.Tests.Environment;
@@ -22,7 +21,11 @@ public class GetAllOkTest : IAsyncLifetime
     }
     public async Task InitializeAsync()
     {
-        await _fixture.DatabaseResetProvider.ResetAsync();
+        if (_fixture.DatabaseResetProvider != null)
+        {
+            await _fixture.DatabaseResetProvider.ResetAsync();
+        }
+
         var content = await _jsonResourceProvider.CreateHttpContentByResourceAsync("Post_Person_Request.json");
         var response = await _fixture.SendAsync(HttpMethod.Post, Route, content, TestUsers.Admin);  
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -33,7 +36,7 @@ public class GetAllOkTest : IAsyncLifetime
     [Fact]
     public async Task PersonController_GetAll_Ok()
     {
-        var response = await _fixture.SendAsync(HttpMethod.Get, Route, TestUsers.Admin);
+        var response = await _fixture.SendAsync(HttpMethod.Get, Route, null, TestUsers.Admin);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var result = await response.Content.ReadAsync<IEnumerable<GetPersonResponse>>();

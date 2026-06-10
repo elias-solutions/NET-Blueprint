@@ -25,7 +25,10 @@ public class PutOptimisticLockingTest : IAsyncLifetime
 
     public async Task InitializeAsync()
     {
-        await _fixture.DatabaseResetProvider.ResetAsync();
+        if (_fixture.DatabaseResetProvider != null)
+        {
+            await _fixture.DatabaseResetProvider.ResetAsync();
+        }
 
         var content = await _jsonResourceProvider.CreateHttpContentByResourceAsync("Post_Person_Request.json");
         var response = await _fixture.SendAsync(HttpMethod.Post, Route, content, TestUsers.Admin);
@@ -34,6 +37,7 @@ public class PutOptimisticLockingTest : IAsyncLifetime
     }
 
     public Task DisposeAsync() => Task.CompletedTask;
+
 
     [Fact]
     public async Task PersonsController_Ok()

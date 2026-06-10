@@ -1,5 +1,4 @@
-﻿using MediatR;
-using NET.Backend.Blueprint.Api.Entities;
+﻿using NET.Backend.Blueprint.Api.Entities;
 using NET.Backend.Blueprint.Api.ErrorHandling;
 using System.Net;
 using Microsoft.EntityFrameworkCore;
@@ -9,11 +8,11 @@ using NET.Backend.Blueprint.Api.DataAccess;
 
 namespace NET.Backend.Blueprint.Api.CQRS.Queries;
 
-public record GetPersonResponseByIdQuery(Guid PersonId) : IRequest<GetPersonResponse>;
+public record GetPersonResponseByIdQuery(Guid PersonId) : IQuery<GetPersonResponse>;
 
-public class GetPersonResponseByIdQueryHandler(Repository<Person> repository) : IRequestHandler<GetPersonResponseByIdQuery, GetPersonResponse>
+public class GetPersonResponseByIdQueryHandler(Repository<Person> repository) : IQueryHandler<GetPersonResponseByIdQuery, GetPersonResponse>
 {
-    public async Task<GetPersonResponse> Handle(GetPersonResponseByIdQuery request, CancellationToken cancellationToken)
+    public async Task<GetPersonResponse> HandleAsync(GetPersonResponseByIdQuery request, CancellationToken cancellationToken)
     {
         var person = await repository.FirstOrDefaultAsync(
                           person => person.Id == request.PersonId, 
