@@ -1,4 +1,4 @@
-using FluentAssertions;
+using NET.Backend.Blueprint.Integration.xUnit.Tests.Assertions;
 using NET.Backend.Blueprint.Api.Model.Queries;
 using NET.Backend.Blueprint.Extensions;
 using NET.Backend.Blueprint.Integration.xUnit.Tests.Environment;
@@ -11,7 +11,7 @@ namespace NET.Backend.Blueprint.Integration.xUnit.Tests.Api.V1.PersonsController
 public class GetOkTest(Fixture fixture) : IAsyncLifetime
 {
     private const string Route = "/api/v1/persons";
-    private readonly EmbeddedJsonResourceProvider _jsonResourceProvider = new(typeof(GetOkTest).Namespace);
+    private readonly EmbeddedJsonResourceProvider _jsonResourceProvider = new(typeof(GetOkTest).Namespace!);
 
     public async Task InitializeAsync() => await fixture.ResetDatabaseAsync();
 

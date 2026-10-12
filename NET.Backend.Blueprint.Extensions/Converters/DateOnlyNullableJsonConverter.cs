@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace NET.Backend.Blueprint.Integration.xUnit.Tests.Converters;
+namespace NET.Backend.Blueprint.Extensions.Converters;
 
 public class DateOnlyNullableJsonConverter : JsonConverter<DateOnly?>
 {

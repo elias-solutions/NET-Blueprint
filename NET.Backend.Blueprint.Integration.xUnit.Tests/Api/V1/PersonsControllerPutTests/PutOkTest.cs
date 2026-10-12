@@ -1,4 +1,4 @@
-using FluentAssertions;
+using NET.Backend.Blueprint.Integration.xUnit.Tests.Assertions;
 using NET.Backend.Blueprint.Api.CQRS.Commands;
 using NET.Backend.Blueprint.Api.Model.Commands;
 using NET.Backend.Blueprint.Api.Model.Queries;
@@ -16,7 +16,7 @@ public class PutOkTest(Fixture fixture) : IAsyncLifetime
     private const string Route = "/api/v1/persons";
     private const string CreatedDate = "2023-10-10T14:30:00+00:00";
     private const string ModifiedDate = "2023-11-10T14:30:00+00:00";
-    private readonly EmbeddedJsonResourceProvider _jsonResourceProvider = new(typeof(PutOkTest).Namespace);
+    private readonly EmbeddedJsonResourceProvider _jsonResourceProvider = new(typeof(PutOkTest).Namespace!);
 
     public async Task InitializeAsync() => await fixture.ResetDatabaseAsync();
 
@@ -49,7 +49,11 @@ public class PutOkTest(Fixture fixture) : IAsyncLifetime
             .Excluding(x => x.Version)
             .For(x => x.Addresses).Exclude(x => x.Id)
             .For(x => x.Addresses).Exclude(x => x.Version));
-        person.Addresses.Select(x => x.Version.Should().NotBe(Guid.Empty));
+        updatedPerson!.Version.Should().NotBe(person!.Version);
+        foreach (var address in updatedPerson.Addresses)
+        {
+            address.Version.Should().NotBe(Guid.Empty);
+        }
     }
 
     private UpdatePersonRequest UpdatePerson(GetPersonResponse person)

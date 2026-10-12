@@ -1,5 +1,5 @@
 using System.Net;
-using FluentAssertions;
+using NET.Backend.Blueprint.Integration.xUnit.Tests.Assertions;
 using Microsoft.AspNetCore.Mvc;
 using NET.Backend.Blueprint.Api.Model.Queries;
 using NET.Backend.Blueprint.Extensions;
@@ -39,5 +39,25 @@ public class PutOptimisticLockingTest(Fixture fixture) : IAsyncLifetime
             Title = "BadRequest - Entity version conflict",
             Detail = "Entity has been updated through other user."
         });
+    }
+
+    [Fact]
+    public async Task PersonsController_StaleVersionAfterUpdate_BadRequest()
+    {
+        var content = await _jsonResourceProvider.CreateHttpContentByResourceAsync("Post_Person_Request.json");
+        var response = await fixture.SendAsync(HttpMethod.Post, Route, content, TestUsers.Admin);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var createdPerson = await response.Content.ReadAsync<GetPersonResponse>();
+
+        response = await fixture.SendAsync(HttpMethod.Get, $"{Route}/{createdPerson!.Id}", null, TestUsers.Admin);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var person = await response.Content.ReadAsync<GetPersonResponse>();
+
+        var updateRequest = await _jsonResourceProvider.CreateObjectByResourceAsync<GetPersonResponse>("Put_Person_Request.json") with { Id = person!.Id, Version = person.Version };
+        response = await fixture.SendAsync(HttpMethod.Put, $"{Route}/{person.Id}", updateRequest.ToJson().ToStringContent(), TestUsers.Admin);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        response = await fixture.SendAsync(HttpMethod.Put, $"{Route}/{person.Id}", updateRequest.ToJson().ToStringContent(), TestUsers.Admin);
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 }

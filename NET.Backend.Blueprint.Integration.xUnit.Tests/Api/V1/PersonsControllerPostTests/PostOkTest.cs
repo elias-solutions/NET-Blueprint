@@ -1,4 +1,4 @@
-using FluentAssertions;
+using NET.Backend.Blueprint.Integration.xUnit.Tests.Assertions;
 using NET.Backend.Blueprint.Api.CQRS.Commands;
 using NET.Backend.Blueprint.Api.Model.Queries;
 using NET.Backend.Blueprint.Extensions;
@@ -13,7 +13,7 @@ namespace NET.Backend.Blueprint.Integration.xUnit.Tests.Api.V1.PersonsController
 public class PostOkTest(Fixture fixture)
 {
     private const string Route = "/api/v1/persons";
-    private readonly EmbeddedJsonResourceProvider _jsonResourceProvider = new(typeof(PostOkTest).Namespace);
+    private readonly EmbeddedJsonResourceProvider _jsonResourceProvider = new(typeof(PostOkTest).Namespace!);
 
     [Fact]
     public async Task PersonsController_Ok()
