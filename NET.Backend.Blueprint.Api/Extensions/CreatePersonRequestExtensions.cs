@@ -7,7 +7,8 @@ public static class CreatePersonRequestExtensions
 {
     public static Person ToNewPerson(this CreatePersonRequest source)
     {
-        return new Person
+        var addresses = source.Addresses.Select(x => x.ToNewAddress()).ToList();
+        var person = new Person
         {
             Id = Guid.Empty,
             FirstName = source.FirstName,
@@ -15,7 +16,8 @@ public static class CreatePersonRequestExtensions
             Birthday = source.Birthday,
             CreatedId = source.CreatedId,
             CreatedDate = source.CreatedDate,
-            Addresses = source.Addresses.Select(x => x.ToNewAddress()).ToList()
+            Addresses = addresses
         };
+        return person;
     }
 }

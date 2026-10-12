@@ -1,16 +1,14 @@
-﻿using NET.Backend.Blueprint.Api.Authorization;
-using NET.Backend.Blueprint.Api.Entities.Base;
+﻿using NET.Backend.Blueprint.Api.Entities.Base;
 
 namespace NET.Backend.Blueprint.Api.Entities
 {
     public class Person : EntityBase
     {
-        public string FirstName { get; set; } = default!;
+        public required string FirstName { get; set; }
 
-        public string LastName { get; set; } = default!;
+        public required string LastName { get; set; }
 
-        public DateOnly Birthday { get; set; }
-
+        public required DateOnly Birthday { get; set; }
         public Guid CreatedId { get; set; }
 
         public DateTimeOffset CreatedDate { get; set; }
@@ -19,6 +17,6 @@ namespace NET.Backend.Blueprint.Api.Entities
 
         public DateTimeOffset? ModifiedDate { get; set; }
 
-        public ICollection<Address> Addresses { get; set; } = default!;
+        public ICollection<Address> Addresses { get; set; } = [];
     }
 }

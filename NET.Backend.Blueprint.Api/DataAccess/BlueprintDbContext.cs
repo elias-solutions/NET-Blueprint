@@ -6,16 +6,25 @@ namespace NET.Backend.Blueprint.Api.DataAccess;
 
 public class BlueprintDbContext(DbContextOptions options) : DbContext(options)
 {
+    private const int StringLength = 200;
     public DbSet<Person> Persons { get; set; }
     public DbSet<Address> Addresses { get; set; } 
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder builder)
     {
-        modelBuilder.Entity<Person>()
+        builder.Entity<Person>()
             .HasMany(x => x.Addresses)
             .WithOne(x => x.Person)
             .HasForeignKey(x => x.PersonId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<Person>().Property(p => p.FirstName).HasMaxLength(StringLength);
+        builder.Entity<Person>().Property(p => p.LastName).HasMaxLength(StringLength);
+        builder.Entity<Address>().Property(p => p.Street).HasMaxLength(StringLength);
+        builder.Entity<Address>().Property(p => p.Number).HasMaxLength(StringLength);
+        builder.Entity<Address>().Property(p => p.City).HasMaxLength(StringLength);
+        builder.Entity<Address>().Property(p => p.PostalCode).HasMaxLength(StringLength);
+
     }
 
     public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)

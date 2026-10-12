@@ -26,7 +26,9 @@ public static class ServiceCollectionExtensions
     {
         services.AddApiVersioning(o =>
             {
+#pragma warning disable AV0016 // Clients send no version header; unversioned requests must fall back to DefaultApiVersion.
                 o.AssumeDefaultVersionWhenUnspecified = true;
+#pragma warning restore AV0016
                 o.DefaultApiVersion = new ApiVersion(1, 0);
                 o.ReportApiVersions = true;
                 o.ApiVersionReader = new HeaderApiVersionReader();
