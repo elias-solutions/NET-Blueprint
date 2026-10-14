@@ -1,4 +1,4 @@
-﻿using NET.Backend.Blueprint.Api.Authorization;
+﻿using NET.Backend.Blueprint.Web.Authorization;
 
 namespace NET.Backend.Blueprint.Integration.xUnit.Tests.Environment;
 

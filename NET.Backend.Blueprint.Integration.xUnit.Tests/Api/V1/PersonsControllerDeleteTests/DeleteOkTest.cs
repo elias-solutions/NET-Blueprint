@@ -1,5 +1,5 @@
 using NET.Backend.Blueprint.Integration.xUnit.Tests.Assertions;
-using NET.Backend.Blueprint.Api.CQRS.Commands;
+using NET.Backend.Blueprint.Application.CQRS.Commands;
 using NET.Backend.Blueprint.Integration.xUnit.Tests.Environment;
 using System.Net;
 using System.Net.Http.Json;

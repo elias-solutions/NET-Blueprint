@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>14</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Asp.Versioning.Http" Version="10.2.1" />
+    <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="10.2.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.12" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NET.Backend.Blueprint.Application\NET.Backend.Blueprint.Application.csproj" />
+    <ProjectReference Include="..\NET.Backend.Blueprint.Infrastructure\NET.Backend.Blueprint.Infrastructure.csproj" />
+    <ProjectReference Include="..\NET.Backend.Blueprint.Web\NET.Backend.Blueprint.Web.csproj" />
+  </ItemGroup>
+
+</Project>

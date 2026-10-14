@@ -3,7 +3,7 @@ using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using NET.Backend.Blueprint.Api.Authorization;
+using NET.Backend.Blueprint.Web.Authorization;
 
 namespace NET.Backend.Blueprint.Integration.xUnit.Tests.Environment;
 

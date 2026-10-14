@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using NET.Backend.Blueprint.Api.Authorization;
-using NET.Backend.Blueprint.Api.DataAccess;
+using NET.Backend.Blueprint.Web.Authorization;
+using NET.Backend.Blueprint.Infrastructure.DataAccess;
 using NSubstitute;
 using Xunit;
 

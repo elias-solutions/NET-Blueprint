@@ -2,7 +2,7 @@ using System.Net;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NET.Backend.Blueprint.Api.Authorization;
+using NET.Backend.Blueprint.Web.Authorization;
 
 namespace NET.Backend.Blueprint.Api.Controllers.V2;
 

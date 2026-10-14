@@ -1,5 +1,7 @@
-﻿using System.Net.Mime;
+using System.Net.Mime;
 using System.Text.Json;
+using NET.Backend.Blueprint.Application.Exceptions;
+using NET.Backend.Blueprint.Web.ErrorHandling;
 
 namespace NET.Backend.Blueprint.Api.ErrorHandling
 {
@@ -11,17 +13,18 @@ namespace NET.Backend.Blueprint.Api.ErrorHandling
             {
                 await next(context);
             }
-            catch (ProblemDetailsException exception)
+            catch (BlueprintException exception)
             {
+                var problemDetails = exception.ToProblemDetails();
                 context.Response.Clear();
                 context.Response.ContentType = MediaTypeNames.Application.Json;
 
-                if (exception.ProblemDetails.Status != null)
+                if (problemDetails.Status != null)
                 {
-                    context.Response.StatusCode = exception.ProblemDetails.Status.Value;
+                    context.Response.StatusCode = problemDetails.Status.Value;
                 }
 
-                await context.Response.WriteAsync(JsonSerializer.Serialize(exception.ProblemDetails));
+                await context.Response.WriteAsync(JsonSerializer.Serialize(problemDetails));
             }
         }
     }

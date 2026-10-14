@@ -1,7 +1,7 @@
 using System.Net;
 using NET.Backend.Blueprint.Integration.xUnit.Tests.Assertions;
 using Microsoft.AspNetCore.Mvc;
-using NET.Backend.Blueprint.Api.Model.Queries;
+using NET.Backend.Blueprint.Application.Model.Queries;
 using NET.Backend.Blueprint.Extensions;
 using NET.Backend.Blueprint.Integration.xUnit.Tests.Environment;
 using NET.Backend.Blueprint.Integration.xUnit.Tests.Extensions;

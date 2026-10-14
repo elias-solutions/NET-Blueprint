@@ -11,9 +11,7 @@
     <PackageReference Include="Asp.Versioning.Mvc" Version="10.2.1" />
     <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="10.2.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.12" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.12" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.3.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -21,7 +19,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\NET.Backend.Blueprint.Application\NET.Backend.Blueprint.Application.csproj" />
     <ProjectReference Include="..\NET.Backend.Blueprint.Extensions\NET.Backend.Blueprint.Extensions.csproj" />
+    <ProjectReference Include="..\NET.Backend.Blueprint.Infrastructure\NET.Backend.Blueprint.Infrastructure.csproj" />
+    <ProjectReference Include="..\NET.Backend.Blueprint.Web\NET.Backend.Blueprint.Web.csproj" />
   </ItemGroup>
 
 </Project>

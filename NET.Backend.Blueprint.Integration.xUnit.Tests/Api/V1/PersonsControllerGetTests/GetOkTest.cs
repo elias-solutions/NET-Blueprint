@@ -1,5 +1,5 @@
 using NET.Backend.Blueprint.Integration.xUnit.Tests.Assertions;
-using NET.Backend.Blueprint.Api.Model.Queries;
+using NET.Backend.Blueprint.Application.Model.Queries;
 using NET.Backend.Blueprint.Extensions;
 using NET.Backend.Blueprint.Integration.xUnit.Tests.Environment;
 using System.Net;

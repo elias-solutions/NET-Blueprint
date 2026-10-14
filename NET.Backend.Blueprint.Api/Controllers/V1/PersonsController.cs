@@ -2,11 +2,12 @@ using System.Net;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NET.Backend.Blueprint.Api.Authorization;
-using NET.Backend.Blueprint.Api.CQRS.Commands;
-using NET.Backend.Blueprint.Api.CQRS.Queries;
-using NET.Backend.Blueprint.Api.Model.Commands;
-using NET.Backend.Blueprint.Api.Model.Queries;
+using NET.Backend.Blueprint.Application.CQRS;
+using NET.Backend.Blueprint.Application.CQRS.Commands;
+using NET.Backend.Blueprint.Application.CQRS.Queries;
+using NET.Backend.Blueprint.Application.Model.Commands;
+using NET.Backend.Blueprint.Application.Model.Queries;
+using NET.Backend.Blueprint.Web.Authorization;
 
 namespace NET.Backend.Blueprint.Api.Controllers.V1;
 
@@ -15,7 +16,7 @@ namespace NET.Backend.Blueprint.Api.Controllers.V1;
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/persons")]
 public class PersonsController(
-    IQueryHandler<GetPersonsResponseQuery, IEnumerable<GetPersonResponse>> getPersonsResponseQueryHandler,
+    IQueryHandler<GetPersonsResponseQuery, IReadOnlyList<GetPersonResponse>> getPersonsResponseQueryHandler,
     IQueryHandler<GetPersonResponseByIdQuery, GetPersonResponse> getPersonByIdResponseQueryHandler,
     ICommandHandler<CreatePersonCommand, CreatePersonResponse> createPersonCommandHandler,
     ICommandHandler<UpdatePersonCommand> updatePersonCommandHandler,
