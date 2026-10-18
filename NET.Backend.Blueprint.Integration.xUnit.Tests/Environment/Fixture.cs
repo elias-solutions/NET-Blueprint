@@ -10,12 +10,15 @@ using Microsoft.Extensions.DependencyInjection;
 using NET.Backend.Blueprint.Web.Authorization;
 using NET.Backend.Blueprint.Infrastructure.DataAccess;
 using NSubstitute;
+using Testcontainers.PostgreSql;
 using Xunit;
 
 namespace NET.Backend.Blueprint.Integration.xUnit.Tests.Environment;
 
 public class Fixture : WebApplicationFactory<Program>, IAsyncLifetime
 {
+    private readonly PostgreSqlContainer _database = new PostgreSqlBuilder("postgres:18-alpine").Build();
+
     public IUserService UserService { get; } = Substitute.For<IUserService>();
     private HttpClient Client { get; set; } = null!;
     
@@ -26,38 +29,35 @@ public class Fixture : WebApplicationFactory<Program>, IAsyncLifetime
             // Add configuration sources
             config.AddJsonFile("appsettings.json")
                 .AddJsonFile($"appsettings.{context.HostingEnvironment.EnvironmentName}.json", optional: true)
-                .AddEnvironmentVariables();
+                .AddEnvironmentVariables()
+                .AddInMemoryCollection(new Dictionary<string, string?>
+                {
+                    ["ConnectionStrings:Database"] = _database.GetConnectionString()
+                });
         });
 
         builder
             .ConfigureTestServices(services =>
             {
-                var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<BlueprintDbContext>));
-                if (descriptor != null)
-                {
-                    services.Remove(descriptor);
-                }
-
-                services.AddDbContextFactory<BlueprintDbContext>(options => options.UseInMemoryDatabase("Database"));
                 services.AddScoped(_ => UserService);
                 services.AddAuthentication("TestAuthentication")
                     .AddScheme<AuthenticationSchemeOptions, TestAuthenticationHandler>("TestAuthentication", null);
             });
     }
 
-    public Task InitializeAsync()
+    public async Task InitializeAsync()
     {
+        await _database.StartAsync();
+
         Client = CreateClient();
         Client.DefaultRequestHeaders.Accept.Add(
             new MediaTypeWithQualityHeaderValue(MediaTypeNames.Application.Json));
-
-        return Task.CompletedTask;
     }
 
-    Task IAsyncLifetime.DisposeAsync()
+    async Task IAsyncLifetime.DisposeAsync()
     {
         Client?.Dispose();
-        return Task.CompletedTask;
+        await _database.DisposeAsync();
     }
 
     public async Task<HttpResponseMessage> SendAsync(HttpMethod method, string route, HttpContent? content, User? user)

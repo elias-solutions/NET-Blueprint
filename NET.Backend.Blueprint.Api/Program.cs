@@ -11,7 +11,8 @@ using System.Threading.RateLimiting;
 
 const string rateLimitsPolicyName = "fixed";
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddPersistence(options => options.UseInMemoryDatabase("Database"));
+builder.Services.AddPersistence((services, options) =>
+    options.UseNpgsql(services.GetRequiredService<IConfiguration>().GetConnectionString("Database")));
 builder.Services.AddCqrs();
 builder.Services.AddBlueprintSecurity();
 builder.Services.AddSingleton<ErrorHandlingMiddleware>();
@@ -49,6 +50,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers().RequireRateLimiting(rateLimitsPolicyName);
+await app.Services.MigrateDatabaseAsync();
 await app.RunAsync();
 
 

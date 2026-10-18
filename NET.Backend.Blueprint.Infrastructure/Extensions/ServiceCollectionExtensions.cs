@@ -7,7 +7,7 @@ namespace NET.Backend.Blueprint.Infrastructure.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddPersistence(this IServiceCollection services, Action<DbContextOptionsBuilder> configureDatabase)
+    public static IServiceCollection AddPersistence(this IServiceCollection services, Action<IServiceProvider, DbContextOptionsBuilder> configureDatabase)
     {
         services.AddDbContextFactory<BlueprintDbContext>(configureDatabase);
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));

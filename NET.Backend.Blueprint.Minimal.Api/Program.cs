@@ -8,7 +8,8 @@ using NET.Backend.Blueprint.Web.Extensions;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
-    .AddPersistence(options => options.UseInMemoryDatabase("Database"))
+    .AddPersistence((services, options) =>
+        options.UseNpgsql(services.GetRequiredService<IConfiguration>().GetConnectionString("Database")))
     .AddCqrs()
     .AddBlueprintSecurity()
     .AddBlueprintProblemDetails()
@@ -33,5 +34,7 @@ app.UseAuthorization();
 app.UseRateLimiter();
 
 app.MapBlueprintEndpoints();
+
+await app.Services.MigrateDatabaseAsync();
 
 await app.RunAsync();

@@ -12,6 +12,11 @@ public class BlueprintDbContext(DbContextOptions<BlueprintDbContext> options) : 
 
     public DbSet<Address> Addresses { get; set; }
 
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        configurationBuilder.Properties<DateTimeOffset>().HaveConversion<UtcDateTimeOffsetConverter>();
+    }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.Entity<Person>()
