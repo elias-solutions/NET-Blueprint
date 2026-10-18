@@ -14,4 +14,4 @@ Test
 Docker
 - images are built from the published output (`publish/<Project>`), see `NET.Backend.Blueprint.Api/Dockerfile` and `NET.Backend.Blueprint.Minimal.Api/Dockerfile`
 - from the Blueprint root: `./build-images.sh` (build missing images, migrate, compose up) or `./build-images.sh -f` (force rebuild)
-- `docker compose up -d` starts PostgreSQL + all APIs (Api: http://localhost:8081/swagger, Minimal Api: http://localhost:8082/swagger)
+- `docker compose up -d` starts PostgreSQL + all APIs (Api: http://localhost:5102/swagger, Minimal Api: http://localhost:5206/swagger)
