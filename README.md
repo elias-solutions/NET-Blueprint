@@ -1,7 +1,19 @@
 C# Backend Blueprint:
-- .NET 8
-- CQRS MediatR
-- EF Framework
+- .NET 10
+- CQRS with own lightweight abstractions (`ICommandHandler` / `IQueryHandler`, registered via `AddCqrs()`) — no MediatR
+- Entity Framework Core 10 with PostgreSQL (Npgsql)
+- two API hosts sharing the same Application/Infrastructure: Controller API and Minimal API (API versioning, Swagger)
+- xUnit integration tests with Testcontainers
+
+Projects
+- `NET.Backend.Blueprint.Domain` — entities
+- `NET.Backend.Blueprint.Application` — CQRS handlers, request/response models, repository abstraction
+- `NET.Backend.Blueprint.Infrastructure` — EF Core DbContext, repository, migrations
+- `NET.Backend.Blueprint.Web` — shared web setup (authentication, authorization, error handling, OpenAPI)
+- `NET.Backend.Blueprint.Api` — controller-based API
+- `NET.Backend.Blueprint.Minimal.Api` — minimal API endpoints (incl. rate limiting)
+- `NET.Backend.Blueprint.Extensions` — shared helpers
+- `NET.Backend.Blueprint.Integration.xUnit.Tests` / `NET.Backend.Blueprint.Minimal.Integration.xUnit.Tests` — integration tests per API
 
 Preparation
 - start PostgreSQL from the Blueprint root: `docker compose up -d` (database `blueprint_net`)
