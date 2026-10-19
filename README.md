@@ -4,6 +4,7 @@ C# Backend Blueprint:
 - Entity Framework Core 10 with PostgreSQL (Npgsql)
 - two API hosts sharing the same Application/Infrastructure: Controller API and Minimal API (API versioning, Swagger)
 - xUnit integration tests with Testcontainers
+- JWT bearer authentication against Keycloak (realm `blueprint`, configured under `Authentication:Schemes:Bearer`); policy `ApiAccess`: `GET` for roles `standard` and `admin`, everything else `admin` only
 
 Projects
 - `NET.Backend.Blueprint.Domain` — entities

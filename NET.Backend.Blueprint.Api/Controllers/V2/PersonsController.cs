@@ -7,7 +7,7 @@ using NET.Backend.Blueprint.Web.Authorization;
 namespace NET.Backend.Blueprint.Api.Controllers.V2;
 
 [ApiController]
-[Authorize(Roles = Roles.Admin)]
+[Authorize(Policies.ApiAccess)]
 [ApiVersion("2.0")]
 [Route("api/v{version:apiVersion}/persons")]
 public class PersonsController : ControllerBase

@@ -27,6 +27,13 @@ public class PersonsEndpointsTests(Fixture fixture) : IAsyncLifetime
         { "DELETE", $"{Route}/{Guid.NewGuid()}" }
     };
 
+    public static TheoryData<string, string> WriteRoutes => new()
+    {
+        { "POST", Route },
+        { "PUT", $"{Route}/{Guid.NewGuid()}" },
+        { "DELETE", $"{Route}/{Guid.NewGuid()}" }
+    };
+
     [Theory]
     [MemberData(nameof(Routes))]
     public async Task Persons_WithoutUser_Unauthorized(string method, string route)
@@ -37,12 +44,30 @@ public class PersonsEndpointsTests(Fixture fixture) : IAsyncLifetime
     }
 
     [Theory]
-    [MemberData(nameof(Routes))]
-    public async Task Persons_WithStandardUser_Forbidden(string method, string route)
+    [MemberData(nameof(WriteRoutes))]
+    public async Task Persons_WriteWithStandardUser_Forbidden(string method, string route)
     {
         var response = await fixture.SendAsync(new HttpMethod(method), route, TestUsers.Standard);
 
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetAll_WithStandardUser_Ok()
+    {
+        var response = await fixture.SendAsync(HttpMethod.Get, Route, TestUsers.Standard);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetById_WithStandardUser_Ok()
+    {
+        var id = await CreatePersonAsync(TestData.CreatePersonRequest());
+
+        var response = await fixture.SendAsync(HttpMethod.Get, $"{Route}/{id}", TestUsers.Standard);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
     [Fact]

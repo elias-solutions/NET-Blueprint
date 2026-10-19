@@ -12,7 +12,7 @@ using NET.Backend.Blueprint.Web.Authorization;
 namespace NET.Backend.Blueprint.Api.Controllers.V1;
 
 [ApiController]
-[Authorize(Roles = Roles.Admin)]
+[Authorize(Policies.ApiAccess)]
 [Route("api/v{version:apiVersion}/addresses")]
 [ApiVersion("1.0")]
 public class AddressesController(

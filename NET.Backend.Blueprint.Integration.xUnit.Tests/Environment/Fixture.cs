@@ -1,15 +1,13 @@
 using System.Net.Http.Headers;
 using System.Net.Mime;
-using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using NET.Backend.Blueprint.Web.Authorization;
 using NET.Backend.Blueprint.Infrastructure.DataAccess;
-using NSubstitute;
 using Testcontainers.PostgreSql;
 using Xunit;
 
@@ -19,9 +17,9 @@ public class Fixture : WebApplicationFactory<Program>, IAsyncLifetime
 {
     private readonly PostgreSqlContainer _database = new PostgreSqlBuilder("postgres:18-alpine").Build();
 
-    public IUserService UserService { get; } = Substitute.For<IUserService>();
+    public TestTokenIssuer Tokens { get; } = new();
     private HttpClient Client { get; set; } = null!;
-    
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureAppConfiguration((context, config) =>
@@ -36,13 +34,8 @@ public class Fixture : WebApplicationFactory<Program>, IAsyncLifetime
                 });
         });
 
-        builder
-            .ConfigureTestServices(services =>
-            {
-                services.AddScoped(_ => UserService);
-                services.AddAuthentication("TestAuthentication")
-                    .AddScheme<AuthenticationSchemeOptions, TestAuthenticationHandler>("TestAuthentication", null);
-            });
+        builder.ConfigureTestServices(services =>
+            services.PostConfigure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, Tokens.Trust));
     }
 
     public async Task InitializeAsync()
@@ -60,16 +53,22 @@ public class Fixture : WebApplicationFactory<Program>, IAsyncLifetime
         await _database.DisposeAsync();
     }
 
-    public async Task<HttpResponseMessage> SendAsync(HttpMethod method, string route, HttpContent? content, User? user)
-    {
-        UserService.GetCurrentUser().Returns(user);
+    /// <summary>Sends the request with a valid access token for <paramref name="user"/>; <c>null</c> sends it anonymously.</summary>
+    public Task<HttpResponseMessage> SendAsync(HttpMethod method, string route, HttpContent? content, TestUser? user) =>
+        SendWithTokenAsync(method, route, content, user == null ? null : Tokens.Issue(user));
 
+    public async Task<HttpResponseMessage> SendWithTokenAsync(HttpMethod method, string route, HttpContent? content, string? accessToken)
+    {
         var message = new HttpRequestMessage
         {
             Method = method,
             RequestUri = new Uri(route, UriKind.Relative),
             Content = content
         };
+        if (accessToken != null)
+        {
+            message.Headers.Authorization = new AuthenticationHeaderValue(JwtBearerDefaults.AuthenticationScheme, accessToken);
+        }
 
         return await Client.SendAsync(message);
     }

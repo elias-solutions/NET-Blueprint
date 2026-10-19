@@ -22,7 +22,7 @@ public static class EndpointRouteBuilderExtensions
     public static RouteGroupBuilder WithBlueprintConventions(this RouteGroupBuilder group)
     {
         group
-            .RequireAuthorization(Policies.Admin)
+            .RequireAuthorization(Policies.ApiAccess)
             .RequireRateLimiting(FixedWindowRateLimitSettings.PolicyName)
             .ProducesProblem(StatusCodes.Status400BadRequest);
 

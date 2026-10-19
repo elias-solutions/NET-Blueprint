@@ -1,8 +1,8 @@
 using Asp.Versioning.ApiExplorer;
-using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using NET.Backend.Blueprint.Web.Authentication;
 using NET.Backend.Blueprint.Web.Authorization;
 using NET.Backend.Blueprint.Web.ErrorHandling;
 using NET.Backend.Blueprint.Web.OpenApi;
@@ -12,13 +12,24 @@ namespace NET.Backend.Blueprint.Web.Extensions;
 
 public static class ServiceCollectionExtensions
 {
+    /// <summary>
+    /// Validates Keycloak access tokens. Authority, audience and metadata address are bound from
+    /// <c>Authentication:Schemes:Bearer</c>.
+    /// </summary>
     public static IServiceCollection AddBlueprintSecurity(this IServiceCollection services)
     {
-        services.AddScoped<IUserService, UserService>();
-        services.AddAuthentication(AuthenticationHandler.SchemeName)
-            .AddScheme<AuthenticationSchemeOptions, AuthenticationHandler>(AuthenticationHandler.SchemeName, null);
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.MapInboundClaims = false;
+                options.TokenValidationParameters.NameClaimType = KeycloakClaims.UserName;
+                options.TokenValidationParameters.RoleClaimType = KeycloakClaims.Roles;
+            });
+        services.AddSingleton<IAuthorizationHandler, ApiAccessHandler>();
         services.AddAuthorizationBuilder()
-            .AddPolicy(Policies.Admin, policy => policy.RequireRole(Roles.Admin));
+            .AddPolicy(Policies.ApiAccess, policy => policy
+                .RequireAuthenticatedUser()
+                .AddRequirements(new ApiAccessRequirement()));
         return services;
     }
 
