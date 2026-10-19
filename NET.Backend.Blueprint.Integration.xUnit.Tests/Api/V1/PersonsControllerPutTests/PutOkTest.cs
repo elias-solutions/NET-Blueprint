@@ -2,6 +2,7 @@ using NET.Backend.Blueprint.Integration.xUnit.Tests.Assertions;
 using NET.Backend.Blueprint.Application.CQRS.Commands;
 using NET.Backend.Blueprint.Application.Model.Commands;
 using NET.Backend.Blueprint.Application.Model.Queries;
+using NET.Backend.Blueprint.Domain.Enums;
 using NET.Backend.Blueprint.Extensions;
 using NET.Backend.Blueprint.Integration.xUnit.Tests.Environment;
 using NET.Backend.Blueprint.Integration.xUnit.Tests.Extensions;
@@ -62,6 +63,11 @@ public class PutOkTest(Fixture fixture) : IAsyncLifetime
             person.Id,
             "Joe", "El",
             new DateOnly(2020, 5, 3),
+            Gender.Female,
+            "Freelance Angular developer",
+            "joe.el@example.com",
+            "+41 62 987 65 43",
+            PersonType.Freelancer,
             UpdateAddresses(person.Addresses.ToArray()),
             TestUsers.Admin.Id,
             DateTimeOffset.Parse(CreatedDate),

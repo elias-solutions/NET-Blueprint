@@ -19,6 +19,11 @@ public class UpdatePersonCommandHandler(IRepository<Person> repository) : IComma
         person.FirstName = request.FirstName;
         person.LastName = request.LastName;
         person.Birthday = request.Birthday;
+        person.Gender = request.Gender;
+        person.Description = request.Description;
+        person.Email = request.Email;
+        person.Phone = request.Phone;
+        person.Type = request.Type;
         person.CreatedId = request.CreatedId;
         person.CreatedDate = request.CreatedDate;
         person.ModifiedId = request.ModifiedId;

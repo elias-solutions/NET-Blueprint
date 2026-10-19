@@ -7,6 +7,7 @@ namespace NET.Backend.Blueprint.Infrastructure.DataAccess;
 public class BlueprintDbContext(DbContextOptions<BlueprintDbContext> options) : DbContext(options)
 {
     private const int StringLength = 200;
+    private const int EnumLength = 20;
 
     public DbSet<Person> Persons { get; set; }
 
@@ -27,6 +28,11 @@ public class BlueprintDbContext(DbContextOptions<BlueprintDbContext> options) : 
 
         builder.Entity<Person>().Property(p => p.FirstName).HasMaxLength(StringLength);
         builder.Entity<Person>().Property(p => p.LastName).HasMaxLength(StringLength);
+        builder.Entity<Person>().Property(p => p.Gender).HasConversion<string>().HasMaxLength(EnumLength);
+        builder.Entity<Person>().Property(p => p.Description).HasMaxLength(PersonConstraints.DescriptionMaxLength);
+        builder.Entity<Person>().Property(p => p.Email).HasMaxLength(PersonConstraints.EmailMaxLength);
+        builder.Entity<Person>().Property(p => p.Phone).HasMaxLength(PersonConstraints.PhoneMaxLength);
+        builder.Entity<Person>().Property(p => p.Type).HasConversion<string>().HasMaxLength(EnumLength);
         builder.Entity<Address>().Property(p => p.Street).HasMaxLength(StringLength);
         builder.Entity<Address>().Property(p => p.Number).HasMaxLength(StringLength);
         builder.Entity<Address>().Property(p => p.City).HasMaxLength(StringLength);

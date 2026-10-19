@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using NET.Backend.Blueprint.Application.CQRS.Commands;
 using NET.Backend.Blueprint.Application.Model.Commands;
 using NET.Backend.Blueprint.Application.Model.Queries;
+using NET.Backend.Blueprint.Domain.Enums;
 using NET.Backend.Blueprint.Minimal.Integration.xUnit.Tests.Environment;
 using Xunit;
 
@@ -65,6 +66,35 @@ public class PersonsEndpointsTests(Fixture fixture) : IAsyncLifetime
     }
 
     [Fact]
+    public async Task Post_WithoutOptionalFields_Ok()
+    {
+        var request = TestData.CreatePersonRequest() with
+        {
+            Birthday = null, Gender = null, Description = null, Email = null, Phone = null, Type = null
+        };
+        var id = await CreatePersonAsync(request);
+
+        var person = await GetPersonAsync(id);
+
+        Assert.Null(person.Birthday);
+        Assert.Null(person.Gender);
+        Assert.Null(person.Description);
+        Assert.Null(person.Email);
+        Assert.Null(person.Phone);
+        Assert.Null(person.Type);
+    }
+
+    [Fact]
+    public async Task Post_InvalidEmail_BadRequest()
+    {
+        var request = TestData.CreatePersonRequest() with { Email = "no-email" };
+
+        var response = await fixture.SendAsync(HttpMethod.Post, Route, TestUsers.Admin, request);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
     public async Task GetById_ExistingPerson_Ok()
     {
         var request = TestData.CreatePersonRequest();
@@ -78,6 +108,11 @@ public class PersonsEndpointsTests(Fixture fixture) : IAsyncLifetime
         Assert.Equal(request.FirstName, person.FirstName);
         Assert.Equal(request.LastName, person.LastName);
         Assert.Equal(request.Birthday, person.Birthday);
+        Assert.Equal(request.Gender, person.Gender);
+        Assert.Equal(request.Description, person.Description);
+        Assert.Equal(request.Email, person.Email);
+        Assert.Equal(request.Phone, person.Phone);
+        Assert.Equal(request.Type, person.Type);
         Assert.Equal(request.Addresses.Length, person.Addresses.Count());
         Assert.NotEqual(Guid.Empty, person.Version);
     }
@@ -121,6 +156,9 @@ public class PersonsEndpointsTests(Fixture fixture) : IAsyncLifetime
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var updated = await GetPersonAsync(id);
         Assert.Equal("Joe", updated.FirstName);
+        Assert.Equal(Gender.Female, updated.Gender);
+        Assert.Equal(PersonType.Freelancer, updated.Type);
+        Assert.Equal("joe.el@example.com", updated.Email);
         Assert.NotEqual(person.Version, updated.Version);
         Assert.Equal(2, updated.Addresses.Count());
         Assert.Contains(updated.Addresses, a => a.Id == keptAddress.Id && a.Street == "Updated Street");
@@ -189,7 +227,9 @@ public class PersonsEndpointsTests(Fixture fixture) : IAsyncLifetime
     }
 
     private static UpdatePersonRequest ToUpdateRequest(GetPersonResponse person, UpdateAddressRequest[] addresses) => new(
-        person.Id, "Joe", "El", new DateOnly(2020, 5, 3), addresses,
+        person.Id, "Joe", "El", new DateOnly(2020, 5, 3),
+        Gender.Female, "Freelance Angular developer", "joe.el@example.com", "+41 62 987 65 43", PersonType.Freelancer,
+        addresses,
         TestUsers.Admin.Id, TestData.CreatedDate, TestUsers.Admin.Id, TestData.ModifiedDate, person.Version);
 
     private static UpdateAddressRequest ToUpdateAddressRequest(GetAddressResponse address) => new(

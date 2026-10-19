@@ -14,6 +14,11 @@ public static class CreatePersonRequestExtensions
             FirstName = source.FirstName,
             LastName = source.LastName,
             Birthday = source.Birthday,
+            Gender = source.Gender,
+            Description = source.Description,
+            Email = source.Email,
+            Phone = source.Phone,
+            Type = source.Type,
             CreatedId = source.CreatedId,
             CreatedDate = source.CreatedDate,
             Addresses = addresses
