@@ -12,10 +12,6 @@ namespace NET.Backend.Blueprint.Web.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    /// <summary>
-    /// Validates Keycloak access tokens. Authority, audience and metadata address are bound from
-    /// <c>Authentication:Schemes:Bearer</c>.
-    /// </summary>
     public static IServiceCollection AddBlueprintSecurity(this IServiceCollection services)
     {
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

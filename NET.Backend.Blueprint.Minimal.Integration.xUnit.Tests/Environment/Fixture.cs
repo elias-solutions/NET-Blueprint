@@ -44,7 +44,6 @@ public class Fixture : WebApplicationFactory<IApiMarker>, IAsyncLifetime
         await _database.DisposeAsync();
     }
 
-    /// <summary>Sends the request with a valid access token for <paramref name="user"/>; <c>null</c> sends it anonymously.</summary>
     public Task<HttpResponseMessage> SendAsync(HttpMethod method, string route, TestUser? user, object? body = null) =>
         SendWithTokenAsync(method, route, user == null ? null : Tokens.Issue(user), body);
 

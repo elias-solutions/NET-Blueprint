@@ -2,9 +2,6 @@ using System.Reflection;
 
 namespace NET.Backend.Blueprint.Integration.xUnit.Tests.Assertions.Equivalency.Steps;
 
-/// <summary>
-/// Fallback step: compares every public readable property declared on the expectation's type.
-/// </summary>
 internal sealed class MemberwiseEquivalencyStep : IEquivalencyStep
 {
     private const BindingFlags PublicInstance = BindingFlags.Public | BindingFlags.Instance;

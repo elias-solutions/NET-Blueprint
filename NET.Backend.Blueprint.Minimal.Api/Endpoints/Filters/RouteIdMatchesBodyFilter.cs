@@ -1,8 +1,5 @@
 namespace NET.Backend.Blueprint.Minimal.Api.Endpoints.Filters;
 
-/// <summary>
-/// Rejects requests whose <c>{id}</c> route value differs from the id carried in the request body.
-/// </summary>
 public sealed class RouteIdMatchesBodyFilter<TRequest>(Func<TRequest, Guid> bodyIdSelector) : IEndpointFilter
 {
     private const string RouteIdName = "id";

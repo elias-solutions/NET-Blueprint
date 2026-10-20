@@ -1,0 +1,19 @@
+using System.Net;
+using NET.Backend.Blueprint.Integration.xUnit.Tests.Assertions;
+using NET.Backend.Blueprint.Integration.xUnit.Tests.Environment;
+using Xunit;
+
+namespace NET.Backend.Blueprint.Integration.xUnit.Tests.Api.V1.PersonsControllerDeleteTests;
+
+[Collection(nameof(SharedTestCollection))]
+public class DeleteWriterForbiddenTest(Fixture fixture)
+{
+    private const string Route = "/api/v1/persons";
+
+    [Fact]
+    public async Task PersonController_Delete_Writer_Forbidden()
+    {
+        var response = await fixture.SendAsync(HttpMethod.Delete, $"{Route}/{Guid.NewGuid()}", null, TestUsers.Writer);
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+    }
+}

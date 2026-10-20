@@ -2,9 +2,6 @@ using System.Collections;
 
 namespace NET.Backend.Blueprint.Integration.xUnit.Tests.Assertions.Equivalency.Steps;
 
-/// <summary>
-/// Compares collections ignoring item order: every expected item must match a distinct actual item.
-/// </summary>
 internal sealed class CollectionEquivalencyStep : IEquivalencyStep
 {
     public bool CanHandle(object expected) => expected is IEnumerable;

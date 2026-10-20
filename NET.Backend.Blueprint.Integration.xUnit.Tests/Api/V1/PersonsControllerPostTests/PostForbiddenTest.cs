@@ -13,7 +13,7 @@ public class PostForbiddenTest(Fixture fixture)
     [Fact]
     public async Task PersonController_Post_Forbidden()
     {
-        var response = await fixture.SendAsync(HttpMethod.Post, Route, null, TestUsers.Standard);
+        var response = await fixture.SendAsync(HttpMethod.Post, Route, null, TestUsers.Reader);
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 }

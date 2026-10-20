@@ -49,9 +49,19 @@ public class AddressesEndpointsTests(Fixture fixture) : IAsyncLifetime
     }
 
     [Fact]
-    public async Task Put_WithStandardUser_Forbidden()
+    public async Task Put_WithWriter_Ok()
     {
-        var response = await fixture.SendAsync(HttpMethod.Put, $"{Route}/{Guid.NewGuid()}", TestUsers.Standard);
+        var address = await CreateAddressAsync();
+
+        var response = await fixture.SendAsync(HttpMethod.Put, $"{Route}/{address.Id}", TestUsers.Writer, ToUpdateRequest(address));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Put_WithReader_Forbidden()
+    {
+        var response = await fixture.SendAsync(HttpMethod.Put, $"{Route}/{Guid.NewGuid()}", TestUsers.Reader);
 
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }

@@ -8,23 +8,23 @@ using Xunit;
 namespace NET.Backend.Blueprint.Integration.xUnit.Tests.Api.V1.PersonsControllerGetTests;
 
 [Collection(nameof(SharedTestCollection))]
-public class GetStandardUserOkTest(Fixture fixture) : IAsyncLifetime
+public class GetReaderOkTest(Fixture fixture) : IAsyncLifetime
 {
     private const string Route = "/api/v1/persons";
-    private readonly EmbeddedJsonResourceProvider _jsonResourceProvider = new(typeof(GetStandardUserOkTest).Namespace!);
+    private readonly EmbeddedJsonResourceProvider _jsonResourceProvider = new(typeof(GetReaderOkTest).Namespace!);
 
     public async Task InitializeAsync() => await fixture.ResetDatabaseAsync();
 
     public Task DisposeAsync() => Task.CompletedTask;
 
     [Fact]
-    public async Task PersonController_Get_StandardUser_Ok()
+    public async Task PersonController_Get_Reader_Ok()
     {
         var content = await _jsonResourceProvider.CreateHttpContentByResourceAsync("Post_Person_Request.json");
         var created = await (await fixture.SendAsync(HttpMethod.Post, Route, content, TestUsers.Admin))
             .Content.ReadAsync<GetPersonResponse>();
 
-        var response = await fixture.SendAsync(HttpMethod.Get, $"{Route}/{created.Id}", null, TestUsers.Standard);
+        var response = await fixture.SendAsync(HttpMethod.Get, $"{Route}/{created.Id}", null, TestUsers.Reader);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }

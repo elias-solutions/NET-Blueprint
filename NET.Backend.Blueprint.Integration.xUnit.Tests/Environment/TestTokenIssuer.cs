@@ -8,13 +8,8 @@ using NET.Backend.Blueprint.Web.Authorization;
 
 namespace NET.Backend.Blueprint.Integration.xUnit.Tests.Environment;
 
-/// <summary>
-/// Stands in for Keycloak: signs access tokens like the "blueprint" realm. <see cref="Trust"/> hands its key
-/// to the JWT bearer handler, which then validates the tokens exactly as in production.
-/// </summary>
 public sealed class TestTokenIssuer
 {
-    /// <summary>Must match <c>Authentication:Schemes:Bearer</c> in appsettings.json.</summary>
     public const string Issuer = "http://localhost:8180/realms/blueprint";
     public const string Audience = "blueprint-api";
 
@@ -31,7 +26,6 @@ public sealed class TestTokenIssuer
 
     public string Issue(TestUser user) => Issue(user, descriptor => descriptor);
 
-    /// <summary>Issues a token whose descriptor the test may tamper with (issuer, audience, expiry...).</summary>
     public string Issue(TestUser user, Func<SecurityTokenDescriptor, SecurityTokenDescriptor> tamper) =>
         _handler.CreateToken(tamper(Describe(user, _signingKey)));
 

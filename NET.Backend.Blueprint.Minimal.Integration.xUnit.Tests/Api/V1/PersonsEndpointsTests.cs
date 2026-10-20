@@ -45,27 +45,56 @@ public class PersonsEndpointsTests(Fixture fixture) : IAsyncLifetime
 
     [Theory]
     [MemberData(nameof(WriteRoutes))]
-    public async Task Persons_WriteWithStandardUser_Forbidden(string method, string route)
+    public async Task Persons_WriteWithReader_Forbidden(string method, string route)
     {
-        var response = await fixture.SendAsync(new HttpMethod(method), route, TestUsers.Standard);
+        var response = await fixture.SendAsync(new HttpMethod(method), route, TestUsers.Reader);
 
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
 
     [Fact]
-    public async Task GetAll_WithStandardUser_Ok()
+    public async Task Delete_WithWriter_Forbidden()
     {
-        var response = await fixture.SendAsync(HttpMethod.Get, Route, TestUsers.Standard);
+        var id = await CreatePersonAsync(TestData.CreatePersonRequest());
+
+        var response = await fixture.SendAsync(HttpMethod.Delete, $"{Route}/{id}", TestUsers.Writer);
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Post_WithWriter_Ok()
+    {
+        var response = await fixture.SendAsync(HttpMethod.Post, Route, TestUsers.Writer, TestData.CreatePersonRequest());
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
     [Fact]
-    public async Task GetById_WithStandardUser_Ok()
+    public async Task Put_WithWriter_Ok()
+    {
+        var id = await CreatePersonAsync(TestData.CreatePersonRequest());
+        var person = await GetPersonAsync(id);
+
+        var response = await fixture.SendAsync(HttpMethod.Put, $"{Route}/{id}", TestUsers.Writer, ToUpdateRequest(person, []));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetAll_WithReader_Ok()
+    {
+        var response = await fixture.SendAsync(HttpMethod.Get, Route, TestUsers.Reader);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetById_WithReader_Ok()
     {
         var id = await CreatePersonAsync(TestData.CreatePersonRequest());
 
-        var response = await fixture.SendAsync(HttpMethod.Get, $"{Route}/{id}", TestUsers.Standard);
+        var response = await fixture.SendAsync(HttpMethod.Get, $"{Route}/{id}", TestUsers.Reader);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
